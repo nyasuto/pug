@@ -110,7 +110,7 @@ test: ## 全てのテストを実行
 .PHONY: test-cov
 test-cov: ## テストカバレッジ付きでテスト実行
 	@echo "📊 テストカバレッジ測定中..."
-	$(GOTEST) -race -coverprofile=coverage.out -covermode=atomic ./...
+	$(GOTEST) -race -coverprofile=coverage.out -covermode=atomic ./phase1
 	$(GOCMD) tool cover -html=coverage.out -o coverage.html
 
 .PHONY: lint
