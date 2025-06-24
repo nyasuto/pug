@@ -1,0 +1,2227 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>interp: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/nyasuto/pug/cmd/interp/main.go (0.0%)</option>
+				
+				<option value="file1">github.com/nyasuto/pug/cmd/pug/main.go (0.0%)</option>
+				
+				<option value="file2">github.com/nyasuto/pug/main.go (0.0%)</option>
+				
+				<option value="file3">github.com/nyasuto/pug/phase1/ast.go (46.6%)</option>
+				
+				<option value="file4">github.com/nyasuto/pug/phase1/builtins.go (20.0%)</option>
+				
+				<option value="file5">github.com/nyasuto/pug/phase1/environment.go (100.0%)</option>
+				
+				<option value="file6">github.com/nyasuto/pug/phase1/evaluator.go (89.0%)</option>
+				
+				<option value="file7">github.com/nyasuto/pug/phase1/lexer.go (91.4%)</option>
+				
+				<option value="file8">github.com/nyasuto/pug/phase1/object.go (16.4%)</option>
+				
+				<option value="file9">github.com/nyasuto/pug/phase1/parser.go (85.0%)</option>
+				
+				<option value="file10">github.com/nyasuto/pug/phase1/repl.go (0.0%)</option>
+				
+				<option value="file11">github.com/nyasuto/pug/phase1/token.go (75.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">no coverage</span>
+				<span class="cov1">low coverage</span>
+				<span class="cov2">*</span>
+				<span class="cov3">*</span>
+				<span class="cov4">*</span>
+				<span class="cov5">*</span>
+				<span class="cov6">*</span>
+				<span class="cov7">*</span>
+				<span class="cov8">*</span>
+				<span class="cov9">*</span>
+				<span class="cov10">high coverage</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package main
+
+import (
+        "fmt"
+        "os"
+)
+
+func main() <span class="cov0" title="0">{
+        fmt.Println("🐶 pug コンパイラ - Phase 1 インタープリター")
+        fmt.Println("段階的に学ぶコンパイラ実装プロジェクト")
+
+        if len(os.Args) &gt; 1 </span><span class="cov0" title="0">{
+                filename := os.Args[1]
+                fmt.Printf("📄 ファイル '%s' を処理中...\n", filename)
+                fmt.Println("⚠️  まだ実装されていません - Phase 1.0 レクサーから開始してください")
+        }</span> else<span class="cov0" title="0"> {
+                fmt.Println("📝 使用方法: interp &lt;filename.dog&gt;")
+                fmt.Println("🔄 または REPL モード: interp --repl")
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package main
+
+import (
+        "fmt"
+        "os"
+)
+
+func main() <span class="cov0" title="0">{
+        fmt.Println("🐶 pug コンパイラ - Phase 2 コンパイラ")
+        fmt.Println("段階的に学ぶコンパイラ実装プロジェクト")
+
+        if len(os.Args) &gt; 1 </span><span class="cov0" title="0">{
+                filename := os.Args[1]
+                fmt.Printf("📄 ファイル '%s' をコンパイル中...\n", filename)
+                fmt.Println("⚠️  まだ実装されていません - Phase 2.0 コード生成器から開始してください")
+        }</span> else<span class="cov0" title="0"> {
+                fmt.Println("📝 使用方法: pug &lt;filename.dog&gt; [-o output]")
+                fmt.Println("🔧 オプション:")
+                fmt.Println("  --emit-asm    アセンブリコードを表示")
+                fmt.Println("  --emit-ast    AST構造を表示")
+                fmt.Println("  -O0,-O1,-O2   最適化レベル")
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package main
+
+import (
+        "fmt"
+        "os"
+        "os/user"
+
+        "github.com/nyasuto/pug/phase1"
+)
+
+func main() <span class="cov0" title="0">{
+        user, err := user.Current()
+        if err != nil </span><span class="cov0" title="0">{
+                panic(err)</span>
+        }
+        <span class="cov0" title="0">fmt.Printf("Hello %s! This is the Dog programming language!\n",
+                user.Username)
+        fmt.Printf("Feel free to type in commands\n")
+        phase1.Start(os.Stdin, os.Stdout)</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package phase1
+
+import (
+        "bytes"
+        "strings"
+)
+
+// Node は全てのASTノードが実装するインターフェース
+type Node interface {
+        TokenLiteral() string
+        String() string
+}
+
+// Statement は文を表すノード
+type Statement interface {
+        Node
+        statementNode()
+}
+
+// Expression は式を表すノード
+type Expression interface {
+        Node
+        expressionNode()
+}
+
+// Program はASTのルートノード
+type Program struct {
+        Statements []Statement
+}
+
+func (p *Program) TokenLiteral() string <span class="cov0" title="0">{
+        if len(p.Statements) &gt; 0 </span><span class="cov0" title="0">{
+                return p.Statements[0].TokenLiteral()
+        }</span>
+        <span class="cov0" title="0">return ""</span>
+}
+
+func (p *Program) String() string <span class="cov8" title="25">{
+        var out bytes.Buffer
+        for _, s := range p.Statements </span><span class="cov8" title="26">{
+                out.WriteString(s.String())
+        }</span>
+        <span class="cov8" title="25">return out.String()</span>
+}
+
+// LetStatement はlet文を表すノード
+type LetStatement struct {
+        Token Token // LETトークン
+        Name  *Identifier
+        Value Expression
+}
+
+func (ls *LetStatement) statementNode()       {<span class="cov0" title="0">}</span>
+func (ls *LetStatement) TokenLiteral() string <span class="cov4" title="5">{ return ls.Token.Literal }</span>
+func (ls *LetStatement) String() string <span class="cov0" title="0">{
+        var out bytes.Buffer
+        out.WriteString(ls.TokenLiteral() + " ")
+        out.WriteString(ls.Name.String())
+        out.WriteString(" = ")
+        if ls.Value != nil </span><span class="cov0" title="0">{
+                out.WriteString(ls.Value.String())
+        }</span>
+        <span class="cov0" title="0">out.WriteString(";")
+        return out.String()</span>
+}
+
+// ReturnStatement はreturn文を表すノード
+type ReturnStatement struct {
+        Token       Token // RETURNトークン
+        ReturnValue Expression
+}
+
+func (rs *ReturnStatement) statementNode()       {<span class="cov0" title="0">}</span>
+func (rs *ReturnStatement) TokenLiteral() string <span class="cov1" title="1">{ return rs.Token.Literal }</span>
+func (rs *ReturnStatement) String() string <span class="cov0" title="0">{
+        var out bytes.Buffer
+        out.WriteString(rs.TokenLiteral() + " ")
+        if rs.ReturnValue != nil </span><span class="cov0" title="0">{
+                out.WriteString(rs.ReturnValue.String())
+        }</span>
+        <span class="cov0" title="0">out.WriteString(";")
+        return out.String()</span>
+}
+
+// ExpressionStatement は式文を表すノード
+type ExpressionStatement struct {
+        Token      Token // 式の最初のトークン
+        Expression Expression
+}
+
+func (es *ExpressionStatement) statementNode()       {<span class="cov0" title="0">}</span>
+func (es *ExpressionStatement) TokenLiteral() string <span class="cov0" title="0">{ return es.Token.Literal }</span>
+func (es *ExpressionStatement) String() string <span class="cov8" title="27">{
+        if es.Expression != nil </span><span class="cov8" title="27">{
+                return es.Expression.String()
+        }</span>
+        <span class="cov0" title="0">return ""</span>
+}
+
+// Identifier は識別子を表すノード
+type Identifier struct {
+        Token Token // IDENTトークン
+        Value string
+}
+
+func (i *Identifier) expressionNode()      {<span class="cov0" title="0">}</span>
+func (i *Identifier) TokenLiteral() string <span class="cov9" title="41">{ return i.Token.Literal }</span>
+func (i *Identifier) String() string       <span class="cov9" title="42">{ return i.Value }</span>
+
+// IntegerLiteral は整数リテラルを表すノード
+type IntegerLiteral struct {
+        Token Token // INTトークン
+        Value int64
+}
+
+func (il *IntegerLiteral) expressionNode()      {<span class="cov0" title="0">}</span>
+func (il *IntegerLiteral) TokenLiteral() string <span class="cov8" title="29">{ return il.Token.Literal }</span>
+func (il *IntegerLiteral) String() string       <span class="cov9" title="49">{ return il.Token.Literal }</span>
+
+// FloatLiteral は浮動小数点リテラルを表すノード
+type FloatLiteral struct {
+        Token Token // FLOATトークン
+        Value float64
+}
+
+func (fl *FloatLiteral) expressionNode()      {<span class="cov0" title="0">}</span>
+func (fl *FloatLiteral) TokenLiteral() string <span class="cov6" title="11">{ return fl.Token.Literal }</span>
+func (fl *FloatLiteral) String() string       <span class="cov0" title="0">{ return fl.Token.Literal }</span>
+
+// StringLiteral は文字列リテラルを表すノード
+type StringLiteral struct {
+        Token Token // STRINGトークン
+        Value string
+}
+
+func (sl *StringLiteral) expressionNode()      {<span class="cov0" title="0">}</span>
+func (sl *StringLiteral) TokenLiteral() string <span class="cov0" title="0">{ return sl.Token.Literal }</span>
+func (sl *StringLiteral) String() string       <span class="cov0" title="0">{ return "\"" + sl.Value + "\"" }</span>
+
+// Boolean はブール値リテラルを表すノード
+type Boolean struct {
+        Token Token // TRUE | FALSEトークン
+        Value bool
+}
+
+func (b *Boolean) expressionNode()      {<span class="cov0" title="0">}</span>
+func (b *Boolean) TokenLiteral() string <span class="cov5" title="9">{ return b.Token.Literal }</span>
+func (b *Boolean) String() string       <span class="cov4" title="6">{ return b.Token.Literal }</span>
+
+// PrefixExpression は前置演算子式を表すノード
+type PrefixExpression struct {
+        Token    Token // 前置演算子トークン（!、-など）
+        Operator string
+        Right    Expression
+}
+
+func (pe *PrefixExpression) expressionNode()      {<span class="cov0" title="0">}</span>
+func (pe *PrefixExpression) TokenLiteral() string <span class="cov0" title="0">{ return pe.Token.Literal }</span>
+func (pe *PrefixExpression) String() string <span class="cov4" title="6">{
+        var out bytes.Buffer
+        out.WriteString("(")
+        out.WriteString(pe.Operator)
+        out.WriteString(pe.Right.String())
+        out.WriteString(")")
+        return out.String()
+}</span>
+
+// InfixExpression は中置演算子式を表すノード
+type InfixExpression struct {
+        Token    Token // 演算子トークン
+        Left     Expression
+        Operator string
+        Right    Expression
+}
+
+func (oe *InfixExpression) expressionNode()      {<span class="cov0" title="0">}</span>
+func (oe *InfixExpression) TokenLiteral() string <span class="cov0" title="0">{ return oe.Token.Literal }</span>
+func (oe *InfixExpression) String() string <span class="cov10" title="59">{
+        var out bytes.Buffer
+        out.WriteString("(")
+        out.WriteString(oe.Left.String())
+        out.WriteString(" " + oe.Operator + " ")
+        out.WriteString(oe.Right.String())
+        out.WriteString(")")
+        return out.String()
+}</span>
+
+// IfExpression はif式を表すノード
+type IfExpression struct {
+        Token       Token // IFトークン
+        Condition   Expression
+        Consequence *BlockStatement
+        Alternative *BlockStatement
+}
+
+func (ie *IfExpression) expressionNode()      {<span class="cov0" title="0">}</span>
+func (ie *IfExpression) TokenLiteral() string <span class="cov0" title="0">{ return ie.Token.Literal }</span>
+func (ie *IfExpression) String() string <span class="cov0" title="0">{
+        var out bytes.Buffer
+        out.WriteString("if")
+        out.WriteString(ie.Condition.String())
+        out.WriteString(" ")
+        out.WriteString(ie.Consequence.String())
+        if ie.Alternative != nil </span><span class="cov0" title="0">{
+                out.WriteString("else ")
+                out.WriteString(ie.Alternative.String())
+        }</span>
+        <span class="cov0" title="0">return out.String()</span>
+}
+
+// BlockStatement はブロック文を表すノード
+type BlockStatement struct {
+        Token      Token // LBRACEトークン
+        Statements []Statement
+}
+
+func (bs *BlockStatement) statementNode()       {<span class="cov0" title="0">}</span>
+func (bs *BlockStatement) TokenLiteral() string <span class="cov0" title="0">{ return bs.Token.Literal }</span>
+func (bs *BlockStatement) String() string <span class="cov1" title="1">{
+        var out bytes.Buffer
+        for _, s := range bs.Statements </span><span class="cov1" title="1">{
+                out.WriteString(s.String())
+        }</span>
+        <span class="cov1" title="1">return out.String()</span>
+}
+
+// FunctionLiteral は関数リテラルを表すノード
+type FunctionLiteral struct {
+        Token      Token // FNトークン
+        Parameters []*Identifier
+        Body       *BlockStatement
+}
+
+func (fl *FunctionLiteral) expressionNode()      {<span class="cov0" title="0">}</span>
+func (fl *FunctionLiteral) TokenLiteral() string <span class="cov0" title="0">{ return fl.Token.Literal }</span>
+func (fl *FunctionLiteral) String() string <span class="cov0" title="0">{
+        var out bytes.Buffer
+        params := []string{}
+        for _, p := range fl.Parameters </span><span class="cov0" title="0">{
+                params = append(params, p.String())
+        }</span>
+        <span class="cov0" title="0">out.WriteString(fl.TokenLiteral())
+        out.WriteString("(")
+        out.WriteString(strings.Join(params, ", "))
+        out.WriteString(") ")
+        out.WriteString(fl.Body.String())
+        return out.String()</span>
+}
+
+// CallExpression は関数呼び出し式を表すノード
+type CallExpression struct {
+        Token     Token // LPARENトークン
+        Function  Expression
+        Arguments []Expression
+}
+
+func (ce *CallExpression) expressionNode()      {<span class="cov0" title="0">}</span>
+func (ce *CallExpression) TokenLiteral() string <span class="cov0" title="0">{ return ce.Token.Literal }</span>
+func (ce *CallExpression) String() string <span class="cov4" title="4">{
+        var out bytes.Buffer
+        args := []string{}
+        for _, a := range ce.Arguments </span><span class="cov6" title="10">{
+                args = append(args, a.String())
+        }</span>
+        <span class="cov4" title="4">out.WriteString(ce.Function.String())
+        out.WriteString("(")
+        out.WriteString(strings.Join(args, ", "))
+        out.WriteString(")")
+        return out.String()</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package phase1
+
+import "fmt"
+
+// builtins は組み込み関数のマップ
+var builtins = map[string]*Builtin{
+        "len": &amp;Builtin{
+                Fn: func(args ...Object) Object <span class="cov10" title="5">{
+                        if len(args) != 1 </span><span class="cov1" title="1">{
+                                return newError("wrong number of arguments. got=%d, want=1",
+                                        len(args))
+                        }</span>
+
+                        <span class="cov8" title="4">switch arg := args[0].(type) </span>{
+                        case *Array:<span class="cov0" title="0">
+                                return &amp;Integer{Value: int64(len(arg.Elements))}</span>
+                        case *String:<span class="cov7" title="3">
+                                return &amp;Integer{Value: int64(len(arg.Value))}</span>
+                        default:<span class="cov1" title="1">
+                                return newError("argument to `len` not supported, got %s",
+                                        args[0].Type())</span>
+                        }
+                },
+        },
+
+        "first": &amp;Builtin{
+                Fn: func(args ...Object) Object <span class="cov0" title="0">{
+                        if len(args) != 1 </span><span class="cov0" title="0">{
+                                return newError("wrong number of arguments. got=%d, want=1",
+                                        len(args))
+                        }</span>
+                        <span class="cov0" title="0">if args[0].Type() != ARRAY_OBJ </span><span class="cov0" title="0">{
+                                return newError("argument to `first` must be ARRAY, got %T",
+                                        args[0])
+                        }</span>
+
+                        <span class="cov0" title="0">arr := args[0].(*Array)
+                        if len(arr.Elements) &gt; 0 </span><span class="cov0" title="0">{
+                                return arr.Elements[0]
+                        }</span>
+
+                        <span class="cov0" title="0">return NULL_OBJ_INSTANCE</span>
+                },
+        },
+
+        "last": &amp;Builtin{
+                Fn: func(args ...Object) Object <span class="cov0" title="0">{
+                        if len(args) != 1 </span><span class="cov0" title="0">{
+                                return newError("wrong number of arguments. got=%d, want=1",
+                                        len(args))
+                        }</span>
+                        <span class="cov0" title="0">if args[0].Type() != ARRAY_OBJ </span><span class="cov0" title="0">{
+                                return newError("argument to `last` must be ARRAY, got %T",
+                                        args[0])
+                        }</span>
+
+                        <span class="cov0" title="0">arr := args[0].(*Array)
+                        length := len(arr.Elements)
+                        if length &gt; 0 </span><span class="cov0" title="0">{
+                                return arr.Elements[length-1]
+                        }</span>
+
+                        <span class="cov0" title="0">return NULL_OBJ_INSTANCE</span>
+                },
+        },
+
+        "rest": &amp;Builtin{
+                Fn: func(args ...Object) Object <span class="cov0" title="0">{
+                        if len(args) != 1 </span><span class="cov0" title="0">{
+                                return newError("wrong number of arguments. got=%d, want=1",
+                                        len(args))
+                        }</span>
+                        <span class="cov0" title="0">if args[0].Type() != ARRAY_OBJ </span><span class="cov0" title="0">{
+                                return newError("argument to `rest` must be ARRAY, got %T",
+                                        args[0])
+                        }</span>
+
+                        <span class="cov0" title="0">arr := args[0].(*Array)
+                        length := len(arr.Elements)
+                        if length &gt; 0 </span><span class="cov0" title="0">{
+                                newElements := make([]Object, length-1)
+                                copy(newElements, arr.Elements[1:length])
+                                return &amp;Array{Elements: newElements}
+                        }</span>
+
+                        <span class="cov0" title="0">return NULL_OBJ_INSTANCE</span>
+                },
+        },
+
+        "push": &amp;Builtin{
+                Fn: func(args ...Object) Object <span class="cov0" title="0">{
+                        if len(args) != 2 </span><span class="cov0" title="0">{
+                                return newError("wrong number of arguments. got=%d, want=2",
+                                        len(args))
+                        }</span>
+                        <span class="cov0" title="0">if args[0].Type() != ARRAY_OBJ </span><span class="cov0" title="0">{
+                                return newError("argument to `push` must be ARRAY, got %T",
+                                        args[0])
+                        }</span>
+
+                        <span class="cov0" title="0">arr := args[0].(*Array)
+                        length := len(arr.Elements)
+
+                        newElements := make([]Object, length+1)
+                        copy(newElements, arr.Elements)
+                        newElements[length] = args[1]
+
+                        return &amp;Array{Elements: newElements}</span>
+                },
+        },
+
+        "puts": &amp;Builtin{
+                Fn: func(args ...Object) Object <span class="cov1" title="1">{
+                        for _, arg := range args </span><span class="cov4" title="2">{
+                                fmt.Println(arg.Inspect())
+                        }</span>
+
+                        <span class="cov1" title="1">return NULL_OBJ_INSTANCE</span>
+                },
+        },
+
+        "type": &amp;Builtin{
+                Fn: func(args ...Object) Object <span class="cov8" title="4">{
+                        if len(args) != 1 </span><span class="cov0" title="0">{
+                                return newError("wrong number of arguments. got=%d, want=1",
+                                        len(args))
+                        }</span>
+
+                        <span class="cov8" title="4">return &amp;String{Value: string(args[0].Type())}</span>
+                },
+        },
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package phase1
+
+// Environment は変数の束縛を管理する環境
+type Environment struct {
+        store map[string]Object
+        outer *Environment
+}
+
+// NewEnvironment は新しい環境を作成する
+func NewEnvironment() *Environment <span class="cov10" title="123">{
+        s := make(map[string]Object)
+        return &amp;Environment{store: s, outer: nil}
+}</span>
+
+// NewEnclosedEnvironment は外側の環境を持つ新しい環境を作成する
+func NewEnclosedEnvironment(outer *Environment) *Environment <span class="cov5" title="9">{
+        env := NewEnvironment()
+        env.outer = outer
+        return env
+}</span>
+
+// Get は変数の値を取得する
+func (e *Environment) Get(name string) (Object, bool) <span class="cov7" title="40">{
+        value, ok := e.store[name]
+        if !ok &amp;&amp; e.outer != nil </span><span class="cov1" title="1">{
+                value, ok = e.outer.Get(name)
+        }</span>
+        <span class="cov7" title="40">return value, ok</span>
+}
+
+// Set は変数に値を設定する
+func (e *Environment) Set(name string, val Object) Object <span class="cov7" title="26">{
+        e.store[name] = val
+        return val
+}</span>
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package phase1
+
+import "fmt"
+
+// Eval はASTノードを評価してオブジェクトを返す
+func Eval(node Node, env *Environment) Object <span class="cov10" title="718">{
+        switch node := node.(type) </span>{
+
+        // Program
+        case *Program:<span class="cov7" title="114">
+                return evalProgram(node.Statements, env)</span>
+
+        // Statements
+        case *ExpressionStatement:<span class="cov7" title="128">
+                return Eval(node.Expression, env)</span>
+
+        case *LetStatement:<span class="cov4" title="14">
+                val := Eval(node.Value, env)
+                if isError(val) </span><span class="cov0" title="0">{
+                        return val
+                }</span>
+                <span class="cov4" title="14">env.Set(node.Name.Value, val)
+                return val</span>
+
+        case *ReturnStatement:<span class="cov3" title="7">
+                val := Eval(node.ReturnValue, env)
+                if isError(val) </span><span class="cov1" title="1">{
+                        return val
+                }</span>
+                <span class="cov3" title="6">return &amp;ReturnValue{Value: val}</span>
+
+        case *BlockStatement:<span class="cov5" title="19">
+                return evalBlockStatement(node, env)</span>
+
+        // Expressions
+        case *IntegerLiteral:<span class="cov7" title="152">
+                return &amp;Integer{Value: node.Value}</span>
+
+        case *FloatLiteral:<span class="cov5" title="31">
+                return &amp;Float{Value: node.Value}</span>
+
+        case *StringLiteral:<span class="cov4" title="14">
+                return &amp;String{Value: node.Value}</span>
+
+        case *Boolean:<span class="cov5" title="34">
+                return nativeBoolToPugBoolean(node.Value)</span>
+
+        case *PrefixExpression:<span class="cov5" title="20">
+                right := Eval(node.Right, env)
+                if isError(right) </span><span class="cov0" title="0">{
+                        return right
+                }</span>
+                <span class="cov5" title="20">return evalPrefixExpression(node.Operator, right)</span>
+
+        case *InfixExpression:<span class="cov7" title="106">
+                left := Eval(node.Left, env)
+                if isError(left) </span><span class="cov0" title="0">{
+                        return left
+                }</span>
+                <span class="cov7" title="106">right := Eval(node.Right, env)
+                if isError(right) </span><span class="cov0" title="0">{
+                        return right
+                }</span>
+                <span class="cov7" title="106">return evalInfixExpression(node.Operator, left, right)</span>
+
+        case *IfExpression:<span class="cov4" title="12">
+                return evalIfExpression(node, env)</span>
+
+        case *Identifier:<span class="cov6" title="39">
+                return evalIdentifier(node, env)</span>
+
+        case *FunctionLiteral:<span class="cov4" title="9">
+                params := node.Parameters
+                body := node.Body
+                return &amp;Function{Parameters: params, Env: env, Body: body}</span>
+
+        case *CallExpression:<span class="cov5" title="19">
+                function := Eval(node.Function, env)
+                if isError(function) </span><span class="cov0" title="0">{
+                        return function
+                }</span>
+                <span class="cov5" title="19">args := evalExpressions(node.Arguments, env)
+                if len(args) == 1 &amp;&amp; isError(args[0]) </span><span class="cov0" title="0">{
+                        return args[0]
+                }</span>
+                <span class="cov5" title="19">return applyFunction(function, args)</span>
+
+        default:<span class="cov0" title="0">
+                return newError("unknown node type: %T", node)</span>
+        }
+}
+
+// evalProgram はプログラム全体を評価する
+func evalProgram(stmts []Statement, env *Environment) Object <span class="cov7" title="114">{
+        var result Object
+
+        for _, statement := range stmts </span><span class="cov7" title="130">{
+                result = Eval(statement, env)
+
+                switch result := result.(type) </span>{
+                case *ReturnValue:<span class="cov3" title="5">
+                        return result.Value</span>
+                case *Error:<span class="cov4" title="14">
+                        return result</span>
+                }
+        }
+
+        <span class="cov7" title="95">return result</span>
+}
+
+// evalBlockStatement はブロック文を評価する
+func evalBlockStatement(block *BlockStatement, env *Environment) Object <span class="cov5" title="19">{
+        var result Object
+
+        for _, statement := range block.Statements </span><span class="cov5" title="19">{
+                result = Eval(statement, env)
+
+                if result != nil </span><span class="cov5" title="19">{
+                        rt := result.Type()
+                        if rt == RETURN_VALUE_OBJ || rt == ERROR_OBJ </span><span class="cov3" title="6">{
+                                return result
+                        }</span>
+                }
+        }
+
+        <span class="cov4" title="13">return result</span>
+}
+
+// evalPrefixExpression は前置演算子式を評価する
+func evalPrefixExpression(operator string, right Object) Object <span class="cov5" title="20">{
+        switch operator </span>{
+        case "!":<span class="cov4" title="9">
+                return evalBangOperatorExpression(right)</span>
+        case "-":<span class="cov3" title="8">
+                return evalMinusPrefixOperatorExpression(right)</span>
+        case "+":<span class="cov2" title="3">
+                return evalPlusPrefixOperatorExpression(right)</span>
+        default:<span class="cov0" title="0">
+                return newError("unknown operator: %s%s", operator, right.Type())</span>
+        }
+}
+
+// evalBangOperatorExpression は論理否定演算子を評価する
+func evalBangOperatorExpression(right Object) Object <span class="cov4" title="9">{
+        switch right </span>{
+        case TRUE_OBJ_INSTANCE:<span class="cov2" title="3">
+                return FALSE_OBJ_INSTANCE</span>
+        case FALSE_OBJ_INSTANCE:<span class="cov2" title="4">
+                return TRUE_OBJ_INSTANCE</span>
+        case NULL_OBJ_INSTANCE:<span class="cov0" title="0">
+                return TRUE_OBJ_INSTANCE</span>
+        default:<span class="cov1" title="2">
+                return FALSE_OBJ_INSTANCE</span>
+        }
+}
+
+// evalMinusPrefixOperatorExpression はマイナス前置演算子を評価する
+func evalMinusPrefixOperatorExpression(right Object) Object <span class="cov3" title="8">{
+        switch right := right.(type) </span>{
+        case *Integer:<span class="cov3" title="6">
+                return &amp;Integer{Value: -right.Value}</span>
+        case *Float:<span class="cov1" title="1">
+                return &amp;Float{Value: -right.Value}</span>
+        default:<span class="cov1" title="1">
+                return newError("unknown operator: -%s", right.Type())</span>
+        }
+}
+
+// evalPlusPrefixOperatorExpression はプラス前置演算子を評価する
+func evalPlusPrefixOperatorExpression(right Object) Object <span class="cov2" title="3">{
+        switch right := right.(type) </span>{
+        case *Integer:<span class="cov1" title="2">
+                return &amp;Integer{Value: +right.Value}</span>
+        case *Float:<span class="cov1" title="1">
+                return &amp;Float{Value: +right.Value}</span>
+        default:<span class="cov0" title="0">
+                return newError("unknown operator: +%s", right.Type())</span>
+        }
+}
+
+// evalInfixExpression は中置演算子式を評価する
+func evalInfixExpression(operator string, left, right Object) Object <span class="cov7" title="106">{
+        switch </span>{
+        case left.Type() == INTEGER_OBJ &amp;&amp; right.Type() == INTEGER_OBJ:<span class="cov6" title="73">
+                return evalIntegerInfixExpression(operator, left, right)</span>
+        case left.Type() == FLOAT_OBJ &amp;&amp; right.Type() == FLOAT_OBJ:<span class="cov4" title="11">
+                return evalFloatInfixExpression(operator, left, right)</span>
+        case left.Type() == INTEGER_OBJ &amp;&amp; right.Type() == FLOAT_OBJ:<span class="cov1" title="2">
+                leftFloat := &amp;Float{Value: float64(left.(*Integer).Value)}
+                return evalFloatInfixExpression(operator, leftFloat, right)</span>
+        case left.Type() == FLOAT_OBJ &amp;&amp; right.Type() == INTEGER_OBJ:<span class="cov1" title="2">
+                rightFloat := &amp;Float{Value: float64(right.(*Integer).Value)}
+                return evalFloatInfixExpression(operator, left, rightFloat)</span>
+        case left.Type() == STRING_OBJ &amp;&amp; right.Type() == STRING_OBJ:<span class="cov2" title="3">
+                return evalStringInfixExpression(operator, left, right)</span>
+        case operator == "==":<span class="cov3" title="7">
+                return nativeBoolToPugBoolean(left == right)</span>
+        case operator == "!=":<span class="cov1" title="2">
+                return nativeBoolToPugBoolean(left != right)</span>
+        default:<span class="cov3" title="6">
+                return newError("unknown operator: %s %s %s",
+                        left.Type(), operator, right.Type())</span>
+        }
+}
+
+// evalIntegerInfixExpression は整数同士の中置演算子を評価する
+func evalIntegerInfixExpression(operator string, left, right Object) Object <span class="cov6" title="73">{
+        leftVal := left.(*Integer).Value
+        rightVal := right.(*Integer).Value
+
+        switch operator </span>{
+        case "+":<span class="cov5" title="22">
+                return &amp;Integer{Value: leftVal + rightVal}</span>
+        case "-":<span class="cov1" title="1">
+                return &amp;Integer{Value: leftVal - rightVal}</span>
+        case "*":<span class="cov5" title="19">
+                return &amp;Integer{Value: leftVal * rightVal}</span>
+        case "/":<span class="cov2" title="3">
+                if rightVal == 0 </span><span class="cov1" title="1">{
+                        return newError("division by zero")
+                }</span>
+                <span class="cov1" title="2">return &amp;Integer{Value: leftVal / rightVal}</span>
+        case "%":<span class="cov2" title="3">
+                if rightVal == 0 </span><span class="cov1" title="1">{
+                        return newError("modulo by zero")
+                }</span>
+                <span class="cov1" title="2">return &amp;Integer{Value: leftVal % rightVal}</span>
+        case "&lt;":<span class="cov3" title="6">
+                return nativeBoolToPugBoolean(leftVal &lt; rightVal)</span>
+        case "&gt;":<span class="cov4" title="11">
+                return nativeBoolToPugBoolean(leftVal &gt; rightVal)</span>
+        case "&lt;=":<span class="cov1" title="2">
+                return nativeBoolToPugBoolean(leftVal &lt;= rightVal)</span>
+        case "&gt;=":<span class="cov1" title="2">
+                return nativeBoolToPugBoolean(leftVal &gt;= rightVal)</span>
+        case "==":<span class="cov1" title="2">
+                return nativeBoolToPugBoolean(leftVal == rightVal)</span>
+        case "!=":<span class="cov1" title="2">
+                return nativeBoolToPugBoolean(leftVal != rightVal)</span>
+        default:<span class="cov0" title="0">
+                return newError("unknown operator: %s", operator)</span>
+        }
+}
+
+// evalFloatInfixExpression は浮動小数点同士の中置演算子を評価する
+func evalFloatInfixExpression(operator string, left, right Object) Object <span class="cov4" title="15">{
+        leftVal := left.(*Float).Value
+        rightVal := right.(*Float).Value
+
+        switch operator </span>{
+        case "+":<span class="cov2" title="3">
+                return &amp;Float{Value: leftVal + rightVal}</span>
+        case "-":<span class="cov1" title="1">
+                return &amp;Float{Value: leftVal - rightVal}</span>
+        case "*":<span class="cov2" title="3">
+                return &amp;Float{Value: leftVal * rightVal}</span>
+        case "/":<span class="cov1" title="2">
+                if rightVal == 0.0 </span><span class="cov1" title="1">{
+                        return newError("division by zero")
+                }</span>
+                <span class="cov1" title="1">return &amp;Float{Value: leftVal / rightVal}</span>
+        case "&lt;":<span class="cov1" title="1">
+                return nativeBoolToPugBoolean(leftVal &lt; rightVal)</span>
+        case "&gt;":<span class="cov1" title="1">
+                return nativeBoolToPugBoolean(leftVal &gt; rightVal)</span>
+        case "&lt;=":<span class="cov1" title="1">
+                return nativeBoolToPugBoolean(leftVal &lt;= rightVal)</span>
+        case "&gt;=":<span class="cov1" title="1">
+                return nativeBoolToPugBoolean(leftVal &gt;= rightVal)</span>
+        case "==":<span class="cov1" title="1">
+                return nativeBoolToPugBoolean(leftVal == rightVal)</span>
+        case "!=":<span class="cov1" title="1">
+                return nativeBoolToPugBoolean(leftVal != rightVal)</span>
+        default:<span class="cov0" title="0">
+                return newError("unknown operator: %s", operator)</span>
+        }
+}
+
+// evalStringInfixExpression は文字列同士の中置演算子を評価する
+func evalStringInfixExpression(operator string, left, right Object) Object <span class="cov2" title="3">{
+        leftVal := left.(*String).Value
+        rightVal := right.(*String).Value
+
+        switch operator </span>{
+        case "+":<span class="cov1" title="2">
+                return &amp;String{Value: leftVal + rightVal}</span>
+        case "==":<span class="cov0" title="0">
+                return nativeBoolToPugBoolean(leftVal == rightVal)</span>
+        case "!=":<span class="cov0" title="0">
+                return nativeBoolToPugBoolean(leftVal != rightVal)</span>
+        default:<span class="cov1" title="1">
+                return newError("unknown operator: %s %s %s",
+                        left.Type(), operator, right.Type())</span>
+        }
+}
+
+// evalIfExpression はif式を評価する
+func evalIfExpression(ie *IfExpression, env *Environment) Object <span class="cov4" title="12">{
+        condition := Eval(ie.Condition, env)
+        if isError(condition) </span><span class="cov0" title="0">{
+                return condition
+        }</span>
+
+        <span class="cov4" title="12">if isTruthy(condition) </span><span class="cov4" title="9">{
+                return Eval(ie.Consequence, env)
+        }</span> else<span class="cov2" title="3"> if ie.Alternative != nil </span><span class="cov1" title="1">{
+                return Eval(ie.Alternative, env)
+        }</span> else<span class="cov1" title="2"> {
+                return NULL_OBJ_INSTANCE
+        }</span>
+}
+
+// evalIdentifier は識別子を評価する
+func evalIdentifier(node *Identifier, env *Environment) Object <span class="cov6" title="39">{
+        if val, ok := env.Get(node.Value); ok </span><span class="cov5" title="28">{
+                return val
+        }</span>
+
+        <span class="cov4" title="11">if builtin, ok := builtins[node.Value]; ok </span><span class="cov4" title="10">{
+                return builtin
+        }</span>
+
+        <span class="cov1" title="1">return newError("identifier not found: %s", node.Value)</span>
+}
+
+// evalExpressions は式のリストを評価する
+func evalExpressions(exps []Expression, env *Environment) []Object <span class="cov5" title="19">{
+        var result []Object
+
+        for _, e := range exps </span><span class="cov5" title="24">{
+                evaluated := Eval(e, env)
+                if isError(evaluated) </span><span class="cov0" title="0">{
+                        return []Object{evaluated}
+                }</span>
+                <span class="cov5" title="24">result = append(result, evaluated)</span>
+        }
+
+        <span class="cov5" title="19">return result</span>
+}
+
+// applyFunction は関数を適用する
+func applyFunction(fn Object, args []Object) Object <span class="cov5" title="19">{
+        switch fn := fn.(type) </span>{
+        case *Function:<span class="cov4" title="9">
+                extendedEnv := extendFunctionEnv(fn, args)
+                evaluated := Eval(fn.Body, extendedEnv)
+                return unwrapReturnValue(evaluated)</span>
+        case *Builtin:<span class="cov4" title="10">
+                return fn.Fn(args...)</span>
+        default:<span class="cov0" title="0">
+                return newError("not a function: %T", fn)</span>
+        }
+}
+
+// extendFunctionEnv は関数の環境を拡張する
+func extendFunctionEnv(fn *Function, args []Object) *Environment <span class="cov4" title="9">{
+        env := NewEnclosedEnvironment(fn.Env)
+
+        for paramIdx, param := range fn.Parameters </span><span class="cov4" title="12">{
+                env.Set(param.Value, args[paramIdx])
+        }</span>
+
+        <span class="cov4" title="9">return env</span>
+}
+
+// unwrapReturnValue はReturnValueをアンラップする
+func unwrapReturnValue(obj Object) Object <span class="cov4" title="9">{
+        if returnValue, ok := obj.(*ReturnValue); ok </span><span class="cov1" title="1">{
+                return returnValue.Value
+        }</span>
+        <span class="cov3" title="8">return obj</span>
+}
+
+// isTruthy はオブジェクトが真偽値として真かどうかを判定する
+func isTruthy(obj Object) bool <span class="cov4" title="12">{
+        switch obj </span>{
+        case NULL_OBJ_INSTANCE:<span class="cov0" title="0">
+                return false</span>
+        case TRUE_OBJ_INSTANCE:<span class="cov3" title="8">
+                return true</span>
+        case FALSE_OBJ_INSTANCE:<span class="cov2" title="3">
+                return false</span>
+        default:<span class="cov1" title="1">
+                return true</span>
+        }
+}
+
+// isError はオブジェクトがエラーかどうかを判定する
+func isError(obj Object) bool <span class="cov8" title="322">{
+        if obj != nil </span><span class="cov8" title="322">{
+                return obj.Type() == ERROR_OBJ
+        }</span>
+        <span class="cov0" title="0">return false</span>
+}
+
+// newError は新しいエラーオブジェクトを作成する
+func newError(format string, a ...interface{}) *Error <span class="cov4" title="14">{
+        return &amp;Error{Message: fmt.Sprintf(format, a...)}
+}</span>
+
+// nativeBoolToPugBoolean はGoのboolをPugのBooleanオブジェクトに変換する
+func nativeBoolToPugBoolean(input bool) *BooleanObj <span class="cov6" title="74">{
+        if input </span><span class="cov6" title="47">{
+                return TRUE_OBJ_INSTANCE
+        }</span>
+        <span class="cov5" title="27">return FALSE_OBJ_INSTANCE</span>
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package phase1
+
+// Lexer は字句解析器の構造体
+type Lexer struct {
+        input        string // 解析対象の入力文字列
+        position     int    // 現在の文字位置（current charを指す）
+        readPosition int    // 次に読む文字位置（current charの次）
+        ch           byte   // 現在検査中の文字
+        line         int    // 現在の行番号（エラー報告用）
+        column       int    // 現在の列番号（エラー報告用）
+}
+
+// New は新しいLexerを作成する
+func New(input string) *Lexer <span class="cov6" title="225">{
+        l := &amp;Lexer{
+                input:  input,
+                line:   1,
+                column: 0,
+        }
+        l.readChar() // 最初の文字を読み込む
+        return l
+}</span>
+
+// readChar は次の文字を読み込み、現在位置を進める
+func (l *Lexer) readChar() <span class="cov10" title="3787">{
+        if l.readPosition &gt;= len(l.input) </span><span class="cov7" title="602">{
+                l.ch = 0 // ASCII NUL文字（EOF）
+        }</span> else<span class="cov9" title="3185"> {
+                l.ch = l.input[l.readPosition]
+        }</span>
+
+        // 行・列番号の更新
+        <span class="cov10" title="3787">if l.ch == '\n' </span><span class="cov5" title="53">{
+                l.line++
+                l.column = 0
+        }</span> else<span class="cov9" title="3734"> {
+                l.column++
+        }</span>
+
+        <span class="cov10" title="3787">l.position = l.readPosition
+        l.readPosition++</span>
+}
+
+// peekChar は次の文字を先読みする（位置は進めない）
+func (l *Lexer) peekChar() byte <span class="cov6" title="203">{
+        if l.readPosition &gt;= len(l.input) </span><span class="cov1" title="2">{
+                return 0
+        }</span>
+        <span class="cov6" title="201">return l.input[l.readPosition]</span>
+}
+
+// skipWhitespace は空白文字をスキップする
+func (l *Lexer) skipWhitespace() <span class="cov9" title="1655">{
+        for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' </span><span class="cov8" title="739">{
+                l.readChar()
+        }</span>
+}
+
+// skipComment は行コメント（//）をスキップする
+func (l *Lexer) skipComment() <span class="cov2" title="3">{
+        if l.ch == '/' &amp;&amp; l.peekChar() == '/' </span><span class="cov2" title="3">{
+                // 行末まで読み飛ばす
+                for l.ch != '\n' &amp;&amp; l.ch != 0 </span><span class="cov5" title="90">{
+                        l.readChar()
+                }</span>
+        }
+}
+
+// readIdentifier は識別子を読み取る
+func (l *Lexer) readIdentifier() string <span class="cov7" title="322">{
+        position := l.position
+
+        // 最初の文字はアルファベットまたはアンダースコア
+        if isLetter(l.ch) </span><span class="cov7" title="322">{
+                l.readChar()
+
+                // 2文字目以降はアルファベット、数字、アンダースコア
+                for isLetter(l.ch) || isDigit(l.ch) </span><span class="cov8" title="720">{
+                        l.readChar()
+                }</span>
+        }
+
+        <span class="cov7" title="322">return l.input[position:l.position]</span>
+}
+
+// readNumber は数値を読み取る（整数・浮動小数点数対応）
+func (l *Lexer) readNumber() (string, TokenType) <span class="cov7" title="305">{
+        position := l.position
+        tokenType := INT
+
+        // 整数部分を読む
+        for isDigit(l.ch) </span><span class="cov7" title="359">{
+                l.readChar()
+        }</span>
+
+        // 小数点がある場合は浮動小数点数
+        <span class="cov7" title="305">if l.ch == '.' &amp;&amp; isDigit(l.peekChar()) </span><span class="cov5" title="42">{
+                tokenType = FLOAT
+                l.readChar() // '.'をスキップ
+
+                // 小数部分を読む
+                for isDigit(l.ch) </span><span class="cov5" title="55">{
+                        l.readChar()
+                }</span>
+        }
+
+        <span class="cov7" title="305">return l.input[position:l.position], tokenType</span>
+}
+
+// readString は文字列リテラルを読み取る
+func (l *Lexer) readString() string <span class="cov4" title="24">{
+        result := ""
+
+        for </span><span class="cov6" title="169">{
+                l.readChar()
+                if l.ch == '"' || l.ch == 0 </span><span class="cov4" title="24">{
+                        break</span>
+                }
+                // エスケープシーケンスの処理
+                <span class="cov6" title="145">if l.ch == '\\' </span><span class="cov2" title="3">{
+                        l.readChar() // バックスラッシュをスキップ
+                        if l.ch != 0 </span><span class="cov2" title="3">{
+                                switch l.ch </span>{
+                                case 'n':<span class="cov1" title="1">
+                                        result += "\n"</span>
+                                case 't':<span class="cov0" title="0">
+                                        result += "\t"</span>
+                                case 'r':<span class="cov0" title="0">
+                                        result += "\r"</span>
+                                case '\\':<span class="cov0" title="0">
+                                        result += "\\"</span>
+                                case '"':<span class="cov1" title="2">
+                                        result += "\\\""</span>
+                                default:<span class="cov0" title="0">
+                                        // 未対応のエスケープシーケンスはそのまま
+                                        result += "\\" + string(l.ch)</span>
+                                }
+                        }
+                } else<span class="cov6" title="142"> {
+                        result += string(l.ch)
+                }</span>
+        }
+
+        <span class="cov4" title="24">return result</span>
+}
+
+// isLetter は文字がアルファベットまたはアンダースコアかチェックする
+func isLetter(ch byte) bool <span class="cov9" title="1994">{
+        return 'a' &lt;= ch &amp;&amp; ch &lt;= 'z' || 'A' &lt;= ch &amp;&amp; ch &lt;= 'Z' || ch == '_'
+}</span>
+
+// isDigit は文字が数字かチェックする
+func isDigit(ch byte) bool <span class="cov8" title="1437">{
+        return '0' &lt;= ch &amp;&amp; ch &lt;= '9'
+}</span>
+
+// NextToken は次のトークンを解析して返す
+func (l *Lexer) NextToken() Token <span class="cov9" title="1652">{
+        var tok Token
+
+        // 空白とコメントをスキップ
+        for </span><span class="cov9" title="1655">{
+                l.skipWhitespace()
+
+                // コメントチェック
+                if l.ch == '/' &amp;&amp; l.peekChar() == '/' </span><span class="cov2" title="3">{
+                        l.skipComment()
+                        continue</span>
+                }
+                <span class="cov9" title="1652">break</span>
+        }
+
+        // 現在位置を記録
+        <span class="cov9" title="1652">tok.Line = l.line
+        tok.Column = l.column
+        tok.Position = l.position
+
+        switch l.ch </span>{
+        case '.':<span class="cov1" title="1">
+                if l.peekChar() == '.' </span><span class="cov1" title="1">{
+                        ch := l.ch
+                        l.readChar()
+                        tok.Type = IDENT
+                        tok.Literal = string(ch) + string(l.ch)
+                }</span> else<span class="cov0" title="0"> {
+                        tok.Type = ILLEGAL
+                        tok.Literal = string(l.ch)
+                }</span>
+        case '=':<span class="cov5" title="49">
+                if l.peekChar() == '=' </span><span class="cov4" title="20">{
+                        ch := l.ch
+                        l.readChar()
+                        tok.Type = EQ
+                        tok.Literal = string(ch) + string(l.ch)
+                }</span> else<span class="cov4" title="29"> {
+                        tok.Type = ASSIGN
+                        tok.Literal = string(l.ch)
+                }</span>
+        case '+':<span class="cov5" title="66">
+                tok.Type = PLUS
+                tok.Literal = string(l.ch)</span>
+        case '-':<span class="cov4" title="23">
+                if l.peekChar() == '&gt;' </span><span class="cov1" title="1">{
+                        ch := l.ch
+                        l.readChar()
+                        tok.Type = ARROW
+                        tok.Literal = string(ch) + string(l.ch)
+                }</span> else<span class="cov4" title="22"> {
+                        tok.Type = MINUS
+                        tok.Literal = string(l.ch)
+                }</span>
+        case '*':<span class="cov5" title="43">
+                tok.Type = MULTIPLY
+                tok.Literal = string(l.ch)</span>
+        case '/':<span class="cov3" title="13">
+                tok.Type = DIVIDE
+                tok.Literal = string(l.ch)</span>
+        case '%':<span class="cov2" title="4">
+                tok.Type = MODULO
+                tok.Literal = string(l.ch)</span>
+        case '!':<span class="cov4" title="26">
+                if l.peekChar() == '=' </span><span class="cov3" title="10">{
+                        ch := l.ch
+                        l.readChar()
+                        tok.Type = NOT_EQ
+                        tok.Literal = string(ch) + string(l.ch)
+                }</span> else<span class="cov4" title="16"> {
+                        tok.Type = NOT
+                        tok.Literal = string(l.ch)
+                }</span>
+        case '&lt;':<span class="cov4" title="19">
+                if l.peekChar() == '=' </span><span class="cov2" title="3">{
+                        ch := l.ch
+                        l.readChar()
+                        tok.Type = LTE
+                        tok.Literal = string(ch) + string(l.ch)
+                }</span> else<span class="cov4" title="16"> {
+                        tok.Type = LT
+                        tok.Literal = string(l.ch)
+                }</span>
+        case '&gt;':<span class="cov4" title="21">
+                if l.peekChar() == '=' </span><span class="cov2" title="3">{
+                        ch := l.ch
+                        l.readChar()
+                        tok.Type = GTE
+                        tok.Literal = string(ch) + string(l.ch)
+                }</span> else<span class="cov4" title="18"> {
+                        tok.Type = GT
+                        tok.Literal = string(l.ch)
+                }</span>
+        case '&amp;':<span class="cov1" title="1">
+                if l.peekChar() == '&amp;' </span><span class="cov0" title="0">{
+                        ch := l.ch
+                        l.readChar()
+                        tok.Type = AND
+                        tok.Literal = string(ch) + string(l.ch)
+                }</span> else<span class="cov1" title="1"> {
+                        tok.Type = ILLEGAL
+                        tok.Literal = string(l.ch)
+                }</span>
+        case '|':<span class="cov1" title="1">
+                if l.peekChar() == '|' </span><span class="cov0" title="0">{
+                        ch := l.ch
+                        l.readChar()
+                        tok.Type = OR
+                        tok.Literal = string(ch) + string(l.ch)
+                }</span> else<span class="cov1" title="1"> {
+                        tok.Type = ILLEGAL
+                        tok.Literal = string(l.ch)
+                }</span>
+        case ',':<span class="cov4" title="21">
+                tok.Type = COMMA
+                tok.Literal = string(l.ch)</span>
+        case ';':<span class="cov6" title="116">
+                tok.Type = SEMICOLON
+                tok.Literal = string(l.ch)</span>
+        case ':':<span class="cov2" title="5">
+                tok.Type = COLON
+                tok.Literal = string(l.ch)</span>
+        case '(':<span class="cov5" title="69">
+                tok.Type = LPAREN
+                tok.Literal = string(l.ch)</span>
+        case ')':<span class="cov5" title="69">
+                tok.Type = RPAREN
+                tok.Literal = string(l.ch)</span>
+        case '{':<span class="cov4" title="36">
+                tok.Type = LBRACE
+                tok.Literal = string(l.ch)</span>
+        case '}':<span class="cov4" title="36">
+                tok.Type = RBRACE
+                tok.Literal = string(l.ch)</span>
+        case '[':<span class="cov1" title="1">
+                tok.Type = LBRACKET
+                tok.Literal = string(l.ch)</span>
+        case ']':<span class="cov1" title="1">
+                tok.Type = RBRACKET
+                tok.Literal = string(l.ch)</span>
+        case '"':<span class="cov4" title="24">
+                tok.Type = STRING
+                tok.Literal = l.readString()</span>
+        case 0:<span class="cov7" title="377">
+                tok.Type = EOF
+                tok.Literal = ""</span>
+        default:<span class="cov8" title="630">
+                if isLetter(l.ch) </span><span class="cov7" title="322">{
+                        tok.Literal = l.readIdentifier()
+                        tok.Type = LookupIdent(tok.Literal)
+                        return tok // readIdentifierで既に位置が進んでいるため
+                }</span> else<span class="cov7" title="308"> if isDigit(l.ch) </span><span class="cov7" title="305">{
+                        tok.Literal, tok.Type = l.readNumber()
+                        return tok // readNumberで既に位置が進んでいるため
+                }</span> else<span class="cov2" title="3"> {
+                        tok.Type = ILLEGAL
+                        tok.Literal = string(l.ch)
+                }</span>
+        }
+
+        <span class="cov8" title="1025">l.readChar()
+        return tok</span>
+}
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package phase1
+
+import (
+        "bytes"
+        "fmt"
+        "hash/fnv"
+        "strings"
+)
+
+// ObjectType はオブジェクトの型を表す
+type ObjectType string
+
+const (
+        INTEGER_OBJ      = "INTEGER"
+        FLOAT_OBJ        = "FLOAT"
+        BOOLEAN_OBJ      = "BOOLEAN"
+        STRING_OBJ       = "STRING"
+        NULL_OBJ         = "NULL"
+        RETURN_VALUE_OBJ = "RETURN_VALUE"
+        ERROR_OBJ        = "ERROR"
+        FUNCTION_OBJ     = "FUNCTION"
+        BUILTIN_OBJ      = "BUILTIN"
+        ARRAY_OBJ        = "ARRAY"
+        HASH_OBJ         = "HASH"
+)
+
+// Object は全てのオブジェクトが実装するインターフェース
+type Object interface {
+        Type() ObjectType
+        Inspect() string
+}
+
+// Hashable はハッシュ可能なオブジェクトのインターフェース
+type Hashable interface {
+        HashKey() HashKey
+}
+
+// HashKey はハッシュのキーを表す
+type HashKey struct {
+        Type  ObjectType
+        Value uint64
+}
+
+// Integer は整数オブジェクト
+type Integer struct {
+        Value int64
+}
+
+func (i *Integer) Type() ObjectType <span class="cov10" title="380">{ return INTEGER_OBJ }</span>
+func (i *Integer) Inspect() string  <span class="cov0" title="0">{ return fmt.Sprintf("%d", i.Value) }</span>
+func (i *Integer) HashKey() HashKey <span class="cov0" title="0">{
+        // Convert int64 to uint64 using Go's well-defined conversion
+        // #nosec G115 -- Go's int64 to uint64 conversion is well-defined and safe
+        return HashKey{Type: i.Type(), Value: uint64(i.Value)}
+}</span>
+
+// Float は浮動小数点オブジェクト
+type Float struct {
+        Value float64
+}
+
+func (f *Float) Type() ObjectType <span class="cov7" title="76">{ return FLOAT_OBJ }</span>
+func (f *Float) Inspect() string  <span class="cov0" title="0">{ return fmt.Sprintf("%g", f.Value) }</span>
+
+// BooleanObj はブール値オブジェクト
+type BooleanObj struct {
+        Value bool
+}
+
+func (b *BooleanObj) Type() ObjectType <span class="cov8" title="130">{ return BOOLEAN_OBJ }</span>
+func (b *BooleanObj) Inspect() string  <span class="cov0" title="0">{ return fmt.Sprintf("%t", b.Value) }</span>
+func (b *BooleanObj) HashKey() HashKey <span class="cov0" title="0">{
+        var value uint64
+        if b.Value </span><span class="cov0" title="0">{
+                value = 1
+        }</span> else<span class="cov0" title="0"> {
+                value = 0
+        }</span>
+        <span class="cov0" title="0">return HashKey{Type: b.Type(), Value: value}</span>
+}
+
+// String は文字列オブジェクト
+type String struct {
+        Value string
+}
+
+func (s *String) Type() ObjectType <span class="cov6" title="39">{ return STRING_OBJ }</span>
+func (s *String) Inspect() string  <span class="cov2" title="2">{ return s.Value }</span>
+func (s *String) HashKey() HashKey <span class="cov0" title="0">{
+        h := fnv.New64a()
+        _, _ = h.Write([]byte(s.Value)) // Hash.Write never returns an error
+        return HashKey{Type: s.Type(), Value: h.Sum64()}
+}</span>
+
+// Null はnullオブジェクト
+type Null struct{}
+
+func (n *Null) Type() ObjectType <span class="cov0" title="0">{ return NULL_OBJ }</span>
+func (n *Null) Inspect() string  <span class="cov0" title="0">{ return "null" }</span>
+
+// ReturnValue はreturn文の値をラップするオブジェクト
+type ReturnValue struct {
+        Value Object
+}
+
+func (rv *ReturnValue) Type() ObjectType <span class="cov2" title="3">{ return RETURN_VALUE_OBJ }</span>
+func (rv *ReturnValue) Inspect() string  <span class="cov0" title="0">{ return rv.Value.Inspect() }</span>
+
+// Error はエラーオブジェクト
+type Error struct {
+        Message string
+}
+
+func (e *Error) Type() ObjectType <span class="cov3" title="4">{ return ERROR_OBJ }</span>
+func (e *Error) Inspect() string  <span class="cov0" title="0">{ return "ERROR: " + e.Message }</span>
+
+// Function は関数オブジェクト
+type Function struct {
+        Parameters []*Identifier
+        Body       *BlockStatement
+        Env        *Environment
+}
+
+func (f *Function) Type() ObjectType <span class="cov5" title="17">{ return FUNCTION_OBJ }</span>
+func (f *Function) Inspect() string <span class="cov0" title="0">{
+        var out bytes.Buffer
+        params := []string{}
+        for _, p := range f.Parameters </span><span class="cov0" title="0">{
+                params = append(params, p.String())
+        }</span>
+        <span class="cov0" title="0">out.WriteString("fn")
+        out.WriteString("(")
+        out.WriteString(strings.Join(params, ", "))
+        out.WriteString(") {\n")
+        out.WriteString(f.Body.String())
+        out.WriteString("\n}")
+        return out.String()</span>
+}
+
+// BuiltinFunction は組み込み関数の型
+type BuiltinFunction func(args ...Object) Object
+
+// Builtin は組み込み関数オブジェクト
+type Builtin struct {
+        Fn BuiltinFunction
+}
+
+func (b *Builtin) Type() ObjectType <span class="cov4" title="10">{ return BUILTIN_OBJ }</span>
+func (b *Builtin) Inspect() string  <span class="cov0" title="0">{ return "builtin function" }</span>
+
+// Array は配列オブジェクト
+type Array struct {
+        Elements []Object
+}
+
+func (ao *Array) Type() ObjectType <span class="cov0" title="0">{ return ARRAY_OBJ }</span>
+func (ao *Array) Inspect() string <span class="cov0" title="0">{
+        var out bytes.Buffer
+        elements := []string{}
+        for _, e := range ao.Elements </span><span class="cov0" title="0">{
+                elements = append(elements, e.Inspect())
+        }</span>
+        <span class="cov0" title="0">out.WriteString("[")
+        out.WriteString(strings.Join(elements, ", "))
+        out.WriteString("]")
+        return out.String()</span>
+}
+
+// HashPair はハッシュのキーと値のペア
+type HashPair struct {
+        Key   Object
+        Value Object
+}
+
+// Hash はハッシュオブジェクト
+type Hash struct {
+        Pairs map[HashKey]HashPair
+}
+
+func (h *Hash) Type() ObjectType <span class="cov0" title="0">{ return HASH_OBJ }</span>
+func (h *Hash) Inspect() string <span class="cov0" title="0">{
+        var out bytes.Buffer
+        pairs := []string{}
+        for _, pair := range h.Pairs </span><span class="cov0" title="0">{
+                pairs = append(pairs, fmt.Sprintf("%s: %s",
+                        pair.Key.Inspect(), pair.Value.Inspect()))
+        }</span>
+        <span class="cov0" title="0">out.WriteString("{")
+        out.WriteString(strings.Join(pairs, ", "))
+        out.WriteString("}")
+        return out.String()</span>
+}
+
+// よく使用されるオブジェクトのシングルトン
+var (
+        NULL_OBJ_INSTANCE  = &amp;Null{}
+        TRUE_OBJ_INSTANCE  = &amp;BooleanObj{Value: true}
+        FALSE_OBJ_INSTANCE = &amp;BooleanObj{Value: false}
+)
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package phase1
+
+import (
+        "fmt"
+        "strconv"
+)
+
+// 演算子の優先順位定数
+const (
+        _ int = iota
+        LOWEST
+        EQUALS      // ==
+        LESSGREATER // &gt; または &lt;
+        SUM         // +
+        PRODUCT     // *
+        PREFIX      // -X または !X
+        CALL        // myFunction(X)
+)
+
+// 演算子の優先順位マップ
+var precedences = map[TokenType]int{
+        EQ:       EQUALS,
+        NOT_EQ:   EQUALS,
+        LT:       LESSGREATER,
+        GT:       LESSGREATER,
+        LTE:      LESSGREATER,
+        GTE:      LESSGREATER,
+        PLUS:     SUM,
+        MINUS:    SUM,
+        DIVIDE:   PRODUCT,
+        MULTIPLY: PRODUCT,
+        MODULO:   PRODUCT,
+        LPAREN:   CALL,
+}
+
+// 前置構文解析関数の型
+type prefixParseFn func() Expression
+
+// 中置構文解析関数の型
+type infixParseFn func(Expression) Expression
+
+// Parser は構文解析器を表す
+type Parser struct {
+        l *Lexer
+
+        curToken  Token
+        peekToken Token
+
+        errors []string
+
+        prefixParseFns map[TokenType]prefixParseFn
+        infixParseFns  map[TokenType]infixParseFn
+}
+
+// New は新しいParserを作成する
+func NewParser(l *Lexer) *Parser <span class="cov7" title="187">{
+        p := &amp;Parser{
+                l:      l,
+                errors: []string{},
+        }
+
+        // 前置構文解析関数の登録
+        p.prefixParseFns = make(map[TokenType]prefixParseFn)
+        p.registerPrefix(IDENT, p.parseIdentifier)
+        p.registerPrefix(INT, p.parseIntegerLiteral)
+        p.registerPrefix(FLOAT, p.parseFloatLiteral)
+        p.registerPrefix(STRING, p.parseStringLiteral)
+        p.registerPrefix(TRUE, p.parseBoolean)
+        p.registerPrefix(FALSE, p.parseBoolean)
+        p.registerPrefix(NOT, p.parsePrefixExpression)
+        p.registerPrefix(MINUS, p.parsePrefixExpression)
+        p.registerPrefix(PLUS, p.parsePrefixExpression)
+        p.registerPrefix(LPAREN, p.parseGroupedExpression)
+        p.registerPrefix(IF, p.parseIfExpression)
+        p.registerPrefix(FN, p.parseFunctionLiteral)
+
+        // 中置構文解析関数の登録
+        p.infixParseFns = make(map[TokenType]infixParseFn)
+        p.registerInfix(PLUS, p.parseInfixExpression)
+        p.registerInfix(MINUS, p.parseInfixExpression)
+        p.registerInfix(DIVIDE, p.parseInfixExpression)
+        p.registerInfix(MULTIPLY, p.parseInfixExpression)
+        p.registerInfix(MODULO, p.parseInfixExpression)
+        p.registerInfix(EQ, p.parseInfixExpression)
+        p.registerInfix(NOT_EQ, p.parseInfixExpression)
+        p.registerInfix(LT, p.parseInfixExpression)
+        p.registerInfix(GT, p.parseInfixExpression)
+        p.registerInfix(LTE, p.parseInfixExpression)
+        p.registerInfix(GTE, p.parseInfixExpression)
+        p.registerInfix(LPAREN, p.parseCallExpression)
+
+        // 2つのトークンを読み込んでcurTokenとpeekTokenを設定
+        p.nextToken()
+        p.nextToken()
+
+        return p
+}</span>
+
+// registerPrefix は前置構文解析関数を登録する
+func (p *Parser) registerPrefix(tokenType TokenType, fn prefixParseFn) <span class="cov10" title="2244">{
+        p.prefixParseFns[tokenType] = fn
+}</span>
+
+// registerInfix は中置構文解析関数を登録する
+func (p *Parser) registerInfix(tokenType TokenType, fn infixParseFn) <span class="cov10" title="2244">{
+        p.infixParseFns[tokenType] = fn
+}</span>
+
+// nextToken はトークンを進める
+func (p *Parser) nextToken() <span class="cov9" title="1469">{
+        p.curToken = p.peekToken
+        p.peekToken = p.l.NextToken()
+}</span>
+
+// Errors はパーサーのエラーを返す
+func (p *Parser) Errors() []string <span class="cov6" title="73">{
+        return p.errors
+}</span>
+
+// peekError はpeekTokenの予期しない型に対するエラーを追加する
+func (p *Parser) peekError(t TokenType) <span class="cov0" title="0">{
+        msg := fmt.Sprintf("expected next token to be %s, got %s instead",
+                t, p.peekToken.Type)
+        p.errors = append(p.errors, msg)
+}</span>
+
+// noPrefixParseFnError は前置構文解析関数が見つからない場合のエラーを追加する
+func (p *Parser) noPrefixParseFnError(t TokenType) <span class="cov0" title="0">{
+        msg := fmt.Sprintf("no prefix parse function for %s found", t)
+        p.errors = append(p.errors, msg)
+}</span>
+
+// ParseProgram はプログラム全体を解析する
+func (p *Parser) ParseProgram() *Program <span class="cov7" title="187">{
+        program := &amp;Program{}
+        program.Statements = []Statement{}
+
+        for !p.curTokenIs(EOF) </span><span class="cov7" title="209">{
+                stmt := p.parseStatement()
+                program.Statements = append(program.Statements, stmt)
+                p.nextToken()
+        }</span>
+
+        <span class="cov7" title="187">return program</span>
+}
+
+// parseStatement は文を解析する
+func (p *Parser) parseStatement() Statement <span class="cov7" title="238">{
+        switch p.curToken.Type </span>{
+        case LET:<span class="cov4" title="19">
+                return p.parseLetStatement()</span>
+        case RETURN:<span class="cov3" title="10">
+                return p.parseReturnStatement()</span>
+        default:<span class="cov7" title="209">
+                return p.parseExpressionStatement()</span>
+        }
+}
+
+// parseLetStatement はlet文を解析する
+func (p *Parser) parseLetStatement() *LetStatement <span class="cov4" title="19">{
+        stmt := &amp;LetStatement{Token: p.curToken}
+
+        if !p.expectPeek(IDENT) </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+
+        <span class="cov4" title="19">stmt.Name = &amp;Identifier{Token: p.curToken, Value: p.curToken.Literal}
+
+        if !p.expectPeek(ASSIGN) </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+
+        <span class="cov4" title="19">p.nextToken()
+
+        stmt.Value = p.parseExpression(LOWEST)
+
+        if p.peekTokenIs(SEMICOLON) </span><span class="cov4" title="19">{
+                p.nextToken()
+        }</span>
+
+        <span class="cov4" title="19">return stmt</span>
+}
+
+// parseReturnStatement はreturn文を解析する
+func (p *Parser) parseReturnStatement() *ReturnStatement <span class="cov3" title="10">{
+        stmt := &amp;ReturnStatement{Token: p.curToken}
+
+        p.nextToken()
+
+        stmt.ReturnValue = p.parseExpression(LOWEST)
+
+        if p.peekTokenIs(SEMICOLON) </span><span class="cov3" title="10">{
+                p.nextToken()
+        }</span>
+
+        <span class="cov3" title="10">return stmt</span>
+}
+
+// parseExpressionStatement は式文を解析する
+func (p *Parser) parseExpressionStatement() *ExpressionStatement <span class="cov7" title="209">{
+        stmt := &amp;ExpressionStatement{Token: p.curToken}
+
+        stmt.Expression = p.parseExpression(LOWEST)
+
+        if p.peekTokenIs(SEMICOLON) </span><span class="cov5" title="67">{
+                p.nextToken()
+        }</span>
+
+        <span class="cov7" title="209">return stmt</span>
+}
+
+// parseExpression は式を解析する（Pratt Parser）
+func (p *Parser) parseExpression(precedence int) Expression <span class="cov8" title="527">{
+        prefix := p.prefixParseFns[p.curToken.Type]
+        if prefix == nil </span><span class="cov0" title="0">{
+                p.noPrefixParseFnError(p.curToken.Type)
+                return nil
+        }</span>
+        <span class="cov8" title="527">leftExp := prefix()
+
+        for !p.peekTokenIs(SEMICOLON) &amp;&amp; precedence &lt; p.peekPrecedence() </span><span class="cov7" title="215">{
+                infix := p.infixParseFns[p.peekToken.Type]
+                if infix == nil </span><span class="cov0" title="0">{
+                        return leftExp
+                }</span>
+
+                <span class="cov7" title="215">p.nextToken()
+
+                leftExp = infix(leftExp)</span>
+        }
+
+        <span class="cov8" title="527">return leftExp</span>
+}
+
+// parseIdentifier は識別子を解析する
+func (p *Parser) parseIdentifier() Expression <span class="cov6" title="108">{
+        return &amp;Identifier{Token: p.curToken, Value: p.curToken.Literal}
+}</span>
+
+// parseIntegerLiteral は整数リテラルを解析する
+func (p *Parser) parseIntegerLiteral() Expression <span class="cov7" title="241">{
+        lit := &amp;IntegerLiteral{Token: p.curToken}
+
+        value, err := strconv.ParseInt(p.curToken.Literal, 0, 64)
+        if err != nil </span><span class="cov0" title="0">{
+                msg := fmt.Sprintf("could not parse %q as integer", p.curToken.Literal)
+                p.errors = append(p.errors, msg)
+                return nil
+        }</span>
+
+        <span class="cov7" title="241">lit.Value = value
+        return lit</span>
+}
+
+// parseFloatLiteral は浮動小数点リテラルを解析する
+func (p *Parser) parseFloatLiteral() Expression <span class="cov5" title="37">{
+        lit := &amp;FloatLiteral{Token: p.curToken}
+
+        value, err := strconv.ParseFloat(p.curToken.Literal, 64)
+        if err != nil </span><span class="cov0" title="0">{
+                msg := fmt.Sprintf("could not parse %q as float", p.curToken.Literal)
+                p.errors = append(p.errors, msg)
+                return nil
+        }</span>
+
+        <span class="cov5" title="37">lit.Value = value
+        return lit</span>
+}
+
+// parseStringLiteral は文字列リテラルを解析する
+func (p *Parser) parseStringLiteral() Expression <span class="cov4" title="16">{
+        return &amp;StringLiteral{Token: p.curToken, Value: p.curToken.Literal}
+}</span>
+
+// parseBoolean はブール値リテラルを解析する
+func (p *Parser) parseBoolean() Expression <span class="cov5" title="51">{
+        return &amp;Boolean{Token: p.curToken, Value: p.curTokenIs(TRUE)}
+}</span>
+
+// parsePrefixExpression は前置演算子式を解析する
+func (p *Parser) parsePrefixExpression() Expression <span class="cov5" title="33">{
+        expression := &amp;PrefixExpression{
+                Token:    p.curToken,
+                Operator: p.curToken.Literal,
+        }
+
+        p.nextToken()
+
+        expression.Right = p.parseExpression(PREFIX)
+
+        return expression
+}</span>
+
+// parseInfixExpression は中置演算子式を解析する
+func (p *Parser) parseInfixExpression(left Expression) Expression <span class="cov7" title="191">{
+        expression := &amp;InfixExpression{
+                Token:    p.curToken,
+                Left:     left,
+                Operator: p.curToken.Literal,
+        }
+
+        precedence := p.curPrecedence()
+        p.nextToken()
+        expression.Right = p.parseExpression(precedence)
+
+        return expression
+}</span>
+
+// parseGroupedExpression は括弧で囲まれた式を解析する
+func (p *Parser) parseGroupedExpression() Expression <span class="cov4" title="14">{
+        p.nextToken()
+
+        exp := p.parseExpression(LOWEST)
+
+        if !p.expectPeek(RPAREN) </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+
+        <span class="cov4" title="14">return exp</span>
+}
+
+// parseIfExpression はif式を解析する
+func (p *Parser) parseIfExpression() Expression <span class="cov4" title="14">{
+        expression := &amp;IfExpression{Token: p.curToken}
+
+        if !p.expectPeek(LPAREN) </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+
+        <span class="cov4" title="14">p.nextToken()
+        expression.Condition = p.parseExpression(LOWEST)
+
+        if !p.expectPeek(RPAREN) </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+
+        <span class="cov4" title="14">if !p.expectPeek(LBRACE) </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+
+        <span class="cov4" title="14">expression.Consequence = p.parseBlockStatement()
+
+        if p.peekTokenIs(ELSE) </span><span class="cov2" title="3">{
+                p.nextToken()
+
+                if !p.expectPeek(LBRACE) </span><span class="cov0" title="0">{
+                        return nil
+                }</span>
+
+                <span class="cov2" title="3">expression.Alternative = p.parseBlockStatement()</span>
+        }
+
+        <span class="cov4" title="14">return expression</span>
+}
+
+// parseBlockStatement はブロック文を解析する
+func (p *Parser) parseBlockStatement() *BlockStatement <span class="cov4" title="30">{
+        block := &amp;BlockStatement{Token: p.curToken}
+        block.Statements = []Statement{}
+
+        p.nextToken()
+
+        for !p.curTokenIs(RBRACE) &amp;&amp; !p.curTokenIs(EOF) </span><span class="cov4" title="29">{
+                stmt := p.parseStatement()
+                block.Statements = append(block.Statements, stmt)
+                p.nextToken()
+        }</span>
+
+        <span class="cov4" title="30">return block</span>
+}
+
+// parseFunctionLiteral は関数リテラルを解析する
+func (p *Parser) parseFunctionLiteral() Expression <span class="cov3" title="13">{
+        lit := &amp;FunctionLiteral{Token: p.curToken}
+
+        if !p.expectPeek(LPAREN) </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+
+        <span class="cov3" title="13">lit.Parameters = p.parseFunctionParameters()
+
+        if !p.expectPeek(LBRACE) </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+
+        <span class="cov3" title="13">lit.Body = p.parseBlockStatement()
+
+        return lit</span>
+}
+
+// parseFunctionParameters は関数のパラメータを解析する
+func (p *Parser) parseFunctionParameters() []*Identifier <span class="cov3" title="13">{
+        identifiers := []*Identifier{}
+
+        if p.peekTokenIs(RPAREN) </span><span class="cov1" title="1">{
+                p.nextToken()
+                return identifiers
+        }</span>
+
+        <span class="cov3" title="12">p.nextToken()
+
+        ident := &amp;Identifier{Token: p.curToken, Value: p.curToken.Literal}
+        identifiers = append(identifiers, ident)
+
+        for p.peekTokenIs(COMMA) </span><span class="cov2" title="5">{
+                p.nextToken()
+                p.nextToken()
+                ident := &amp;Identifier{Token: p.curToken, Value: p.curToken.Literal}
+                identifiers = append(identifiers, ident)
+        }</span>
+
+        <span class="cov3" title="12">if !p.expectPeek(RPAREN) </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+
+        <span class="cov3" title="12">return identifiers</span>
+}
+
+// parseCallExpression は関数呼び出し式を解析する
+func (p *Parser) parseCallExpression(fn Expression) Expression <span class="cov4" title="24">{
+        exp := &amp;CallExpression{Token: p.curToken, Function: fn}
+        exp.Arguments = p.parseExpressionList(RPAREN)
+        return exp
+}</span>
+
+// parseExpressionList は式のリストを解析する
+func (p *Parser) parseExpressionList(end TokenType) []Expression <span class="cov4" title="24">{
+        args := []Expression{}
+
+        if p.peekTokenIs(end) </span><span class="cov0" title="0">{
+                p.nextToken()
+                return args
+        }</span>
+
+        <span class="cov4" title="24">p.nextToken()
+        args = append(args, p.parseExpression(LOWEST))
+
+        for p.peekTokenIs(COMMA) </span><span class="cov3" title="13">{
+                p.nextToken()
+                p.nextToken()
+                args = append(args, p.parseExpression(LOWEST))
+        }</span>
+
+        <span class="cov4" title="24">if !p.expectPeek(end) </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+
+        <span class="cov4" title="24">return args</span>
+}
+
+// ユーティリティメソッド
+
+// curTokenIs は現在のトークンが指定された型かチェックする
+func (p *Parser) curTokenIs(t TokenType) bool <span class="cov8" title="535">{
+        return p.curToken.Type == t
+}</span>
+
+// peekTokenIs は次のトークンが指定された型かチェックする
+func (p *Parser) peekTokenIs(t TokenType) bool <span class="cov9" title="1244">{
+        return p.peekToken.Type == t
+}</span>
+
+// expectPeek は次のトークンが予期された型かチェックし、その場合は進める
+func (p *Parser) expectPeek(t TokenType) bool <span class="cov6" title="159">{
+        if p.peekTokenIs(t) </span><span class="cov6" title="159">{
+                p.nextToken()
+                return true
+        }</span> else<span class="cov0" title="0"> {
+                p.peekError(t)
+                return false
+        }</span>
+}
+
+// peekPrecedence は次のトークンの優先順位を返す
+func (p *Parser) peekPrecedence() int <span class="cov8" title="604">{
+        if p, ok := precedences[p.peekToken.Type]; ok </span><span class="cov7" title="258">{
+                return p
+        }</span>
+        <span class="cov7" title="346">return LOWEST</span>
+}
+
+// curPrecedence は現在のトークンの優先順位を返す
+func (p *Parser) curPrecedence() int <span class="cov7" title="191">{
+        if p, ok := precedences[p.curToken.Type]; ok </span><span class="cov7" title="191">{
+                return p
+        }</span>
+        <span class="cov0" title="0">return LOWEST</span>
+}
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package phase1
+
+import (
+        "bufio"
+        "fmt"
+        "io"
+)
+
+const PROMPT = "&gt;&gt; "
+
+// Start はREPLを開始する
+func Start(in io.Reader, out io.Writer) <span class="cov0" title="0">{
+        scanner := bufio.NewScanner(in)
+        env := NewEnvironment()
+
+        for </span><span class="cov0" title="0">{
+                fmt.Fprint(out, PROMPT)
+                scanned := scanner.Scan()
+                if !scanned </span><span class="cov0" title="0">{
+                        return
+                }</span>
+
+                <span class="cov0" title="0">line := scanner.Text()
+                l := New(line)
+                p := NewParser(l)
+                program := p.ParseProgram()
+
+                if len(p.Errors()) != 0 </span><span class="cov0" title="0">{
+                        printParserErrors(out, p.Errors())
+                        continue</span>
+                }
+
+                <span class="cov0" title="0">evaluated := Eval(program, env)
+                if evaluated != nil </span><span class="cov0" title="0">{
+                        _, _ = io.WriteString(out, evaluated.Inspect())
+                        _, _ = io.WriteString(out, "\n")
+                }</span>
+        }
+}
+
+func printParserErrors(out io.Writer, errors []string) <span class="cov0" title="0">{
+        for _, msg := range errors </span><span class="cov0" title="0">{
+                _, _ = io.WriteString(out, "\t"+msg+"\n")
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package phase1
+
+// TokenType はトークンの種類を表す
+type TokenType string
+
+// Token はレクサーが生成するトークンを表す
+type Token struct {
+        Type     TokenType
+        Literal  string
+        Line     int
+        Column   int
+        Position int
+}
+
+// トークンタイプの定数定義
+const (
+        // 特殊トークン
+        ILLEGAL TokenType = "ILLEGAL" // 不正な文字
+        EOF     TokenType = "EOF"     // ファイル終端
+
+        // 識別子とリテラル
+        IDENT  TokenType = "IDENT"  // 識別子（変数名、関数名）
+        INT    TokenType = "INT"    // 整数リテラル
+        FLOAT  TokenType = "FLOAT"  // 浮動小数点リテラル
+        STRING TokenType = "STRING" // 文字列リテラル
+
+        // 演算子
+        ASSIGN   TokenType = "=" // 代入
+        PLUS     TokenType = "+" // 加算
+        MINUS    TokenType = "-" // 減算
+        MULTIPLY TokenType = "*" // 乗算
+        DIVIDE   TokenType = "/" // 除算
+        MODULO   TokenType = "%" // 剰余
+
+        // 比較演算子
+        EQ     TokenType = "==" // 等価
+        NOT_EQ TokenType = "!=" // 非等価
+        LT     TokenType = "&lt;"  // 小なり
+        GT     TokenType = "&gt;"  // 大なり
+        LTE    TokenType = "&lt;=" // 以下
+        GTE    TokenType = "&gt;=" // 以上
+
+        // 論理演算子
+        AND TokenType = "&amp;&amp;" // 論理積
+        OR  TokenType = "||" // 論理和
+        NOT TokenType = "!"  // 論理否定
+
+        // 区切り文字
+        COMMA     TokenType = ","  // カンマ
+        SEMICOLON TokenType = ";"  // セミコロン
+        COLON     TokenType = ":"  // コロン
+        ARROW     TokenType = "-&gt;" // 矢印（関数戻り値型）
+
+        // 括弧類
+        LPAREN   TokenType = "(" // 左丸括弧
+        RPAREN   TokenType = ")" // 右丸括弧
+        LBRACE   TokenType = "{" // 左波括弧
+        RBRACE   TokenType = "}" // 右波括弧
+        LBRACKET TokenType = "[" // 左角括弧
+        RBRACKET TokenType = "]" // 右角括弧
+
+        // キーワード
+        LET      TokenType = "LET"      // let文
+        FN       TokenType = "FN"       // function
+        IF       TokenType = "IF"       // if文
+        ELSE     TokenType = "ELSE"     // else文
+        RETURN   TokenType = "RETURN"   // return文
+        TRUE     TokenType = "TRUE"     // boolean true
+        FALSE    TokenType = "FALSE"    // boolean false
+        WHILE    TokenType = "WHILE"    // while文
+        FOR      TokenType = "FOR"      // for文
+        BREAK    TokenType = "BREAK"    // break文
+        CONTINUE TokenType = "CONTINUE" // continue文
+
+        // 型キーワード
+        INT_TYPE    TokenType = "INT_TYPE"    // int型
+        FLOAT_TYPE  TokenType = "FLOAT_TYPE"  // float型
+        STRING_TYPE TokenType = "STRING_TYPE" // string型
+        BOOL_TYPE   TokenType = "BOOL_TYPE"   // bool型
+)
+
+// keywords は予約語のマップ
+var keywords = map[string]TokenType{
+        "let":      LET,
+        "fn":       FN,
+        "if":       IF,
+        "else":     ELSE,
+        "return":   RETURN,
+        "true":     TRUE,
+        "false":    FALSE,
+        "while":    WHILE,
+        "for":      FOR,
+        "break":    BREAK,
+        "continue": CONTINUE,
+        "int":      INT_TYPE,
+        "float":    FLOAT_TYPE,
+        "string":   STRING_TYPE,
+        "bool":     BOOL_TYPE,
+}
+
+// LookupIdent は識別子がキーワードかどうかをチェックし、適切なTokenTypeを返す
+func LookupIdent(ident string) TokenType <span class="cov10" title="322">{
+        if tok, ok := keywords[ident]; ok </span><span class="cov8" title="153">{
+                return tok
+        }</span>
+        <span class="cov8" title="169">return IDENT</span>
+}
+
+// String はTokenの文字列表現を返す
+func (t Token) String() string <span class="cov0" title="0">{
+        return string(t.Type) + ":" + t.Literal
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

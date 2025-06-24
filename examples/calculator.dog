@@ -1,0 +1,135 @@
+// 簡易電卓 - Dog言語
+// 四則演算、累乗、平方根の近似計算
+
+// 累乗計算（整数のみ）
+let power = fn(base, exp) {
+    if (exp == 0) {
+        return 1;
+    };
+    if (exp == 1) {
+        return base;
+    };
+    
+    let result = base;
+    let i = 1;
+    while (i < exp) {
+        result = result * base;
+        i = i + 1;
+    };
+    
+    return result;
+};
+
+// 階乗計算
+let factorial = fn(n) {
+    if (n <= 1) {
+        return 1;
+    };
+    return n * factorial(n - 1);
+};
+
+// 平方根の近似計算（ニュートン法）
+let sqrt = fn(x) {
+    if (x < 0) {
+        puts("エラー: 負の数の平方根は計算できません");
+        return 0;
+    };
+    if (x == 0) {
+        return 0;
+    };
+    
+    let guess = x / 2.0;
+    let precision = 0.0001;
+    let iterations = 0;
+    let maxIterations = 100;
+    
+    while (iterations < maxIterations) {
+        let newGuess = (guess + x / guess) / 2.0;
+        let diff = newGuess - guess;
+        
+        // 絶対値の計算
+        if (diff < 0) {
+            diff = -diff;
+        };
+        
+        if (diff < precision) {
+            return newGuess;
+        };
+        
+        guess = newGuess;
+        iterations = iterations + 1;
+    };
+    
+    return guess;
+};
+
+// 最大公約数（ユークリッドの互除法）
+let gcd = fn(a, b) {
+    while (b != 0) {
+        let temp = b;
+        b = a % b;
+        a = temp;
+    };
+    return a;
+};
+
+// 最小公倍数
+let lcm = fn(a, b) {
+    return (a * b) / gcd(a, b);
+};
+
+// 数値の絶対値
+let abs = fn(x) {
+    if (x < 0) {
+        return -x;
+    };
+    return x;
+};
+
+// 電卓のメイン処理
+puts("=== Dog言語 簡易電卓 ===");
+puts("");
+
+// 基本演算のテスト
+let a = 15;
+let b = 4;
+
+puts("基本演算:");
+puts(a, "+", b, "=", a + b);
+puts(a, "-", b, "=", a - b);
+puts(a, "*", b, "=", a * b);
+puts(a, "/", b, "=", a / b);
+puts(a, "%", b, "=", a % b);
+puts("");
+
+// 累乗計算
+puts("累乗計算:");
+puts("2^8 =", power(2, 8));
+puts("3^4 =", power(3, 4));
+puts("5^3 =", power(5, 3));
+puts("");
+
+// 階乗計算
+puts("階乗計算:");
+puts("5! =", factorial(5));
+puts("7! =", factorial(7));
+puts("");
+
+// 平方根計算
+puts("平方根計算:");
+puts("sqrt(16) =", sqrt(16));
+puts("sqrt(25) =", sqrt(25));
+puts("sqrt(2) =", sqrt(2));
+puts("");
+
+// 最大公約数・最小公倍数
+puts("最大公約数・最小公倍数:");
+puts("gcd(48, 18) =", gcd(48, 18));
+puts("lcm(48, 18) =", lcm(48, 18));
+puts("");
+
+// 絶対値
+puts("絶対値:");
+puts("abs(-15) =", abs(-15));
+puts("abs(15) =", abs(15));
+puts("abs(0) =", abs(0));
