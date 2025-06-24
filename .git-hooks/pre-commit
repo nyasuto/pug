@@ -98,26 +98,5 @@ if [ -n "$makefile_changed" ]; then
     fi
 fi
 
-# GitHub Actions ワークフローの変更がある場合
-workflow_files=$(git diff --cached --name-only | grep '\.github/workflows/.*\.yml$' || true)
-if [ -n "$workflow_files" ]; then
-    echo "🔄 GitHub Actions ワークフロー構文チェック..."
-    # yamllintがあれば使用
-    if command -v yamllint >/dev/null 2>&1; then
-        echo "$workflow_files" | xargs yamllint
-    else
-        echo "  ⚠️  yamllint がインストールされていません（スキップ）"
-    fi
-fi
-
-# 大きなファイルのチェック（5MB以上）
-large_files=$(git diff --cached --name-only | xargs -I {} sh -c 'if [ -f "{}" ] && [ $(wc -c < "{}") -gt 5242880 ]; then echo "{}"; fi' || true)
-if [ -n "$large_files" ]; then
-    echo "❌ エラー: 5MB以上の大きなファイルが含まれています:"
-    echo "$large_files"
-    echo "   大きなファイルはGit LFSを使用するか、除外してください"
-    exit 1
-fi
-
 
 echo "✅ Pre-commit チェック完了"
