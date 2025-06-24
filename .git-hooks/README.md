@@ -4,12 +4,6 @@
 
 ## 🪝 導入されているフック
 
-### pre-commit
-- **mainブランチへの直接コミット禁止**
-- Goファイルの品質チェック（フォーマット、vet、lint、テスト）
-- 大きなファイル（5MB以上）の検出
-- 機密情報パターンの検出
-- GitHub Actions ワークフロー構文チェック
 
 ### pre-push  
 - **mainブランチへの直接プッシュ禁止**
@@ -18,11 +12,6 @@
 - CI事前チェック（品質、ベンチマーク）
 - Issue番号参照の推奨
 
-### commit-msg
-- **Conventional Commits形式の強制**
-- タイトル長さ制限（72文字）
-- 本文行長さ制限（72文字）
-- 自動Claude Code署名追加
 
 ## 🚀 セットアップ
 
@@ -56,17 +45,6 @@ make git-hooks-disable
 git checkout -b feat/issue-2-lexer-implementation
 git checkout -b fix/issue-5-parser-error
 git checkout -b docs/issue-10-readme-update
-```
-
-## 📝 コミットメッセージ規則
-
-### 形式
-```
-<type>: <description>
-
-[optional body]
-
-[optional footer]
 ```
 
 ### 利用可能なtype
