@@ -49,6 +49,8 @@ type Integer struct {
 func (i *Integer) Type() ObjectType { return INTEGER_OBJ }
 func (i *Integer) Inspect() string  { return fmt.Sprintf("%d", i.Value) }
 func (i *Integer) HashKey() HashKey {
+	// Convert int64 to uint64 using Go's well-defined conversion
+	// #nosec G115 -- Go's int64 to uint64 conversion is well-defined and safe
 	return HashKey{Type: i.Type(), Value: uint64(i.Value)}
 }
 
@@ -86,7 +88,7 @@ func (s *String) Type() ObjectType { return STRING_OBJ }
 func (s *String) Inspect() string  { return s.Value }
 func (s *String) HashKey() HashKey {
 	h := fnv.New64a()
-	h.Write([]byte(s.Value))
+	_, _ = h.Write([]byte(s.Value)) // Hash.Write never returns an error
 	return HashKey{Type: s.Type(), Value: h.Sum64()}
 }
 
