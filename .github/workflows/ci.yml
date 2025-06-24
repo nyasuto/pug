@@ -71,10 +71,10 @@ jobs:
       with:
         go-version: ${{ env.GO_VERSION }}
 
-    - name: 🛡️ Go セキュリティチェック
-      uses: securecodewarrior/github-action-add-sarif@v1
-      with:
-        sarif-file: gosec-report.sarif
+    - name: 🛡️ Go セキュリティチェック (gosec)
+      run: |
+        go install github.com/securecodewarrior/gosec/v2/cmd/gosec@latest
+        gosec -quiet ./...
 
   # ビルドテスト
   build:
