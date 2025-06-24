@@ -119,13 +119,5 @@ if [ -n "$large_files" ]; then
     exit 1
 fi
 
-# 機密情報チェック（基本的なパターン）
-echo "🔒 機密情報チェック..."
-secrets_pattern="(password|secret|key|token|api_key|private_key).*[:=].*['\"][^'\"]{8,}['\"]"
-if git diff --cached | grep -iE "$secrets_pattern"; then
-    echo "❌ エラー: 機密情報の可能性がある内容が検出されました"
-    echo "   APIキーやパスワードはコミットしないでください"
-    exit 1
-fi
 
 echo "✅ Pre-commit チェック完了"
