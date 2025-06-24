@@ -1,35 +1,30 @@
-// フィボナッチ数列 - Dog言語
+// フィボナッチ数列 - Dog言語 Phase 1 Interpreter
 // 性能測定用のサンプルプログラム
 
-fn fibonacci(n: int) -> int {
-    if n <= 1 {
+// Recursive fibonacci function
+let fibonacci = fn(n) {
+    if (n <= 1) {
         return n;
-    }
-    return fibonacci(n-1) + fibonacci(n-2);
-}
+    };
+    return fibonacci(n - 1) + fibonacci(n - 2);
+};
 
-fn fibonacci_iterative(n: int) -> int {
-    if n <= 1 {
-        return n;
-    }
-    
-    let a: int = 0;
-    let b: int = 1;
-    let i: int = 2;
-    
-    while i <= n {
-        let temp: int = a + b;
-        a = b;
-        b = temp;
-        i = i + 1;
-    }
-    
-    return b;
-}
+// Test fibonacci function
+let n = 10;
+puts("フィボナッチ数列計算:");
+puts("fibonacci(", n, ") =", fibonacci(n));
 
-fn main() {
-    let n: int = 10;
-    print("フィボナッチ数列計算:");
-    print("再帰版: ", fibonacci(n));
-    print("反復版: ", fibonacci_iterative(n));
-}
+// Demonstrate closure
+let makeCounter = fn() {
+    let count = 0;
+    return fn() {
+        count = count + 1;
+        return count;
+    };
+};
+
+let counter = makeCounter();
+puts("Counter test:");
+puts("1st call:", counter());
+puts("2nd call:", counter());
+puts("3rd call:", counter());

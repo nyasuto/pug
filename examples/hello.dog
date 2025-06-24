@@ -1,7 +1,25 @@
-// Hello World プログラム - Dog言語
-// pug コンパイラでの最初のプログラム
+// Hello World program in Dog language - Phase 1 Interpreter
+// Basic examples for the pug interpreter
 
-fn main() {
-    print("Hello, pug! 🐶");
-    print("段階的に学ぶコンパイラ実装へようこそ！");
-}
+puts("Hello, pug! 🐶");
+puts("段階的に学ぶコンパイラ実装へようこそ！");
+
+// Variables and arithmetic
+let x = 10;
+let y = 20;
+puts("x + y =", x + y);
+
+// String operations
+let greeting = "Hello";
+let name = "Dog";
+puts(greeting + ", " + name + "!");
+
+// Boolean operations
+let isTrue = true;
+let isFalse = false;
+puts("!true =", !isTrue);
+puts("!false =", !isFalse);
+
+// Function definition and call
+let double = fn(x) { x * 2; };
+puts("double(5) =", double(5));
