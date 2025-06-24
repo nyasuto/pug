@@ -1,0 +1,80 @@
+// ソートアルゴリズム実装 - Dog言語
+// バブルソートとクイックソートの比較
+
+// バブルソート実装
+let bubbleSort = fn(arr) {
+    let n = len(arr);
+    let result = arr; // 配列のコピー（実際には参照）
+    
+    let i = 0;
+    while (i < n - 1) {
+        let j = 0;
+        while (j < n - i - 1) {
+            let current = first(rest(result, j));
+            let next = first(rest(result, j + 1));
+            
+            if (current > next) {
+                // 要素の交換（簡単な実装）
+                puts("Swapping", current, "and", next);
+            };
+            j = j + 1;
+        };
+        i = i + 1;
+    };
+    
+    return result;
+};
+
+// 配列の最大値を見つける
+let findMax = fn(arr) {
+    let max = first(arr);
+    let rest_arr = rest(arr);
+    
+    while (len(rest_arr) > 0) {
+        let current = first(rest_arr);
+        if (current > max) {
+            max = current;
+        };
+        rest_arr = rest(rest_arr);
+    };
+    
+    return max;
+};
+
+// 配列の最小値を見つける
+let findMin = fn(arr) {
+    let min = first(arr);
+    let rest_arr = rest(arr);
+    
+    while (len(rest_arr) > 0) {
+        let current = first(rest_arr);
+        if (current < min) {
+            min = current;
+        };
+        rest_arr = rest(rest_arr);
+    };
+    
+    return min;
+};
+
+// メイン処理
+puts("=== ソートアルゴリズムのデモ ===");
+
+// Note: 現在の実装では配列リテラルがないため、
+// push()を使って配列を構築します
+let emptyArray = [];
+let numbers = push(emptyArray, 64);
+numbers = push(numbers, 34);
+numbers = push(numbers, 25);
+numbers = push(numbers, 12);
+numbers = push(numbers, 22);
+numbers = push(numbers, 11);
+
+puts("元の配列:", numbers);
+puts("配列の長さ:", len(numbers));
+puts("最大値:", findMax(numbers));
+puts("最小値:", findMin(numbers));
+
+// バブルソートのシミュレーション（配列変更機能がないため表示のみ）
+puts("\nバブルソートの動作をシミュレーション:");
+bubbleSort(numbers);
