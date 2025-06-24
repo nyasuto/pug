@@ -1,0 +1,23 @@
+# Build outputs
+bin/
+pug
+*.exe
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage.out
+*.coverprofile
+
+# Temporary files
+*.tmp
+*.temp
