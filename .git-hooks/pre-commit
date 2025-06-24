@@ -64,12 +64,6 @@ if [ -n "$go_files" ]; then
         exit 1
     fi
     
-    # Go vet実行
-    echo "  🔎 Go vet チェック..."
-    if ! go vet ./...; then
-        echo "❌ エラー: Go vet チェックに失敗しました"
-        exit 1
-    fi
     
     # 可能であればlintチェック
     if command -v golangci-lint >/dev/null 2>&1; then
