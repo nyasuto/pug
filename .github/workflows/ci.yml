@@ -43,7 +43,7 @@ jobs:
       run: make test-cov
 
     - name: 📊 カバレッジアップロード
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       with:
         file: ./coverage.out
         flags: unittests
