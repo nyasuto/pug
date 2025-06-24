@@ -110,7 +110,22 @@ test: ## 全てのテストを実行
 .PHONY: test-cov
 test-cov: ## テストカバレッジ付きでテスト実行
 	@echo "📊 テストカバレッジ測定中..."
-	$(GOTEST) -race -coverprofile=coverage.out -covermode=atomic ./phase1
+	@echo "mode: atomic" > coverage.out
+	$(GOTEST) -race -coverprofile=phase1.cover -covermode=atomic ./phase1
+	@tail -n +2 phase1.cover >> coverage.out || true
+	@if [ -d "./phase2" ]; then \
+		$(GOTEST) -race -coverprofile=phase2.cover -covermode=atomic ./phase2; \
+		tail -n +2 phase2.cover >> coverage.out || true; \
+	fi
+	@if [ -d "./phase3" ]; then \
+		$(GOTEST) -race -coverprofile=phase3.cover -covermode=atomic ./phase3; \
+		tail -n +2 phase3.cover >> coverage.out || true; \
+	fi
+	@if [ -d "./phase4" ]; then \
+		$(GOTEST) -race -coverprofile=phase4.cover -covermode=atomic ./phase4; \
+		tail -n +2 phase4.cover >> coverage.out || true; \
+	fi
+	@rm -f phase*.cover
 	$(GOCMD) tool cover -html=coverage.out -o coverage.html
 
 .PHONY: lint

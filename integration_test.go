@@ -163,6 +163,54 @@ func TestProjectStructure(t *testing.T) {
 	}
 }
 
+// TestPhaseStructure tests the phase directory structure
+func TestPhaseStructure(t *testing.T) {
+	phases := []struct {
+		dir         string
+		required    bool
+		description string
+	}{
+		{"phase1", true, "Interpreter (lexer, parser, evaluator)"},
+		{"phase2", false, "Bytecode compiler and VM"},
+		{"phase3", false, "IR generation and optimization"},
+		{"phase4", false, "Native code generation"},
+	}
+
+	for _, phase := range phases {
+		t.Run(phase.dir, func(t *testing.T) {
+			if _, err := os.Stat(phase.dir); os.IsNotExist(err) {
+				if phase.required {
+					t.Errorf("Required phase directory %s does not exist", phase.dir)
+				} else {
+					t.Skipf("Optional phase directory %s does not exist yet", phase.dir)
+				}
+				return
+			}
+
+			// If phase exists, check for go files
+			files, err := os.ReadDir(phase.dir)
+			if err != nil {
+				t.Fatalf("Failed to read phase directory %s: %v", phase.dir, err)
+			}
+
+			goFileCount := 0
+			for _, file := range files {
+				if strings.HasSuffix(file.Name(), ".go") {
+					goFileCount++
+				}
+			}
+
+			if goFileCount == 0 {
+				if phase.required {
+					t.Errorf("Required phase directory %s contains no Go files", phase.dir)
+				} else {
+					t.Logf("Optional phase directory %s exists but contains no Go files (not implemented yet)", phase.dir)
+				}
+			}
+		})
+	}
+}
+
 // TestGoModTidy tests that go.mod is properly maintained
 func TestGoModTidy(t *testing.T) {
 	// Run go mod tidy and check if it changes anything
@@ -176,4 +224,16 @@ func TestGoModTidy(t *testing.T) {
 	if err := cmd.Run(); err != nil {
 		t.Errorf("go mod verify failed: %v", err)
 	}
+}
+
+// Future: TestCrossPhaseIntegration will test interaction between phases
+func TestCrossPhaseIntegration(t *testing.T) {
+	t.Skip("Cross-phase integration testing will be implemented when multiple phases exist")
+
+	// Future implementation will test:
+	// 1. phase1 AST -> phase2 bytecode
+	// 2. phase2 bytecode -> phase3 IR
+	// 3. phase3 IR -> phase4 native code
+	// 4. End-to-end: source -> native execution
+	// 5. Performance comparison between phases
 }
