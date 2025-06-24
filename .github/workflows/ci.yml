@@ -45,9 +45,7 @@ jobs:
     - name: 📊 カバレッジアップロード
       uses: codecov/codecov-action@v5
       with:
-        file: ./coverage.out
-        flags: unittests
-        name: codecov-umbrella
+        token: ${{ secrets.CODECOV_TOKEN }}
 
   # セキュリティスキャン
   security:
