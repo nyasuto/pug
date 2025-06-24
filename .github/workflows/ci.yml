@@ -79,10 +79,9 @@ jobs:
   # ビルドテスト
   build:
     name: 🔨 ビルドテスト
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
         go-version: ['1.20', '1.21']
     
     steps:
@@ -106,7 +105,7 @@ jobs:
     - name: 📄 成果物アップロード
       uses: actions/upload-artifact@v4
       with:
-        name: binaries-${{ matrix.os }}-go${{ matrix.go-version }}
+        name: binaries-ubuntu-go${{ matrix.go-version }}
         path: bin/
 
   # 性能ベンチマーク
