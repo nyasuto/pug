@@ -104,7 +104,7 @@ pugは、プログラミング言語処理系の内部構造を、最初は数�
 
 ```
 
-µcompiler/
+pug/
 
 ├── phase1/ # Phase 1: 基本言語処理
 
@@ -204,25 +204,25 @@ pugは、プログラミング言語処理系の内部構造を、最初は数�
 
 ├── cmd/
 
-│ ├── µc/main.go # コンパイラ CLI エントリーポイント
+│ ├── pug/main.go # コンパイラ CLI エントリーポイント
 
-│ ├── µinterp/main.go # インタープリター CLI
+│ ├── interp/main.go # インタープリター CLI
 
-│ └── µtools/main.go # 開発ツール統合CLI
+│ └── tools/main.go # 開発ツール統合CLI
 
 │
 
 ├── examples/ # サンプルプログラム
 
-│ ├── hello.µ # Hello World
+│ ├── hello.dog # Hello World
 
-│ ├── fibonacci.µ # フィボナッチ数列
+│ ├── fibonacci.dog # フィボナッチ数列
 
-│ ├── sorting.µ # ソートアルゴリズム
+│ ├── sorting.dog # ソートアルゴリズム
 
-│ ├── web_server.µ # 簡易Webサーバー
+│ ├── web_server.dog # 簡易Webサーバー
 
-│ └── ray_tracer.µ # レイトレーサー
+│ └── ray_tracer.dog # レイトレーサー
 
 │
 
@@ -256,7 +256,7 @@ pugは、プログラミング言語処理系の内部構造を、最初は数�
 
 ├── go.mod # Go module 定義
 
-└── language_spec.md # µ言語仕様書
+└── language_spec.md # Dog 言語仕様書
 
 ```
 
@@ -292,7 +292,7 @@ make phase1-build
 
 echo 'print("Hello, pug!")' > hello.dog
 
-./bin/interp hello.dog # Output: Hello, µCompiler!
+./bin/interp hello.dog # Output: Hello, pug!
 
   
 
@@ -412,7 +412,7 @@ make bench-vs-rust # Rust比較
 
   
 
-### **🎯 µ言語仕様（段階的拡張）**
+### **🎯 Dog 言語仕様（段階的拡張）**
 
   
 
@@ -426,7 +426,7 @@ let x: int = 42;
 
 let y: float = 3.14;
 
-let name: string = "µCompiler";
+let name: string = "Compiler";
 
 let flag: bool = true;
 
@@ -834,11 +834,11 @@ Phase 4 LLVM連携: 0.1秒 (100x faster)
 
 ### **開発状況**
 
-- **GitHub Issues**: [プロジェクトボード](https://github.com/user/µcompiler/issues)
+- **GitHub Issues**: [プロジェクトボード](https://github.com/nyasuto/pug/issues)
 
-- **Performance Wiki**: [コンパイラ性能分析レポート](https://github.com/user/µcompiler/wiki/Performance-Analysis-Report)
+- **Performance Wiki**: [コンパイラ性能分析レポート](https://github.com/nyasuto/pug/wiki/Performance-Analysis-Report)
 
-- **Learning Guide**: [段階的学習ガイド](https://github.com/user/µcompiler/wiki/Learning-Guide)
+- **Learning Guide**: [段階的学習ガイド](https://github.com/nyasuto/pug/wiki/Learning-Guide)
 
 - **Pull Requests**: コードレビュー歓迎
 

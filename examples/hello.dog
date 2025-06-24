@@ -1,0 +1,7 @@
+// Hello World プログラム - Dog言語
+// pug コンパイラでの最初のプログラム
+
+fn main() {
+    print("Hello, pug! 🐶");
+    print("段階的に学ぶコンパイラ実装へようこそ！");
+}

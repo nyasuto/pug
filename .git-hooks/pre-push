@@ -1,0 +1,85 @@
+#!/bin/sh
+# pug コンパイラプロジェクト - Pre-push フック
+# ブランチ保護とCI事前チェック
+
+set -e
+
+echo "🚀 Pre-push フック実行中..."
+
+# 引数から情報を取得
+remote="$1"
+url="$2"
+
+# 標準入力からpush情報を読み取り
+while read local_ref local_sha remote_ref remote_sha; do
+    # ブランチ名を抽出
+    if [[ $local_ref =~ refs/heads/(.*) ]]; then
+        branch_name="${BASH_REMATCH[1]}"
+    else
+        echo "⚠️  非ブランチrefはスキップ: $local_ref"
+        continue
+    fi
+    
+    echo "📤 プッシュ対象ブランチ: $branch_name"
+    
+    # mainブランチへの直接プッシュは警告のみ（pre-commitで防止済み）
+    if [ "$branch_name" = "main" ]; then
+        echo "⚠️  警告: mainブランチへのプッシュが検出されました"
+        echo "   通常はPull Requestを使用してください"
+    fi
+    
+    # 削除のケースはスキップ
+    if [ "$local_sha" = "0000000000000000000000000000000000000000" ]; then
+        echo "🗑️  ブランチ削除のためスキップ"
+        continue
+    fi
+    
+    # 新しいブランチの場合の処理
+    if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
+        echo "🆕 新しいブランチ: $branch_name"
+        # mainブランチからの派生チェック
+        if ! git merge-base --is-ancestor origin/main "$local_sha" 2>/dev/null; then
+            echo "❌ エラー: ブランチがmainから派生していません"
+            echo "   mainブランチから派生させてください:"
+            echo "   git checkout main && git pull && git checkout -b $branch_name"
+            exit 1
+        fi
+    fi
+    
+    # コミット履歴チェック
+    commits=$(git rev-list "$remote_sha".."$local_sha" 2>/dev/null || git rev-list "$local_sha")
+    commit_count=$(echo "$commits" | wc -l)
+    
+    if [ $commit_count -gt 20 ]; then
+        echo "⚠️  警告: コミット数が多すぎます ($commit_count コミット)"
+        echo "   squashを検討してください"
+    fi
+    
+    # CI事前チェック（Goファイルがある場合）
+    changed_files=$(git diff --name-only "$remote_sha".."$local_sha" 2>/dev/null || git diff --name-only origin/main.."$local_sha" 2>/dev/null || true)
+    go_files=$(echo "$changed_files" | grep '\.go$' || true)
+    
+    if [ -n "$go_files" ]; then
+        echo "🔍 CI事前チェック実行中..."
+        
+        # 品質チェック
+        echo "  📋 品質チェック..."
+        if ! make quality >/dev/null 2>&1; then
+            echo "❌ エラー: 品質チェックに失敗しました"
+            echo "   修正してから再度プッシュしてください: make quality"
+            exit 1
+        fi
+        
+        # ベンチマークテスト（可能な場合）
+        if [ -d "benchmark" ] && find benchmark -name "*.go" | grep -q .; then
+            echo "  ⚡ ベンチマーク実行..."
+            if ! make bench >/dev/null 2>&1; then
+                echo "⚠️  警告: ベンチマークに失敗しました"
+            fi
+        fi
+    fi
+    
+    echo "✅ ブランチ $branch_name のpre-pushチェック完了"
+done
+
+echo "🚀 Pre-push チェック完了"
