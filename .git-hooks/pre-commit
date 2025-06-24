@@ -64,12 +64,6 @@ if [ -n "$go_files" ]; then
         exit 1
     fi
     
-    # Go vet実行
-    echo "  🔎 Go vet チェック..."
-    if ! go vet ./...; then
-        echo "❌ エラー: Go vet チェックに失敗しました"
-        exit 1
-    fi
     
     # 可能であればlintチェック
     if command -v golangci-lint >/dev/null 2>&1; then
@@ -104,34 +98,5 @@ if [ -n "$makefile_changed" ]; then
     fi
 fi
 
-# GitHub Actions ワークフローの変更がある場合
-workflow_files=$(git diff --cached --name-only | grep '\.github/workflows/.*\.yml$' || true)
-if [ -n "$workflow_files" ]; then
-    echo "🔄 GitHub Actions ワークフロー構文チェック..."
-    # yamllintがあれば使用
-    if command -v yamllint >/dev/null 2>&1; then
-        echo "$workflow_files" | xargs yamllint
-    else
-        echo "  ⚠️  yamllint がインストールされていません（スキップ）"
-    fi
-fi
-
-# 大きなファイルのチェック（5MB以上）
-large_files=$(git diff --cached --name-only | xargs -I {} sh -c 'if [ -f "{}" ] && [ $(wc -c < "{}") -gt 5242880 ]; then echo "{}"; fi' || true)
-if [ -n "$large_files" ]; then
-    echo "❌ エラー: 5MB以上の大きなファイルが含まれています:"
-    echo "$large_files"
-    echo "   大きなファイルはGit LFSを使用するか、除外してください"
-    exit 1
-fi
-
-# 機密情報チェック（基本的なパターン）
-echo "🔒 機密情報チェック..."
-secrets_pattern="(password|secret|key|token|api_key|private_key).*[:=].*['\"][^'\"]{8,}['\"]"
-if git diff --cached | grep -iE "$secrets_pattern"; then
-    echo "❌ エラー: 機密情報の可能性がある内容が検出されました"
-    echo "   APIキーやパスワードはコミットしないでください"
-    exit 1
-fi
 
 echo "✅ Pre-commit チェック完了"

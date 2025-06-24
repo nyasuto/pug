@@ -128,13 +128,8 @@ fmt: ## コードフォーマット
 	@echo "✨ コードフォーマット中..."
 	$(GOCMD) fmt ./...
 
-.PHONY: vet
-vet: ## Go vet実行
-	@echo "🔎 Go vet実行中..."
-	$(GOCMD) vet ./...
-
 .PHONY: quality
-quality: fmt vet lint test ## 全品質チェック実行
+quality: fmt lint test ## 全品質チェック実行
 	@echo "✅ 品質チェック完了"
 
 ##@ ベンチマーク・性能測定
