@@ -119,7 +119,9 @@ func TestBuildProcess(t *testing.T) {
 
 // TestMakeTargets tests that important make targets work
 func TestMakeTargets(t *testing.T) {
-	targets := []string{"test", "build", "clean"}
+	// Note: Excluded "test" target to avoid infinite recursion
+	// (TestMakeTargets -> make test -> TestMakeTargets -> ...)
+	targets := []string{"build", "clean", "fmt", "lint"}
 
 	for _, target := range targets {
 		t.Run("make_"+target, func(t *testing.T) {
