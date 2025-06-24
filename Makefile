@@ -111,7 +111,6 @@ test: ## 全てのテストを実行
 test-cov: ## テストカバレッジ付きでテスト実行
 	@echo "📊 テストカバレッジ測定中..."
 	$(GOTEST) -race -coverprofile=coverage.out -covermode=atomic ./...
-	$(GOCMD) tool cover -html=coverage.out -o coverage.html
 
 .PHONY: lint
 lint: ## コードの静的解析
