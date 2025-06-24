@@ -1,0 +1,137 @@
+#!/bin/sh
+# pug コンパイラプロジェクト - Pre-commit フック
+# 品質チェックとブランチルールを強制
+
+set -e
+
+echo "🪝 Pre-commit フック実行中..."
+
+# 現在のブランチ名を取得
+current_branch=$(git symbolic-ref --short HEAD 2>/dev/null || echo "")
+
+# mainブランチへの直接コミット禁止
+if [ "$current_branch" = "main" ]; then
+    echo "❌ エラー: mainブランチへの直接コミットは禁止されています"
+    echo "   機能ブランチを作成してください:"
+    echo "   git checkout -b feat/your-feature-name"
+    exit 1
+fi
+
+# ブランチ命名規則チェック（mainブランチ以外）
+if [ "$current_branch" != "main" ]; then
+    valid_patterns="^(feat|fix|hotfix|test|docs|ci|cicd|refactor|perf|security|deps)/"
+    if ! echo "$current_branch" | grep -qE "$valid_patterns"; then
+        echo "❌ エラー: ブランチ名が命名規則に従っていません: $current_branch"
+        echo "   正しい形式:"
+        echo "   - feat/issue-X-feature-name     (新機能)"
+        echo "   - fix/issue-X-description       (バグ修正)"
+        echo "   - hotfix/X-description          (緊急修正)"
+        echo "   - test/X-description            (テスト)"
+        echo "   - docs/X-description            (ドキュメント)"
+        echo "   - ci/X-description              (CI/CD)"
+        echo "   - refactor/X-description        (リファクタリング)"
+        echo "   - perf/X-description           (性能改善)"
+        echo "   - security/X-description        (セキュリティ)"
+        echo "   - deps/X-description           (依存関係)"
+        exit 1
+    fi
+    
+    # Issue参照推奨（機能ブランチの場合）
+    if echo "$current_branch" | grep -qE "^(feat|fix|hotfix)/" && ! echo "$current_branch" | grep -qE "issue-[0-9]+"; then
+        echo "ℹ️  情報: ブランチ名にissue番号の含有を推奨します"
+        echo "   推奨形式: feat/issue-123-feature-name"
+    fi
+fi
+
+# 空のコミットメッセージチェック
+if [ -z "$(git diff --cached --name-only)" ]; then
+    echo "❌ エラー: ステージされた変更がありません"
+    exit 1
+fi
+
+# Go ファイルの変更がある場合の品質チェック
+go_files=$(git diff --cached --name-only --diff-filter=ACM | grep '\.go$' || true)
+if [ -n "$go_files" ]; then
+    echo "🔍 Go ファイルの品質チェック実行中..."
+    
+    # フォーマットチェック
+    echo "  ✨ フォーマットチェック..."
+    unformatted=$(echo "$go_files" | xargs gofmt -l)
+    if [ -n "$unformatted" ]; then
+        echo "❌ エラー: 以下のファイルがフォーマットされていません:"
+        echo "$unformatted"
+        echo "   修正するには: make fmt"
+        exit 1
+    fi
+    
+    # Go vet実行
+    echo "  🔎 Go vet チェック..."
+    if ! go vet ./...; then
+        echo "❌ エラー: Go vet チェックに失敗しました"
+        exit 1
+    fi
+    
+    # 可能であればlintチェック
+    if command -v golangci-lint >/dev/null 2>&1; then
+        echo "  🔍 Lint チェック..."
+        if ! golangci-lint run --new-from-rev=HEAD~1; then
+            echo "❌ エラー: Lint チェックに失敗しました"
+            echo "   修正するには: make lint"
+            exit 1
+        fi
+    else
+        echo "  ⚠️  golangci-lint がインストールされていません（スキップ）"
+    fi
+    
+    # テスト実行（変更されたパッケージのみ）
+    echo "  🧪 テスト実行..."
+    packages=$(echo "$go_files" | xargs -I {} dirname {} | sort -u | xargs -I {} echo "./{}...")
+    if [ -n "$packages" ]; then
+        if ! go test $packages; then
+            echo "❌ エラー: テストに失敗しました"
+            exit 1
+        fi
+    fi
+fi
+
+# Makefileの変更がある場合
+makefile_changed=$(git diff --cached --name-only | grep -E '^Makefile$' || true)
+if [ -n "$makefile_changed" ]; then
+    echo "🔧 Makefile構文チェック..."
+    if ! make -n help >/dev/null 2>&1; then
+        echo "❌ エラー: Makefile構文エラーがあります"
+        exit 1
+    fi
+fi
+
+# GitHub Actions ワークフローの変更がある場合
+workflow_files=$(git diff --cached --name-only | grep '\.github/workflows/.*\.yml$' || true)
+if [ -n "$workflow_files" ]; then
+    echo "🔄 GitHub Actions ワークフロー構文チェック..."
+    # yamllintがあれば使用
+    if command -v yamllint >/dev/null 2>&1; then
+        echo "$workflow_files" | xargs yamllint
+    else
+        echo "  ⚠️  yamllint がインストールされていません（スキップ）"
+    fi
+fi
+
+# 大きなファイルのチェック（5MB以上）
+large_files=$(git diff --cached --name-only | xargs -I {} sh -c 'if [ -f "{}" ] && [ $(wc -c < "{}") -gt 5242880 ]; then echo "{}"; fi' || true)
+if [ -n "$large_files" ]; then
+    echo "❌ エラー: 5MB以上の大きなファイルが含まれています:"
+    echo "$large_files"
+    echo "   大きなファイルはGit LFSを使用するか、除外してください"
+    exit 1
+fi
+
+# 機密情報チェック（基本的なパターン）
+echo "🔒 機密情報チェック..."
+secrets_pattern="(password|secret|key|token|api_key|private_key).*[:=].*['\"][^'\"]{8,}['\"]"
+if git diff --cached | grep -iE "$secrets_pattern"; then
+    echo "❌ エラー: 機密情報の可能性がある内容が検出されました"
+    echo "   APIキーやパスワードはコミットしないでください"
+    exit 1
+fi
+
+echo "✅ Pre-commit チェック完了"

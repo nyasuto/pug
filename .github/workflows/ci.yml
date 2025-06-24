@@ -1,0 +1,175 @@
+name: CI/CD - pug コンパイラ
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  GO_VERSION: '1.21'
+
+jobs:
+  # 品質チェック
+  quality:
+    name: 🔍 品質チェック
+    runs-on: ubuntu-latest
+    steps:
+    - name: 📥 チェックアウト
+      uses: actions/checkout@v4
+
+    - name: 🐹 Go セットアップ
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ env.GO_VERSION }}
+
+    - name: 📦 依存関係キャッシュ
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: 📋 依存関係インストール
+      run: make deps
+
+    - name: ✨ フォーマットチェック
+      run: |
+        make fmt
+        if [ -n "$(git diff --name-only)" ]; then
+          echo "コードフォーマットが必要です"
+          git diff
+          exit 1
+        fi
+
+    - name: 🔎 Go vet
+      run: make vet
+
+    - name: 🧪 テスト実行
+      run: make test-cov
+
+    - name: 📊 カバレッジアップロード
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./coverage.out
+        flags: unittests
+        name: codecov-umbrella
+
+  # セキュリティスキャン
+  security:
+    name: 🔒 セキュリティスキャン
+    runs-on: ubuntu-latest
+    steps:
+    - name: 📥 チェックアウト
+      uses: actions/checkout@v4
+
+    - name: 🐹 Go セットアップ
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ env.GO_VERSION }}
+
+    - name: 🛡️ Go セキュリティチェック
+      uses: securecodewarrior/github-action-add-sarif@v1
+      with:
+        sarif-file: gosec-report.sarif
+
+  # ビルドテスト
+  build:
+    name: 🔨 ビルドテスト
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        go-version: ['1.20', '1.21']
+    
+    steps:
+    - name: 📥 チェックアウト
+      uses: actions/checkout@v4
+
+    - name: 🐹 Go セットアップ
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ matrix.go-version }}
+
+    - name: 📦 依存関係インストール
+      run: make deps
+
+    - name: 🔨 ビルド
+      run: make build
+
+    - name: 🧪 テスト実行
+      run: make test
+
+    - name: 📄 成果物アップロード
+      uses: actions/upload-artifact@v4
+      with:
+        name: binaries-${{ matrix.os }}-go${{ matrix.go-version }}
+        path: bin/
+
+  # 性能ベンチマーク
+  benchmark:
+    name: ⚡ 性能ベンチマーク
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: 📥 チェックアウト
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: 🐹 Go セットアップ
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ env.GO_VERSION }}
+
+    - name: 📦 依存関係インストール
+      run: make deps
+
+    - name: ⚡ ベンチマーク実行
+      run: |
+        make bench > benchmark-results.txt 2>&1 || true
+        echo "## 🚀 性能ベンチマーク結果" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        cat benchmark-results.txt >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+    - name: 📈 ベンチマーク結果保存
+      uses: actions/upload-artifact@v4
+      with:
+        name: benchmark-results
+        path: benchmark-results.txt
+
+  # リリース準備（タグ作成時）
+  release:
+    name: 🚀 リリース
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [quality, security, build]
+    
+    steps:
+    - name: 📥 チェックアウト
+      uses: actions/checkout@v4
+
+    - name: 🐹 Go セットアップ
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ env.GO_VERSION }}
+
+    - name: 🔨 リリース用ビルド
+      run: |
+        make clean
+        make build
+        
+    - name: 📦 リリース作成
+      uses: softprops/action-gh-release@v1
+      with:
+        files: bin/*
+        generate_release_notes: true
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,94 @@
+# golangci-lint 設定 - pug コンパイラプロジェクト
+
+run:
+  timeout: 5m
+
+linters-settings:
+  gocyclo:
+    min-complexity: 15
+  
+  goconst:
+    min-len: 3
+    min-occurrences: 3
+  
+  gofmt:
+    simplify: true
+  
+  goimports:
+    local-prefixes: github.com/nyasuto/pug
+  
+  revive:
+    min-confidence: 0.8
+  
+  govet:
+    check-shadowing: true
+    settings:
+      printf:
+        funcs:
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Infof
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Warnf
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
+  
+  lll:
+    line-length: 120
+  
+  
+  misspell:
+    locale: US
+
+linters:
+  enable:
+    - bodyclose
+    - errcheck
+    - gochecknoinits
+    - goconst
+    - gocyclo
+    - gofmt
+    - goimports
+    - revive
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - lll
+    - misspell
+    - nakedret
+    - staticcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - whitespace
+
+  disable:
+    - dupl
+    - gochecknoglobals
+    - gocognit
+    - godox
+    - prealloc
+
+issues:
+  exclude-rules:
+    # テストファイルでは一部のルールを緩和
+    - path: _test\.go
+      linters:
+        - gocyclo
+        - errcheck
+        - gosec
+    
+    # メインファイルでは一部のルールを緩和
+    - path: cmd/
+      linters:
+        - gochecknoinits
+  
+  exclude:
+    # 一般的な除外パターン
+    - "Error return value of .((os\\.)?std(out|err)\\..*|.*Close|.*Flush|os\\.Remove(All)?|.*printf?|os\\.(Un)?Setenv). is not checked"
+    - "func name will be used as test\\.Test.* by other packages, and that stutters; consider calling this"
+    - "G104: Errors unhandled"
+
+  new: false
+  max-issues-per-linter: 0
+  max-same-issues: 0
