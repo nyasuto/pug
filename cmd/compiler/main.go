@@ -22,6 +22,12 @@ func main() {
 
 	inputFile := os.Args[1]
 
+	// 基本的なパス検証（セキュリティ対策）
+	if strings.Contains(inputFile, "..") {
+		fmt.Fprintf(os.Stderr, "❌ エラー: 相対パス指定は許可されていません\n")
+		os.Exit(1)
+	}
+
 	// 出力ファイル名を決定
 	var outputFile string
 	if len(os.Args) >= 3 {
@@ -70,7 +76,7 @@ func main() {
 
 	// アセンブリコードをファイルに出力
 	fmt.Println("💾 アセンブリファイル出力中...")
-	err = os.WriteFile(outputFile, []byte(asmCode), 0644)
+	err = os.WriteFile(outputFile, []byte(asmCode), 0600)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "❌ ファイル出力エラー: %v\n", err)
 		os.Exit(1)
