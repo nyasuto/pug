@@ -294,6 +294,82 @@ func TestLoopContext(t *testing.T) {
 	}
 }
 
+func TestSymbolTableUtilities(t *testing.T) {
+	st := NewSymbolTable()
+
+	// Test utility functions for coverage
+	if st.GetScopeLevel() != 0 {
+		t.Errorf("expected scope level 0, got %d", st.GetScopeLevel())
+	}
+
+	if st.GetNumSymbols() != 0 {
+		t.Errorf("expected 0 symbols, got %d", st.GetNumSymbols())
+	}
+
+	if st.GetParent() != nil {
+		t.Errorf("expected nil parent")
+	}
+
+	// Add a symbol
+	st.Define("test", &IntType{})
+	if st.GetNumSymbols() != 1 {
+		t.Errorf("expected 1 symbol, got %d", st.GetNumSymbols())
+	}
+
+	// Test child table
+	child := NewEnclosedSymbolTable(st)
+	if child.GetParent() != st {
+		t.Errorf("expected parent to be set")
+	}
+	if child.GetScopeLevel() != 1 {
+		t.Errorf("expected scope level 1, got %d", child.GetScopeLevel())
+	}
+}
+
+func TestControlFlowAnalyzerUtilities(t *testing.T) {
+	analyzer := NewControlFlowAnalyzer()
+
+	// Test scope management
+	analyzer.EnterScope()
+	if analyzer.GetSymbolTable().GetScopeLevel() != 1 {
+		t.Errorf("expected scope level 1 after entering scope")
+	}
+
+	analyzer.ExitScope()
+	if analyzer.GetSymbolTable().GetScopeLevel() != 0 {
+		t.Errorf("expected scope level 0 after exiting scope")
+	}
+
+	// Test loop context management
+	analyzer.EnterLoop("break1", "continue1")
+	ctx := analyzer.GetCurrentLoopContext()
+	if ctx == nil {
+		t.Errorf("expected loop context to be set")
+		return
+	}
+	if ctx.BreakLabel != "break1" {
+		t.Errorf("expected break1, got %s", ctx.BreakLabel)
+	}
+
+	analyzer.ExitLoop()
+	if analyzer.GetCurrentLoopContext() != nil {
+		t.Errorf("expected loop context to be nil after exit")
+	}
+}
+
+func TestCodeGeneratorUtilities(t *testing.T) {
+	cg := NewCodeGenerator()
+
+	// Test AssembleAndLink placeholder
+	err := cg.AssembleAndLink("test", "output")
+	if err == nil {
+		t.Errorf("expected error from AssembleAndLink placeholder")
+	}
+	if err.Error() != "assembleAndLink not implemented yet" {
+		t.Errorf("unexpected error message: %s", err.Error())
+	}
+}
+
 // ControlParser は制御構造のパースをテストするためのヘルパー
 type ControlParser struct {
 	*phase1.Parser
