@@ -566,7 +566,7 @@ func (wu *WikiUpdater) updateEvolutionHistoryPage(wikiDir string, report *Benchm
 	var existingContent string
 	// Validate file path before reading
 	if err := validateFilePath(filename); err == nil {
-		if data, err := os.ReadFile(filename); err == nil { // #nosec G304 - validated file path
+		if data, err := os.ReadFile(filename); err == nil { // #nosec G304
 			existingContent = string(data)
 		}
 	}
