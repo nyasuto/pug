@@ -1,0 +1,86 @@
+{
+  "timestamp": "2025-06-25T23:20:00+09:00",
+  "version": "1.0.0",
+  "phase": "phase1-phase2-partial",
+  "environment": {
+    "os": "darwin/arm64",
+    "arch": "arm64",
+    "go_version": "go1.24.4",
+    "cpu_model": "Apple Silicon",
+    "cpu_cores": 8,
+    "memory_gb": 16,
+    "build_info": "pug-compiler-dev"
+  },
+  "compiler_results": [
+    {
+      "phase": "phase1",
+      "compile_time": 0,
+      "execute_time": 0,
+      "memory_usage": 0,
+      "binary_size": 0,
+      "success": false,
+      "error_message": "Phase 1 interpreter not fully implemented yet",
+      "throughput_ops": 0
+    },
+    {
+      "phase": "phase2", 
+      "compile_time": "100ms",
+      "execute_time": 0,
+      "memory_usage": 4096,
+      "binary_size": 0,
+      "success": false,
+      "error_message": "Code generation supports limited syntax",
+      "throughput_ops": 0
+    }
+  ],
+  "gcc_comparisons": [],
+  "rust_comparisons": [],
+  "summary": {
+    "total_tests": 2,
+    "successful_tests": 0, 
+    "failed_tests": 2,
+    "success_rate": 0.0,
+    "avg_compile_time": "50ms",
+    "avg_execute_time": "0ms",
+    "avg_memory_usage": 2048,
+    "avg_binary_size": 0,
+    "gcc_comparison": {
+      "avg_runtime_ratio": 0,
+      "avg_compile_ratio": 0,
+      "avg_binary_ratio": 0,
+      "avg_memory_ratio": 0,
+      "better_than_target": false,
+      "grade": "未測定"
+    },
+    "rust_comparison": {
+      "avg_runtime_ratio": 0,
+      "avg_compile_ratio": 0, 
+      "avg_binary_ratio": 0,
+      "avg_memory_ratio": 0,
+      "better_than_target": false,
+      "grade": "未測定"
+    },
+    "performance_grade": "D (初期段階)",
+    "next_phase_goals": [
+      "Phase 1インタープリター実行機能の完成",
+      "基本構文のサポート拡張",
+      "初期ベンチマーク測定の実行",
+      "エラーハンドリングの改善"
+    ]
+  },
+  "recommendations": [
+    "🔧 インタープリター実行機能の完成が最優先",
+    "📚 基本的な言語機能の実装継続",
+    "🧪 単体テストの充実による安定性向上",
+    "📊 段階的な機能テストの実装",
+    "🎯 Phase 1完成後のベンチマーク測定準備"
+  ],
+  "infrastructure_status": {
+    "benchmark_system": "完全実装済み",
+    "gcc_comparison": "実装済み（実行待ち）", 
+    "rust_comparison": "実装済み（実行待ち）",
+    "report_generation": "完全実装済み",
+    "wiki_integration": "実装済み（Wiki作成待ち）",
+    "ci_cd_integration": "実装済み"
+  }
+}
