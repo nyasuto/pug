@@ -1,0 +1,49 @@
+# Codecov configuration for pug compiler
+# See: https://docs.codecov.com/docs/codecov-yaml
+
+coverage:
+  # Coverage targets
+  range: 70..90
+  round: down
+  precision: 1
+
+  # Status checks
+  status:
+    project:
+      default:
+        target: 75%
+        threshold: 2%
+        base: auto
+    patch:
+      default:
+        target: 70%
+        threshold: 5%
+
+# Comment configuration
+comment:
+  layout: "reach,diff,flags,tree"
+  behavior: default
+  require_changes: false
+
+# Flags for different phases
+flags:
+  phase1:
+    paths:
+      - phase1/
+  phase2:
+    paths:
+      - phase2/
+  phase3:
+    paths:
+      - phase3/
+  phase4:
+    paths:
+      - phase4/
+
+# Ignore paths
+ignore:
+  - "examples/"
+  - "*.md"
+  - "go.mod"
+  - "go.sum"
+  - "Makefile"

@@ -46,6 +46,10 @@ jobs:
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./coverage.out
+        flags: phase1
+        name: codecov-phase1
+        fail_ci_if_error: false
 
   # セキュリティスキャン
   security:
