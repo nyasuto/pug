@@ -417,7 +417,7 @@ func LoadReportJSON(filename string) (*BenchmarkReport, error) {
 		return nil, fmt.Errorf("invalid file path: contains directory traversal")
 	}
 
-	data, err := os.ReadFile(filename)
+	data, err := os.ReadFile(filename) // #nosec G304 - validated file path
 	if err != nil {
 		return nil, fmt.Errorf("ファイル読み込み失敗: %v", err)
 	}
@@ -440,7 +440,7 @@ func (r *BenchmarkReport) GenerateHTMLReport(outputPath string) error {
 
 	tmpl := template.Must(template.New("report").Parse(htmlReportTemplate))
 
-	file, err := os.Create(outputPath)
+	file, err := os.Create(outputPath) // #nosec G304 - validated output path
 	if err != nil {
 		return fmt.Errorf("HTMLファイル作成失敗: %v", err)
 	}

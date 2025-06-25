@@ -145,7 +145,7 @@ func setupBenchmark(phase string, sourceCode string) (*CompilerBenchmark, error)
 
 	err = os.WriteFile(sourceFile, []byte(sourceCode), 0600)
 	if err != nil {
-		os.RemoveAll(tempDir)
+		_ = os.RemoveAll(tempDir) // #nosec G104 - ignore cleanup errors
 		return nil, fmt.Errorf("ソースファイル作成失敗: %v", err)
 	}
 
@@ -169,7 +169,7 @@ func setupBenchmark(phase string, sourceCode string) (*CompilerBenchmark, error)
 		compileCommand = []string{"./bin/pugc", "--backend=llvm", "-O3", sourceFile, "-o", binaryFile}
 		executeCommand = []string{binaryFile}
 	default:
-		os.RemoveAll(tempDir)
+		_ = os.RemoveAll(tempDir) // #nosec G104 - ignore cleanup errors
 		return nil, fmt.Errorf("未サポートフェーズ: %s", phase)
 	}
 
@@ -191,7 +191,7 @@ func (cb *CompilerBenchmark) measureCompileTime(ctx context.Context) (time.Durat
 	}
 
 	start := time.Now()
-	cmd := exec.CommandContext(ctx, cb.CompileCommand[0], cb.CompileCommand[1:]...)
+	cmd := exec.CommandContext(ctx, cb.CompileCommand[0], cb.CompileCommand[1:]...) // #nosec G204 - safe for benchmark use
 	cmd.Dir = "."
 
 	if err := cmd.Run(); err != nil {
@@ -204,7 +204,7 @@ func (cb *CompilerBenchmark) measureCompileTime(ctx context.Context) (time.Durat
 // measureExecuteTime は実行時間を測定
 func (cb *CompilerBenchmark) measureExecuteTime(ctx context.Context) (time.Duration, error) {
 	start := time.Now()
-	cmd := exec.CommandContext(ctx, cb.ExecuteCommand[0], cb.ExecuteCommand[1:]...)
+	cmd := exec.CommandContext(ctx, cb.ExecuteCommand[0], cb.ExecuteCommand[1:]...) // #nosec G204 - safe for benchmark use
 	cmd.Dir = "."
 
 	if err := cmd.Run(); err != nil {
@@ -244,7 +244,7 @@ func (cb *CompilerBenchmark) measureBinarySize() (int64, error) {
 // cleanup はベンチマーク環境をクリーンアップ
 func (cb *CompilerBenchmark) cleanup() {
 	if cb.TempDir != "" {
-		os.RemoveAll(cb.TempDir)
+		_ = os.RemoveAll(cb.TempDir) // #nosec G104 - ignore cleanup errors
 	}
 }
 

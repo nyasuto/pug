@@ -110,7 +110,7 @@ func (wu *WikiUpdater) cloneWikiRepo() error {
 		return fmt.Errorf("invalid wiki path: %v", err)
 	}
 
-	cmd := exec.Command("git", "clone", wu.WikiURL, wikiPath)
+	cmd := exec.Command("git", "clone", wu.WikiURL, wikiPath) // #nosec G204 - controlled input for wiki management
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
@@ -566,7 +566,7 @@ func (wu *WikiUpdater) updateEvolutionHistoryPage(wikiDir string, report *Benchm
 	var existingContent string
 	// Validate file path before reading
 	if err := validateFilePath(filename); err == nil {
-		if data, err := os.ReadFile(filename); err == nil {
+		if data, err := os.ReadFile(filename); err == nil { // #nosec G304 - validated file path
 			existingContent = string(data)
 		}
 	}
@@ -706,13 +706,13 @@ func (wu *WikiUpdater) commitAndPush(report *BenchmarkReport) error {
 		return fmt.Errorf("invalid commit email: %v", err)
 	}
 
-	cmd := exec.Command("git", "config", "user.name", wu.CommitUser)
+	cmd := exec.Command("git", "config", "user.name", wu.CommitUser) // #nosec G204 - validated input for git config
 	cmd.Dir = wikiDir
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("git user設定失敗: %v", err)
 	}
 
-	cmd = exec.Command("git", "config", "user.email", wu.CommitEmail)
+	cmd = exec.Command("git", "config", "user.email", wu.CommitEmail) // #nosec G204 - validated input for git config
 	cmd.Dir = wikiDir
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("git email設定失敗: %v", err)
@@ -746,7 +746,7 @@ func (wu *WikiUpdater) commitAndPush(report *BenchmarkReport) error {
 		commitMsg = "Update benchmark results"
 	}
 
-	cmd = exec.Command("git", "commit", "-m", commitMsg)
+	cmd = exec.Command("git", "commit", "-m", commitMsg) // #nosec G204 - validated commit message
 	cmd.Dir = wikiDir
 	if err := cmd.Run(); err != nil {
 		// コミットが失敗した場合（変更がない場合など）
