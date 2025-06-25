@@ -159,23 +159,98 @@ bench: ## 全ベンチマーク実行
 	@echo "⚡ ベンチマーク実行中..."
 	$(GOTEST) -bench=. -benchmem ./...
 
-.PHONY: bench-compile
-bench-compile: ## コンパイル時間測定
-	@echo "⏱️  コンパイル時間測定中..."
+.PHONY: bench-compiler
+bench-compiler: ## コンパイラ性能ベンチマーク
+	@echo "🔧 コンパイラベンチマーク実行中..."
 	@if [ -d "benchmark" ]; then \
-		$(GOTEST) -bench=BenchmarkCompile -benchmem ./benchmark/...; \
+		$(GOTEST) -bench=BenchmarkCompiler -benchmem -v ./benchmark/...; \
 	else \
 		echo "⚠️  benchmark/ ディレクトリが見つかりません"; \
 	fi
 
-.PHONY: bench-runtime
-bench-runtime: ## 実行時間測定
-	@echo "🏃 実行時間測定中..."
+.PHONY: bench-gcc
+bench-gcc: ## GCC比較ベンチマーク
+	@echo "🏁 GCC比較ベンチマーク実行中..."
+	@if command -v gcc >/dev/null 2>&1; then \
+		if [ -d "benchmark" ]; then \
+			$(GOTEST) -bench=BenchmarkVsGCC -benchmem -v -timeout=10m ./benchmark/...; \
+		else \
+			echo "⚠️  benchmark/ ディレクトリが見つかりません"; \
+		fi \
+	else \
+		echo "⚠️  GCCが見つかりません。GCCをインストールしてください"; \
+	fi
+
+.PHONY: bench-rust
+bench-rust: ## Rust比較ベンチマーク
+	@echo "🦀 Rust比較ベンチマーク実行中..."
+	@if command -v cargo >/dev/null 2>&1; then \
+		if [ -d "benchmark" ]; then \
+			$(GOTEST) -bench=BenchmarkVsRust -benchmem -v -timeout=15m ./benchmark/...; \
+		else \
+			echo "⚠️  benchmark/ ディレクトリが見つかりません"; \
+		fi \
+	else \
+		echo "⚠️  Rust/Cargoが見つかりません。Rustをインストールしてください"; \
+	fi
+
+.PHONY: bench-suite
+bench-suite: ## 包括的ベンチマークスイート
+	@echo "📊 包括的ベンチマークスイート実行中..."
 	@if [ -d "benchmark" ]; then \
-		$(GOTEST) -bench=BenchmarkRuntime -benchmem ./benchmark/...; \
+		$(GOTEST) -bench=BenchmarkSuite -benchmem -v -timeout=20m ./benchmark/...; \
 	else \
 		echo "⚠️  benchmark/ ディレクトリが見つかりません"; \
 	fi
+
+.PHONY: bench-evolution
+bench-evolution: ## 進化分析ベンチマーク
+	@echo "📈 進化分析ベンチマーク実行中..."
+	@if [ -d "benchmark" ]; then \
+		$(GOTEST) -bench=BenchmarkEvolution -benchmem -v -timeout=15m ./benchmark/...; \
+	else \
+		echo "⚠️  benchmark/ ディレクトリが見つかりません"; \
+	fi
+
+.PHONY: bench-report
+bench-report: ## ベンチマークレポート生成
+	@echo "📋 ベンチマークレポート生成中..."
+	@if [ -d "benchmark" ]; then \
+		$(GOTEST) -run=TestBenchmarkReport -v ./benchmark/...; \
+		echo "✅ レポートが生成されました"; \
+	else \
+		echo "⚠️  benchmark/ ディレクトリが見つかりません"; \
+	fi
+
+.PHONY: bench-comprehensive
+bench-comprehensive: build bench-compiler bench-gcc bench-rust bench-evolution ## 包括的ベンチマーク（全機能）
+	@echo "🎯 包括的ベンチマーク完了"
+	@echo ""
+	@echo "📊 実行されたベンチマーク:"
+	@echo "  ✅ コンパイラベンチマーク"
+	@if command -v gcc >/dev/null 2>&1; then \
+		echo "  ✅ GCC比較ベンチマーク"; \
+	else \
+		echo "  ⚠️  GCC比較ベンチマーク (スキップ)"; \
+	fi
+	@if command -v cargo >/dev/null 2>&1; then \
+		echo "  ✅ Rust比較ベンチマーク"; \
+	else \
+		echo "  ⚠️  Rust比較ベンチマーク (スキップ)"; \
+	fi
+	@echo "  ✅ 進化分析ベンチマーク"
+	@echo ""
+	@echo "📈 詳細結果は個別ベンチマーク実行時に表示されます"
+
+.PHONY: bench-compile
+bench-compile: ## コンパイル時間測定（従来互換）
+	@echo "⏱️  コンパイル時間測定中..."
+	@make bench-compiler
+
+.PHONY: bench-runtime
+bench-runtime: ## 実行時間測定（従来互換）
+	@echo "🏃 実行時間測定中..."
+	@make bench-compiler
 
 ##@ ビルド・リリース
 .PHONY: build
