@@ -39,6 +39,7 @@ func main() {
 	}
 
 	// ソースファイルを読み込み
+	// #nosec G304 -- inputFile is validated above to prevent path traversal
 	source, err := os.ReadFile(inputFile)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "エラー: ファイル読み込み失敗: %v\n", err)
