@@ -143,7 +143,7 @@ func setupBenchmark(phase string, sourceCode string) (*CompilerBenchmark, error)
 		binaryFile += ".exe"
 	}
 
-	err = os.WriteFile(sourceFile, []byte(sourceCode), 0644)
+	err = os.WriteFile(sourceFile, []byte(sourceCode), 0600)
 	if err != nil {
 		os.RemoveAll(tempDir)
 		return nil, fmt.Errorf("ソースファイル作成失敗: %v", err)
@@ -219,7 +219,12 @@ func (cb *CompilerBenchmark) measureMemoryUsage() (int64, error) {
 	var m runtime.MemStats
 	runtime.GC()
 	runtime.ReadMemStats(&m)
-	return int64(m.Alloc / 1024), nil // KB
+	// Safely convert uint64 to int64 to avoid overflow
+	alloc := m.Alloc / 1024
+	if alloc > 9223372036854775807 { // MaxInt64
+		return 9223372036854775807, nil // Cap at MaxInt64
+	}
+	return int64(alloc), nil // KB
 }
 
 // measureBinarySize はバイナリサイズを測定

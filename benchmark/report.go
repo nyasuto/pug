@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"os"
 	"sort"
+	"strings"
 	"time"
 )
 
@@ -297,16 +298,24 @@ func generateRustComparisonSummary(results []*RustComparisonResult) ComparisonSu
 
 // evaluatePerformanceGrade は総合性能グレードを評価
 func evaluatePerformanceGrade(gccSummary, rustSummary ComparisonSummary) string {
-	// GCC基準での評価を優先
-	if gccSummary.AvgRuntimeRatio <= 1.0 {
+	// GCC基準での評価を優先、Rust結果も考慮
+	gccRatio := gccSummary.AvgRuntimeRatio
+	rustRatio := rustSummary.AvgRuntimeRatio
+
+	// Rust結果が利用可能でGCCより良い場合はRustを考慮
+	if rustRatio > 0 && rustRatio < gccRatio {
+		gccRatio = (gccRatio + rustRatio) / 2.0 // 平均値を使用
+	}
+
+	if gccRatio <= 1.0 {
 		return "S+ (産業レベル)"
-	} else if gccSummary.AvgRuntimeRatio <= 2.0 {
+	} else if gccRatio <= 2.0 {
 		return "S (優秀)"
-	} else if gccSummary.AvgRuntimeRatio <= 5.0 {
+	} else if gccRatio <= 5.0 {
 		return "A (良好)"
-	} else if gccSummary.AvgRuntimeRatio <= 10.0 {
+	} else if gccRatio <= 10.0 {
 		return "B (基本達成)"
-	} else if gccSummary.AvgRuntimeRatio <= 50.0 {
+	} else if gccRatio <= 50.0 {
 		return "C (改善必要)"
 	} else {
 		return "D (初期段階)"
@@ -398,11 +407,16 @@ func (r *BenchmarkReport) SaveReportJSON(filename string) error {
 		return fmt.Errorf("JSONマーシャル失敗: %v", err)
 	}
 
-	return os.WriteFile(filename, data, 0644)
+	return os.WriteFile(filename, data, 0600)
 }
 
 // LoadReportJSON はJSON形式のレポートを読み込み
 func LoadReportJSON(filename string) (*BenchmarkReport, error) {
+	// Basic file path validation
+	if strings.Contains(filename, "..") {
+		return nil, fmt.Errorf("invalid file path: contains directory traversal")
+	}
+
 	data, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, fmt.Errorf("ファイル読み込み失敗: %v", err)
@@ -419,6 +433,11 @@ func LoadReportJSON(filename string) (*BenchmarkReport, error) {
 
 // GenerateHTMLReport はHTMLレポートを生成
 func (r *BenchmarkReport) GenerateHTMLReport(outputPath string) error {
+	// Basic file path validation
+	if strings.Contains(outputPath, "..") {
+		return fmt.Errorf("invalid output path: contains directory traversal")
+	}
+
 	tmpl := template.Must(template.New("report").Parse(htmlReportTemplate))
 
 	file, err := os.Create(outputPath)

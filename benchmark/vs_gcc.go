@@ -257,9 +257,9 @@ func setupGCCComparison(benchmark GCCBenchmark, optLevel string) (*CompilerBench
 		pugBinary += ".exe"
 	}
 
-	err = os.WriteFile(pugSource, []byte(benchmark.PugSource), 0644)
+	err = os.WriteFile(pugSource, []byte(benchmark.PugSource), 0600)
 	if err != nil {
-		os.RemoveAll(tempDir)
+		_ = os.RemoveAll(tempDir)
 		return nil, nil, "", fmt.Errorf("pugソースファイル作成失敗: %v", err)
 	}
 
@@ -270,9 +270,9 @@ func setupGCCComparison(benchmark GCCBenchmark, optLevel string) (*CompilerBench
 		cBinary += ".exe"
 	}
 
-	err = os.WriteFile(cSource, []byte(benchmark.CSource), 0644)
+	err = os.WriteFile(cSource, []byte(benchmark.CSource), 0600)
 	if err != nil {
-		os.RemoveAll(tempDir)
+		_ = os.RemoveAll(tempDir)
 		return nil, nil, "", fmt.Errorf("cソースファイル作成失敗: %v", err)
 	}
 

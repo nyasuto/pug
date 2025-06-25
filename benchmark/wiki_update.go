@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -18,6 +19,38 @@ type WikiUpdater struct {
 	TempDir     string
 	CommitUser  string
 	CommitEmail string
+}
+
+// validateFilePath validates file paths to prevent directory traversal
+func validateFilePath(path string) error {
+	// Check for directory traversal attempts
+	if strings.Contains(path, "..") {
+		return fmt.Errorf("invalid file path: contains directory traversal")
+	}
+
+	// Check for absolute paths outside allowed directory
+	abs, err := filepath.Abs(path)
+	if err != nil {
+		return fmt.Errorf("invalid file path: %v", err)
+	}
+
+	// Only allow paths within temp directory or current working directory
+	wd, _ := os.Getwd()
+	if !strings.HasPrefix(abs, wd) && !strings.HasPrefix(abs, os.TempDir()) {
+		return fmt.Errorf("invalid file path: outside allowed directory")
+	}
+
+	return nil
+}
+
+// validateGitInput validates git command inputs
+func validateGitInput(input string) error {
+	// Only allow alphanumeric, spaces, dots, hyphens, underscores, and @
+	validPattern := regexp.MustCompile(`^[a-zA-Z0-9\s\.\-_@]+$`)
+	if !validPattern.MatchString(input) {
+		return fmt.Errorf("invalid git input: contains unsafe characters")
+	}
+	return nil
 }
 
 // NewWikiUpdater は新しいWikiUpdaterを作成
@@ -67,7 +100,17 @@ func (wu *WikiUpdater) UpdateBenchmarkWiki(report *BenchmarkReport) error {
 
 // cloneWikiRepo はWikiリポジトリをクローン
 func (wu *WikiUpdater) cloneWikiRepo() error {
-	cmd := exec.Command("git", "clone", wu.WikiURL, filepath.Join(wu.TempDir, "wiki"))
+	// Validate inputs
+	if err := validateGitInput(wu.WikiURL); err != nil {
+		return fmt.Errorf("invalid wiki URL: %v", err)
+	}
+
+	wikiPath := filepath.Join(wu.TempDir, "wiki")
+	if err := validateFilePath(wikiPath); err != nil {
+		return fmt.Errorf("invalid wiki path: %v", err)
+	}
+
+	cmd := exec.Command("git", "clone", wu.WikiURL, wikiPath)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
@@ -110,7 +153,7 @@ func (wu *WikiUpdater) updateMainBenchmarkPage(wikiDir string, report *Benchmark
 	content := wu.generateMainBenchmarkContent(report)
 
 	filename := filepath.Join(wikiDir, "Performance-Benchmark.md")
-	return os.WriteFile(filename, []byte(content), 0644)
+	return os.WriteFile(filename, []byte(content), 0600)
 }
 
 // generateMainBenchmarkContent はメインベンチマークページの内容を生成
@@ -204,7 +247,7 @@ func (wu *WikiUpdater) updatePhaseDetailPage(wikiDir string, report *BenchmarkRe
 	content := wu.generatePhaseDetailContent(report)
 
 	filename := filepath.Join(wikiDir, fmt.Sprintf("%s-Detail.md", strings.ToUpper(report.Phase)))
-	return os.WriteFile(filename, []byte(content), 0644)
+	return os.WriteFile(filename, []byte(content), 0600)
 }
 
 // generatePhaseDetailContent はフェーズ別詳細ページの内容を生成
@@ -326,14 +369,14 @@ func (wu *WikiUpdater) generatePhaseDetailContent(report *BenchmarkReport) strin
 func (wu *WikiUpdater) updateComparisonPages(wikiDir string, report *BenchmarkReport) error {
 	// GCC比較ページ
 	gccContent := wu.generateGCCComparisonContent(report)
-	err := os.WriteFile(filepath.Join(wikiDir, "GCC-Comparison.md"), []byte(gccContent), 0644)
+	err := os.WriteFile(filepath.Join(wikiDir, "GCC-Comparison.md"), []byte(gccContent), 0600)
 	if err != nil {
 		return err
 	}
 
 	// Rust比較ページ
 	rustContent := wu.generateRustComparisonContent(report)
-	err = os.WriteFile(filepath.Join(wikiDir, "Rust-Comparison.md"), []byte(rustContent), 0644)
+	err = os.WriteFile(filepath.Join(wikiDir, "Rust-Comparison.md"), []byte(rustContent), 0600)
 	if err != nil {
 		return err
 	}
@@ -521,8 +564,11 @@ func (wu *WikiUpdater) updateEvolutionHistoryPage(wikiDir string, report *Benchm
 	filename := filepath.Join(wikiDir, "Performance-Evolution.md")
 
 	var existingContent string
-	if data, err := os.ReadFile(filename); err == nil {
-		existingContent = string(data)
+	// Validate file path before reading
+	if err := validateFilePath(filename); err == nil {
+		if data, err := os.ReadFile(filename); err == nil {
+			existingContent = string(data)
+		}
 	}
 
 	// 新しい履歴エントリを生成
@@ -531,7 +577,7 @@ func (wu *WikiUpdater) updateEvolutionHistoryPage(wikiDir string, report *Benchm
 	// 履歴ページの内容を生成
 	content := wu.generateEvolutionContent(existingContent, newEntry, report)
 
-	return os.WriteFile(filename, []byte(content), 0644)
+	return os.WriteFile(filename, []byte(content), 0600)
 }
 
 // generateEvolutionEntry は新しい進化履歴エントリを生成
@@ -652,7 +698,14 @@ func (wu *WikiUpdater) generateEvolutionContent(existingContent, newEntry string
 func (wu *WikiUpdater) commitAndPush(report *BenchmarkReport) error {
 	wikiDir := filepath.Join(wu.TempDir, "wiki")
 
-	// Git設定
+	// Git設定 - validate inputs
+	if err := validateGitInput(wu.CommitUser); err != nil {
+		return fmt.Errorf("invalid commit user: %v", err)
+	}
+	if err := validateGitInput(wu.CommitEmail); err != nil {
+		return fmt.Errorf("invalid commit email: %v", err)
+	}
+
 	cmd := exec.Command("git", "config", "user.name", wu.CommitUser)
 	cmd.Dir = wikiDir
 	if err := cmd.Run(); err != nil {
@@ -686,6 +739,12 @@ func (wu *WikiUpdater) commitAndPush(report *BenchmarkReport) error {
 		report.Summary.SuccessRate,
 		report.Summary.GCCComparison.AvgRuntimeRatio,
 		report.Summary.RustComparison.AvgRuntimeRatio)
+
+	// Validate commit message
+	if err := validateGitInput(commitMsg); err != nil {
+		// If validation fails, use a safe default message
+		commitMsg = "Update benchmark results"
+	}
 
 	cmd = exec.Command("git", "commit", "-m", commitMsg)
 	cmd.Dir = wikiDir

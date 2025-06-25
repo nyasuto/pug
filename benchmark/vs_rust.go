@@ -325,17 +325,17 @@ func setupRustComparison(benchmark RustBenchmark, optLevel string) (*CompilerBen
 		pugBinary += ".exe"
 	}
 
-	err = os.WriteFile(pugSource, []byte(benchmark.PugSource), 0644)
+	err = os.WriteFile(pugSource, []byte(benchmark.PugSource), 0600)
 	if err != nil {
-		os.RemoveAll(tempDir)
+		_ = os.RemoveAll(tempDir)
 		return nil, nil, "", fmt.Errorf("pugソースファイル作成失敗: %v", err)
 	}
 
 	// Rustプロジェクト設定
 	rustProjectDir := filepath.Join(tempDir, "rust_"+benchmark.Name)
-	err = os.MkdirAll(filepath.Join(rustProjectDir, "src"), 0755)
+	err = os.MkdirAll(filepath.Join(rustProjectDir, "src"), 0750)
 	if err != nil {
-		os.RemoveAll(tempDir)
+		_ = os.RemoveAll(tempDir)
 		return nil, nil, "", fmt.Errorf("rustプロジェクトディレクトリ作成失敗: %v", err)
 	}
 
@@ -350,16 +350,16 @@ name = "%s"
 path = "src/main.rs"
 `, benchmark.Name, benchmark.Name)
 
-	err = os.WriteFile(filepath.Join(rustProjectDir, "Cargo.toml"), []byte(cargoToml), 0644)
+	err = os.WriteFile(filepath.Join(rustProjectDir, "Cargo.toml"), []byte(cargoToml), 0600)
 	if err != nil {
-		os.RemoveAll(tempDir)
+		_ = os.RemoveAll(tempDir)
 		return nil, nil, "", fmt.Errorf("cargo.toml作成失敗: %v", err)
 	}
 
 	// main.rs作成
-	err = os.WriteFile(filepath.Join(rustProjectDir, "src", "main.rs"), []byte(benchmark.RustSource), 0644)
+	err = os.WriteFile(filepath.Join(rustProjectDir, "src", "main.rs"), []byte(benchmark.RustSource), 0600)
 	if err != nil {
-		os.RemoveAll(tempDir)
+		_ = os.RemoveAll(tempDir)
 		return nil, nil, "", fmt.Errorf("rustソースファイル作成失敗: %v", err)
 	}
 
