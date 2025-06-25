@@ -128,8 +128,11 @@ test-cov: ## テストカバレッジ付きでテスト実行
 		$(GOTEST) -race -coverprofile=phase4.cover -covermode=atomic ./phase4; \
 		tail -n +2 phase4.cover >> coverage.out || true; \
 	fi
-	@rm -f phase*.cover
 	$(GOCMD) tool cover -html=coverage.out -o coverage.html
+	@echo "✅ カバレッジファイル生成完了:"
+	@echo "   - coverage.out (統合)"
+	@echo "   - coverage.html (HTMLレポート)"
+	@ls -la phase*.cover 2>/dev/null | sed 's/^/   - /' || true
 
 .PHONY: lint
 lint: ## コードの静的解析
@@ -183,7 +186,7 @@ build: phase1-build phase2-build ## 全バイナリをビルド
 clean: ## ビルド成果物を削除
 	@echo "🧹 クリーンアップ中..."
 	@rm -rf $(BIN_DIR) $(BUILD_DIR) $(DIST_DIR)
-	@rm -f coverage.out coverage.html
+	@rm -f coverage.out coverage.html phase*.cover
 
 .PHONY: install
 install: build ## システムにインストール

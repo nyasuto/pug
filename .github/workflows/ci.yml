@@ -42,13 +42,30 @@ jobs:
     - name: 📊 テストカバレッジ
       run: make test-cov
 
-    - name: 📊 カバレッジアップロード
+    - name: 📊 Phase1 カバレッジアップロード
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./phase1.cover
+        flags: phase1
+        name: codecov-phase1
+        fail_ci_if_error: false
+
+    - name: 📊 Phase2 カバレッジアップロード
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./phase2.cover
+        flags: phase2
+        name: codecov-phase2
+        fail_ci_if_error: false
+
+    - name: 📊 統合カバレッジアップロード
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         files: ./coverage.out
-        flags: phase1
-        name: codecov-phase1
+        name: codecov-combined
         fail_ci_if_error: false
 
   # セキュリティスキャン
