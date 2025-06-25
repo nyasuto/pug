@@ -4,7 +4,7 @@ import "fmt"
 
 // builtins は組み込み関数のマップ
 var builtins = map[string]*Builtin{
-	"len": &Builtin{
+	"len": {
 		Fn: func(args ...Object) Object {
 			if len(args) != 1 {
 				return newError("wrong number of arguments. got=%d, want=1",
@@ -23,7 +23,7 @@ var builtins = map[string]*Builtin{
 		},
 	},
 
-	"first": &Builtin{
+	"first": {
 		Fn: func(args ...Object) Object {
 			if len(args) != 1 {
 				return newError("wrong number of arguments. got=%d, want=1",
@@ -43,7 +43,7 @@ var builtins = map[string]*Builtin{
 		},
 	},
 
-	"last": &Builtin{
+	"last": {
 		Fn: func(args ...Object) Object {
 			if len(args) != 1 {
 				return newError("wrong number of arguments. got=%d, want=1",
@@ -64,7 +64,7 @@ var builtins = map[string]*Builtin{
 		},
 	},
 
-	"rest": &Builtin{
+	"rest": {
 		Fn: func(args ...Object) Object {
 			if len(args) != 1 {
 				return newError("wrong number of arguments. got=%d, want=1",
@@ -87,7 +87,7 @@ var builtins = map[string]*Builtin{
 		},
 	},
 
-	"push": &Builtin{
+	"push": {
 		Fn: func(args ...Object) Object {
 			if len(args) != 2 {
 				return newError("wrong number of arguments. got=%d, want=2",
@@ -109,7 +109,7 @@ var builtins = map[string]*Builtin{
 		},
 	},
 
-	"puts": &Builtin{
+	"puts": {
 		Fn: func(args ...Object) Object {
 			for _, arg := range args {
 				fmt.Println(arg.Inspect())
@@ -119,7 +119,7 @@ var builtins = map[string]*Builtin{
 		},
 	},
 
-	"type": &Builtin{
+	"type": {
 		Fn: func(args ...Object) Object {
 			if len(args) != 1 {
 				return newError("wrong number of arguments. got=%d, want=1",
