@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is **pug** (µcompiler) - a learning-oriented compiler implementation project written in Japanese. The project aims to teach compiler construction by building from a simple lexer to a full LLVM-connected optimizing compiler through 4 distinct phases:
+This is **pug**  - a learning-oriented compiler implementation project written in Japanese. The project aims to teach compiler construction by building from a simple lexer to a full LLVM-connected optimizing compiler through 4 distinct phases:
 
 - **Phase 1**: Basic language processing (lexer, parser, interpreter)
 - **Phase 2**: Compiler foundation (code generation, type system, control structures)  
@@ -17,13 +17,13 @@ This is **pug** (µcompiler) - a learning-oriented compiler implementation proje
 
 ## Project Structure (Planned)
 
-The project follows a phase-based structure under `µcompiler/`:
+The project follows a phase-based structure under `pug/`:
 - `phase1/` - Basic language processing (lexer.go, parser.go, ast.go, interpreter.go)
 - `phase2/` - Compiler foundation (codegen.go, types.go, symbols.go, control.go)
 - `phase3/` - IR and optimization (ir/, optimizer/, backend/)
 - `phase4/` - LLVM integration (llvm/, runtime/, tools/)
-- `cmd/` - CLI tools (µc, µinterp, µtools)
-- `examples/` - Sample programs (.µ files)
+- `cmd/` - CLI tools (pug, interp, tools)
+- `examples/` - Sample programs (.dog files)
 - `benchmark/` - Performance measurement tools
 
 ## Build System (Planned)
@@ -45,9 +45,9 @@ The project plans to use a comprehensive Makefile-based build system with these 
 - Phase 3: Optimization flags (-O0, -O1, -O2) and IR emission
 - Phase 4: `--backend=llvm` with multi-target support
 
-## Language Implementation (.µ files)
+## Language Implementation (.dog files)
 
-The µ language syntax is designed to be Rust-like with progressive feature addition:
+The dog language syntax is designed to be Rust-like with progressive feature addition:
 - Basic types: int, float, string, bool
 - Functions with `fn name(params) -> type` syntax
 - Control flow: if/while/for with Rust-like syntax
@@ -73,7 +73,7 @@ The project is designed for AI-assisted development with:
 
 ## File Extensions
 
-- `.µ` or `.dog` - Source files for the µ language
+- `.dog` - Source files for the dog language
 - `.go` - Implementation files (Go language)
 - `*_test.go` - Test files following Go conventions
 
