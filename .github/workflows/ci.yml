@@ -29,7 +29,7 @@ jobs:
         path: |
           ~/.cache/go-build
           ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        key: ${{ runner.os }}-go-${{ hashFiles('go.mod') }}
         restore-keys: |
           ${{ runner.os }}-go-
 
@@ -42,8 +42,6 @@ jobs:
     - name: 📊 テストカバレッジ
       run: make test-cov
 
-
-      
     - name: 📊 カバレッジアップロード
       uses: codecov/codecov-action@v5
       with:
