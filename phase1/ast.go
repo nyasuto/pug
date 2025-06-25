@@ -268,3 +268,69 @@ func (ce *CallExpression) String() string {
 	out.WriteString(")")
 	return out.String()
 }
+
+// WhileStatement はwhile文を表すノード
+type WhileStatement struct {
+	Token     Token // WHILEトークン
+	Condition Expression
+	Body      *BlockStatement
+}
+
+func (ws *WhileStatement) statementNode()       {}
+func (ws *WhileStatement) TokenLiteral() string { return ws.Token.Literal }
+func (ws *WhileStatement) String() string {
+	var out bytes.Buffer
+	out.WriteString("while ")
+	out.WriteString(ws.Condition.String())
+	out.WriteString(" ")
+	out.WriteString(ws.Body.String())
+	return out.String()
+}
+
+// ForStatement はfor文を表すノード
+type ForStatement struct {
+	Token       Token // FORトークン
+	Initializer Statement
+	Condition   Expression
+	Update      Expression
+	Body        *BlockStatement
+}
+
+func (fs *ForStatement) statementNode()       {}
+func (fs *ForStatement) TokenLiteral() string { return fs.Token.Literal }
+func (fs *ForStatement) String() string {
+	var out bytes.Buffer
+	out.WriteString("for ")
+	if fs.Initializer != nil {
+		out.WriteString(fs.Initializer.String())
+	}
+	out.WriteString("; ")
+	if fs.Condition != nil {
+		out.WriteString(fs.Condition.String())
+	}
+	out.WriteString("; ")
+	if fs.Update != nil {
+		out.WriteString(fs.Update.String())
+	}
+	out.WriteString(" ")
+	out.WriteString(fs.Body.String())
+	return out.String()
+}
+
+// BreakStatement はbreak文を表すノード
+type BreakStatement struct {
+	Token Token // BREAKトークン
+}
+
+func (bs *BreakStatement) statementNode()       {}
+func (bs *BreakStatement) TokenLiteral() string { return bs.Token.Literal }
+func (bs *BreakStatement) String() string       { return bs.Token.Literal + ";" }
+
+// ContinueStatement はcontinue文を表すノード
+type ContinueStatement struct {
+	Token Token // CONTINUEトークン
+}
+
+func (cs *ContinueStatement) statementNode()       {}
+func (cs *ContinueStatement) TokenLiteral() string { return cs.Token.Literal }
+func (cs *ContinueStatement) String() string       { return cs.Token.Literal + ";" }

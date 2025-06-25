@@ -1,0 +1,28 @@
+// Phase 2.2 制御構造のデモンストレーション
+
+// 基本的なwhile文
+let count = 0;
+while (count < 5) {
+    let temp = count;
+    count = count + 1;
+}
+
+// break文を使ったwhile文
+while (true) {
+    let x = 1;
+    if (x > 0) {
+        break;
+    }
+}
+
+// continue文を使ったwhile文
+let i = 0;
+while (i < 10) {
+    i = i + 1;
+    if (i % 2 == 0) {
+        continue;
+    }
+    let odd = i;
+}
+
+return count;
