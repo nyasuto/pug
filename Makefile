@@ -86,10 +86,13 @@ phase1-bench: ## Phase 1 ベンチマーク実行
 .PHONY: phase2-build
 phase2-build: ## Phase 2 コンパイラをビルド
 	@echo "⚙️ Phase 2 コンパイラをビルド中..."
-	@if [ -f "cmd/pug/main.go" ]; then \
+	@if [ -f "cmd/compiler/main.go" ]; then \
+		$(GOBUILD) -o $(BIN_DIR)/pugc cmd/compiler/main.go; \
+		echo "✅ pugc コンパイラをビルドしました"; \
+	elif [ -f "cmd/pug/main.go" ]; then \
 		$(GOBUILD) -o $(BIN_DIR)/$(BINARY_NAME) cmd/pug/main.go; \
 	else \
-		echo "⚠️  cmd/pug/main.go が見つかりません"; \
+		echo "⚠️  コンパイラのmain.goが見つかりません"; \
 	fi
 
 .PHONY: phase2-test
