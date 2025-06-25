@@ -151,6 +151,14 @@ func (p *Parser) parseStatement() Statement {
 		return p.parseLetStatement()
 	case RETURN:
 		return p.parseReturnStatement()
+	case WHILE:
+		return p.parseWhileStatement()
+	case FOR:
+		return p.parseForStatement()
+	case BREAK:
+		return p.parseBreakStatement()
+	case CONTINUE:
+		return p.parseContinueStatement()
 	default:
 		return p.parseExpressionStatement()
 	}
@@ -485,4 +493,97 @@ func (p *Parser) curPrecedence() int {
 		return p
 	}
 	return LOWEST
+}
+
+// parseWhileStatement はwhile文を解析する
+func (p *Parser) parseWhileStatement() *WhileStatement {
+	stmt := &WhileStatement{Token: p.curToken}
+
+	if !p.expectPeek(LPAREN) {
+		return nil
+	}
+
+	p.nextToken()
+	stmt.Condition = p.parseExpression(LOWEST)
+
+	if !p.expectPeek(RPAREN) {
+		return nil
+	}
+
+	if !p.expectPeek(LBRACE) {
+		return nil
+	}
+
+	stmt.Body = p.parseBlockStatement()
+
+	return stmt
+}
+
+// parseForStatement はfor文を解析する
+func (p *Parser) parseForStatement() *ForStatement {
+	stmt := &ForStatement{Token: p.curToken}
+
+	if !p.expectPeek(LPAREN) {
+		return nil
+	}
+
+	// 初期化文の解析（省略可能）
+	p.nextToken()
+	if !p.curTokenIs(SEMICOLON) {
+		stmt.Initializer = p.parseStatement()
+	}
+
+	if !p.expectPeek(SEMICOLON) {
+		return nil
+	}
+
+	// 条件式の解析（省略可能）
+	p.nextToken()
+	if !p.curTokenIs(SEMICOLON) {
+		stmt.Condition = p.parseExpression(LOWEST)
+	}
+
+	if !p.expectPeek(SEMICOLON) {
+		return nil
+	}
+
+	// 更新式の解析（省略可能）
+	p.nextToken()
+	if !p.curTokenIs(RPAREN) {
+		stmt.Update = p.parseExpression(LOWEST)
+	}
+
+	if !p.expectPeek(RPAREN) {
+		return nil
+	}
+
+	if !p.expectPeek(LBRACE) {
+		return nil
+	}
+
+	stmt.Body = p.parseBlockStatement()
+
+	return stmt
+}
+
+// parseBreakStatement はbreak文を解析する
+func (p *Parser) parseBreakStatement() *BreakStatement {
+	stmt := &BreakStatement{Token: p.curToken}
+
+	if p.peekTokenIs(SEMICOLON) {
+		p.nextToken()
+	}
+
+	return stmt
+}
+
+// parseContinueStatement はcontinue文を解析する
+func (p *Parser) parseContinueStatement() *ContinueStatement {
+	stmt := &ContinueStatement{Token: p.curToken}
+
+	if p.peekTokenIs(SEMICOLON) {
+		p.nextToken()
+	}
+
+	return stmt
 }

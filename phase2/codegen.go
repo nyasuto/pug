@@ -13,6 +13,7 @@ type CodeGenerator struct {
 	labelCounter int
 	stackOffset  int
 	variables    map[string]int // 変数名とスタックオフセットのマッピング
+	loopContext  *LoopContext   // 現在のループコンテキスト
 }
 
 // NewCodeGenerator は新しいコード生成器を作成する
@@ -90,6 +91,16 @@ func (cg *CodeGenerator) generateStatement(stmt phase1.Statement) error {
 		return cg.generateReturnStatement(node)
 	case *phase1.ExpressionStatement:
 		return cg.generateExpressionStatement(node)
+	case *phase1.WhileStatement:
+		return cg.generateWhileStatement(node)
+	case *phase1.ForStatement:
+		return cg.generateForStatement(node)
+	case *phase1.BreakStatement:
+		return cg.generateBreakStatement(node)
+	case *phase1.ContinueStatement:
+		return cg.generateContinueStatement(node)
+	case *phase1.BlockStatement:
+		return cg.generateBlockStatement(node)
 	default:
 		return fmt.Errorf("unsupported statement type: %T", stmt)
 	}
@@ -142,6 +153,8 @@ func (cg *CodeGenerator) generateExpression(expr phase1.Expression) error {
 	switch node := expr.(type) {
 	case *phase1.IntegerLiteral:
 		return cg.generateIntegerLiteral(node)
+	case *phase1.Boolean:
+		return cg.generateBoolean(node)
 	case *phase1.Identifier:
 		return cg.generateIdentifier(node)
 	case *phase1.InfixExpression:
@@ -156,6 +169,16 @@ func (cg *CodeGenerator) generateExpression(expr phase1.Expression) error {
 // generateIntegerLiteral は整数リテラルのアセンブリコードを生成する
 func (cg *CodeGenerator) generateIntegerLiteral(node *phase1.IntegerLiteral) error {
 	cg.emitf("    movq $%d, %%rax", node.Value)
+	return nil
+}
+
+// generateBoolean はブール値リテラルのアセンブリコードを生成する
+func (cg *CodeGenerator) generateBoolean(node *phase1.Boolean) error {
+	if node.Value {
+		cg.emit("    movq $1, %rax") // true = 1
+	} else {
+		cg.emit("    movq $0, %rax") // false = 0
+	}
 	return nil
 }
 
@@ -289,6 +312,133 @@ func (cg *CodeGenerator) generatePrefixExpression(node *phase1.PrefixExpression)
 		return fmt.Errorf("unsupported prefix operator: %s", node.Operator)
 	}
 
+	return nil
+}
+
+// generateWhileStatement はwhile文のアセンブリコードを生成する
+func (cg *CodeGenerator) generateWhileStatement(stmt *phase1.WhileStatement) error {
+	startLabel := cg.generateLabel("while_start")
+	endLabel := cg.generateLabel("while_end")
+
+	// ループコンテキストを設定
+	oldContext := cg.loopContext
+	cg.loopContext = NewLoopContext(endLabel, startLabel, oldContext)
+
+	// ループ開始ラベル
+	cg.emitf("%s:", startLabel)
+
+	// 条件式を評価
+	if err := cg.generateExpression(stmt.Condition); err != nil {
+		return err
+	}
+
+	// 条件が偽の場合はループを抜ける
+	cg.emit("    testq %rax, %rax")
+	cg.emitf("    jz %s", endLabel)
+
+	// ループ本体を実行
+	if err := cg.generateBlockStatement(stmt.Body); err != nil {
+		return err
+	}
+
+	// ループ開始に戻る
+	cg.emitf("    jmp %s", startLabel)
+
+	// ループ終了ラベル
+	cg.emitf("%s:", endLabel)
+
+	// ループコンテキストを復元
+	cg.loopContext = oldContext
+
+	return nil
+}
+
+// generateForStatement はfor文のアセンブリコードを生成する
+func (cg *CodeGenerator) generateForStatement(stmt *phase1.ForStatement) error {
+	startLabel := cg.generateLabel("for_start")
+	continueLabel := cg.generateLabel("for_continue")
+	endLabel := cg.generateLabel("for_end")
+
+	// ループコンテキストを設定
+	oldContext := cg.loopContext
+	cg.loopContext = NewLoopContext(endLabel, continueLabel, oldContext)
+
+	// 初期化文を実行
+	if stmt.Initializer != nil {
+		if err := cg.generateStatement(stmt.Initializer); err != nil {
+			return err
+		}
+	}
+
+	// ループ開始ラベル
+	cg.emitf("%s:", startLabel)
+
+	// 条件式がある場合は評価
+	if stmt.Condition != nil {
+		if err := cg.generateExpression(stmt.Condition); err != nil {
+			return err
+		}
+		// 条件が偽の場合はループを抜ける
+		cg.emit("    testq %rax, %rax")
+		cg.emitf("    jz %s", endLabel)
+	}
+
+	// ループ本体を実行
+	if err := cg.generateBlockStatement(stmt.Body); err != nil {
+		return err
+	}
+
+	// continueラベル（continue文がここにジャンプ）
+	cg.emitf("%s:", continueLabel)
+
+	// 更新式を実行
+	if stmt.Update != nil {
+		if err := cg.generateExpression(stmt.Update); err != nil {
+			return err
+		}
+	}
+
+	// ループ開始に戻る
+	cg.emitf("    jmp %s", startLabel)
+
+	// ループ終了ラベル
+	cg.emitf("%s:", endLabel)
+
+	// ループコンテキストを復元
+	cg.loopContext = oldContext
+
+	return nil
+}
+
+// generateBreakStatement はbreak文のアセンブリコードを生成する
+func (cg *CodeGenerator) generateBreakStatement(_ *phase1.BreakStatement) error {
+	if cg.loopContext == nil {
+		return fmt.Errorf("break statement outside of loop")
+	}
+
+	// 現在のループの終了ラベルにジャンプ
+	cg.emitf("    jmp %s", cg.loopContext.BreakLabel)
+	return nil
+}
+
+// generateContinueStatement はcontinue文のアセンブリコードを生成する
+func (cg *CodeGenerator) generateContinueStatement(_ *phase1.ContinueStatement) error {
+	if cg.loopContext == nil {
+		return fmt.Errorf("continue statement outside of loop")
+	}
+
+	// 現在のループの継続ラベルにジャンプ
+	cg.emitf("    jmp %s", cg.loopContext.ContinueLabel)
+	return nil
+}
+
+// generateBlockStatement はブロック文のアセンブリコードを生成する
+func (cg *CodeGenerator) generateBlockStatement(stmt *phase1.BlockStatement) error {
+	for _, s := range stmt.Statements {
+		if err := cg.generateStatement(s); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
