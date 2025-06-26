@@ -452,3 +452,43 @@ func BenchmarkCodeGenerator_ComplexExpression(b *testing.B) {
 		}
 	}
 }
+
+// TestCodeGenerator_CallExpression は関数呼び出しのコード生成をテストする
+func TestCodeGenerator_CallExpression(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected []string
+	}{
+		{
+			name:  "simple function call",
+			input: "add(5, 10);",
+			expected: []string{
+				"movq $10, %rax",
+				"pushq %rax",
+				"movq $5, %rax",
+				"pushq %rax",
+				"call add",
+				"addq $16, %rsp",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			program := parseProgram(t, tt.input)
+			cg := NewCodeGenerator()
+
+			result, err := cg.Generate(program)
+			if err != nil {
+				t.Fatalf("code generation failed: %v", err)
+			}
+
+			for _, expectedLine := range tt.expected {
+				if !strings.Contains(result, expectedLine) {
+					t.Errorf("expected line \"%s\" not found in generated code:\n%s", expectedLine, result)
+				}
+			}
+		})
+	}
+}
