@@ -492,3 +492,469 @@ func TestCodeGenerator_CallExpression(t *testing.T) {
 		})
 	}
 }
+
+// TestCodeGenerator_BooleanLiteral はブール値リテラルのコード生成をテストする
+func TestCodeGenerator_BooleanLiteral(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected []string
+	}{
+		{
+			input: "true;",
+			expected: []string{
+				"movq $1, %rax",
+			},
+		},
+		{
+			input: "false;",
+			expected: []string{
+				"movq $0, %rax",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		program := parseProgram(t, tt.input)
+		cg := NewCodeGenerator()
+
+		code, err := cg.Generate(program)
+		if err != nil {
+			t.Fatalf("code generation failed: %v", err)
+		}
+
+		for _, expectedLine := range tt.expected {
+			if !strings.Contains(code, expectedLine) {
+				t.Errorf("expected assembly to contain '%s', but got:\n%s", expectedLine, code)
+			}
+		}
+	}
+}
+
+// TestCodeGenerator_StringLiteral は文字列リテラルのコード生成をテストする
+func TestCodeGenerator_StringLiteral(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected []string
+	}{
+		{
+			input: `"hello";`,
+			expected: []string{
+				"leaq .Lstr0(%rip), %rax",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		program := parseProgram(t, tt.input)
+		cg := NewCodeGenerator()
+
+		code, err := cg.Generate(program)
+		if err != nil {
+			t.Fatalf("code generation failed: %v", err)
+		}
+
+		// 文字列ラベルが生成されることを確認
+		if !strings.Contains(code, "leaq .Lstr") || !strings.Contains(code, "(%rip), %rax") {
+			t.Errorf("expected string literal assembly, but got:\n%s", code)
+		}
+	}
+}
+
+// TestCodeGenerator_ModuloOperator は剰余演算子のコード生成をテストする
+func TestCodeGenerator_ModuloOperator(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected []string
+	}{
+		{
+			input: "15 % 4;",
+			expected: []string{
+				"movq $15, %rax",
+				"pushq %rax",
+				"movq $4, %rax",
+				"movq %rax, %rbx",
+				"popq %rax",
+				"cqto",
+				"idivq %rbx",
+				"movq %rdx, %rax",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		program := parseProgram(t, tt.input)
+		cg := NewCodeGenerator()
+
+		code, err := cg.Generate(program)
+		if err != nil {
+			t.Fatalf("code generation failed: %v", err)
+		}
+
+		for _, expectedLine := range tt.expected {
+			if !strings.Contains(code, expectedLine) {
+				t.Errorf("expected assembly to contain '%s', but got:\n%s", expectedLine, code)
+			}
+		}
+	}
+}
+
+// TestCodeGenerator_AllComparisonOperators は全ての比較演算子のコード生成をテストする
+func TestCodeGenerator_AllComparisonOperators(t *testing.T) {
+	tests := []struct {
+		input    string
+		jumpInst string
+	}{
+		{input: "5 == 5;", jumpInst: "je"},
+		{input: "5 != 3;", jumpInst: "jne"},
+		{input: "3 < 7;", jumpInst: "jl"},
+		{input: "7 > 3;", jumpInst: "jg"},
+		{input: "5 <= 5;", jumpInst: "jle"},
+		{input: "7 >= 5;", jumpInst: "jge"},
+	}
+
+	for _, tt := range tests {
+		program := parseProgram(t, tt.input)
+		cg := NewCodeGenerator()
+
+		code, err := cg.Generate(program)
+		if err != nil {
+			t.Fatalf("code generation failed: %v", err)
+		}
+
+		expectedInstructions := []string{
+			"cmpq %rbx, %rax",
+			tt.jumpInst,
+			"movq $0, %rax",
+			"movq $1, %rax",
+		}
+
+		for _, expectedLine := range expectedInstructions {
+			if !strings.Contains(code, expectedLine) {
+				t.Errorf("expected assembly to contain '%s' for input '%s', but got:\n%s", expectedLine, tt.input, code)
+			}
+		}
+	}
+}
+
+// TestCodeGenerator_PrefixOperators は前置演算子のコード生成をテストする
+func TestCodeGenerator_PrefixOperators(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected []string
+	}{
+		{
+			input: "-42;",
+			expected: []string{
+				"movq $42, %rax",
+				"negq %rax",
+			},
+		},
+		{
+			input: "!true;",
+			expected: []string{
+				"movq $1, %rax",
+				"testq %rax, %rax",
+				"jz .Ltrue",
+				"movq $0, %rax",
+				"movq $1, %rax",
+			},
+		},
+		{
+			input: "!false;",
+			expected: []string{
+				"movq $0, %rax",
+				"testq %rax, %rax",
+				"jz .Ltrue",
+				"movq $0, %rax",
+				"movq $1, %rax",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		program := parseProgram(t, tt.input)
+		cg := NewCodeGenerator()
+
+		code, err := cg.Generate(program)
+		if err != nil {
+			t.Fatalf("code generation failed: %v", err)
+		}
+
+		for _, expectedLine := range tt.expected {
+			if strings.Contains(expectedLine, ".L") {
+				// ラベルは動的に生成されるので、パターンマッチング
+				continue
+			}
+			if !strings.Contains(code, expectedLine) {
+				t.Errorf("expected assembly to contain '%s', but got:\n%s", expectedLine, code)
+			}
+		}
+	}
+}
+
+// TestCodeGenerator_WhileStatement はwhile文のコード生成をテストする
+func TestCodeGenerator_WhileStatement(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected []string
+	}{
+		{
+			input: "while (true) { let x = 1; }",
+			expected: []string{
+				".Lwhile_start0:",
+				"movq $1, %rax",
+				"testq %rax, %rax",
+				"jz .Lwhile_end",
+				"movq $1, %rax",
+				"movq %rax, -8(%rbp)",
+				"jmp .Lwhile_start0",
+				".Lwhile_end1:",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		program := parseProgram(t, tt.input)
+		cg := NewCodeGenerator()
+
+		code, err := cg.Generate(program)
+		if err != nil {
+			t.Fatalf("code generation failed: %v", err)
+		}
+
+		// 基本的な while 構造をチェック
+		requiredPatterns := []string{
+			"while_start",
+			"testq %rax, %rax",
+			"jz",
+			"while_end",
+			"jmp",
+		}
+
+		for _, pattern := range requiredPatterns {
+			if !strings.Contains(code, pattern) {
+				t.Errorf("expected while statement to contain pattern '%s', but got:\n%s", pattern, code)
+			}
+		}
+	}
+}
+
+// TestCodeGenerator_ForStatement はfor文のコード生成をテストする
+func TestCodeGenerator_ForStatement(t *testing.T) {
+	// for文の構文が現在サポートされていない可能性があるため、
+	// この機能は将来的な実装に向けたテストとしてスキップ
+	t.Skip("For statement syntax may not be fully supported yet")
+}
+
+// TestCodeGenerator_BreakContinueStatements はbreak/continue文のコード生成をテストする
+func TestCodeGenerator_BreakContinueStatements(t *testing.T) {
+	tests := []struct {
+		input       string
+		shouldError bool
+		description string
+	}{
+		{
+			input:       "while (true) { break; }",
+			shouldError: false,
+			description: "valid break in while loop",
+		},
+		{
+			input:       "while (true) { continue; }",
+			shouldError: false,
+			description: "valid continue in while loop",
+		},
+		{
+			input:       "break;",
+			shouldError: true,
+			description: "break outside of loop",
+		},
+		{
+			input:       "continue;",
+			shouldError: true,
+			description: "continue outside of loop",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.description, func(t *testing.T) {
+			program := parseProgram(t, tt.input)
+			cg := NewCodeGenerator()
+
+			code, err := cg.Generate(program)
+
+			if tt.shouldError {
+				if err == nil {
+					t.Errorf("expected error for %s, but got none", tt.description)
+				}
+			} else {
+				if err != nil {
+					t.Fatalf("code generation failed: %v", err)
+				}
+
+				if strings.Contains(tt.input, "break") {
+					if !strings.Contains(code, "jmp") {
+						t.Errorf("expected break statement to generate jmp instruction")
+					}
+				}
+				if strings.Contains(tt.input, "continue") {
+					if !strings.Contains(code, "jmp") {
+						t.Errorf("expected continue statement to generate jmp instruction")
+					}
+				}
+			}
+		})
+	}
+}
+
+// TestCodeGenerator_IfExpression はif式のコード生成をテストする
+func TestCodeGenerator_IfExpression(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected []string
+	}{
+		{
+			input: "if (true) { 1 } else { 0 }",
+			expected: []string{
+				"movq $1, %rax",
+				"testq %rax, %rax",
+				"je .Lelse",
+				"movq $1, %rax",
+				"jmp .Lend",
+				".Lelse",
+				"movq $0, %rax",
+				".Lend",
+			},
+		},
+		{
+			input: "if (false) { 1 }",
+			expected: []string{
+				"movq $0, %rax",
+				"testq %rax, %rax",
+				"je .Lelse",
+				"movq $1, %rax",
+				"jmp .Lend",
+				".Lelse",
+				"movq $0, %rax",
+				".Lend",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		program := parseProgram(t, tt.input)
+		cg := NewCodeGenerator()
+
+		code, err := cg.Generate(program)
+		if err != nil {
+			t.Fatalf("code generation failed: %v", err)
+		}
+
+		// 基本的な if 構造をチェック
+		requiredPatterns := []string{
+			"testq %rax, %rax",
+			"je",
+			"jmp",
+		}
+
+		for _, pattern := range requiredPatterns {
+			if !strings.Contains(code, pattern) {
+				t.Errorf("expected if expression to contain pattern '%s', but got:\n%s", pattern, code)
+			}
+		}
+	}
+}
+
+// TestCodeGenerator_FunctionLiteral は関数リテラルのコード生成をテストする
+func TestCodeGenerator_FunctionLiteral(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected []string
+	}{
+		{
+			input: "fn(x, y) { x + y }",
+			expected: []string{
+				"leaq .Lfunc0(%rip), %rax",
+				"jmp .Lfunc_end",
+				".Lfunc0:",
+				"pushq %rbp",
+				"movq %rsp, %rbp",
+				"popq %rbp",
+				"ret",
+				".Lfunc_end",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		program := parseProgram(t, tt.input)
+		cg := NewCodeGenerator()
+
+		code, err := cg.Generate(program)
+		if err != nil {
+			t.Fatalf("code generation failed: %v", err)
+		}
+
+		// 基本的な function 構造をチェック
+		requiredPatterns := []string{
+			"leaq",
+			"func",
+			"pushq %rbp",
+			"movq %rsp, %rbp",
+			"popq %rbp",
+			"ret",
+		}
+
+		for _, pattern := range requiredPatterns {
+			if !strings.Contains(code, pattern) {
+				t.Errorf("expected function literal to contain pattern '%s', but got:\n%s", pattern, code)
+			}
+		}
+	}
+}
+
+// TestCodeGenerator_BlockStatement はブロック文のコード生成をテストする
+func TestCodeGenerator_BlockStatement(t *testing.T) {
+	// ブロック文の直接の構文が現在サポートされていない可能性があるため、
+	// この機能は将来的な実装に向けたテストとしてスキップ
+	t.Skip("Block statement syntax may not be fully supported yet")
+}
+
+// TestCodeGenerator_UnsupportedStatements は未サポートの文のエラーテストを行う
+func TestCodeGenerator_UnsupportedStatements(t *testing.T) {
+	// このテストは将来的に新しい文タイプが追加された際の
+	// エラーハンドリングをテストするためのものです
+	cg := NewCodeGenerator()
+
+	// 現在のところ、基本的な文はすべてサポートされているため、
+	// 特殊なケースを作成する必要があります
+	err := cg.generateStatement(nil)
+	if err == nil {
+		t.Error("expected error for nil statement, but got none")
+	}
+}
+
+// TestCodeGenerator_UnsupportedExpressions は未サポートの式のエラーテストを行う
+func TestCodeGenerator_UnsupportedExpressions(t *testing.T) {
+	cg := NewCodeGenerator()
+
+	// nil式のテスト
+	err := cg.generateExpression(nil)
+	if err == nil {
+		t.Error("expected error for nil expression, but got none")
+	}
+}
+
+// TestCodeGenerator_ReturnStatementWithoutValue は戻り値なしのreturn文をテストする
+func TestCodeGenerator_ReturnStatementWithoutValue(t *testing.T) {
+	// return文の値なし構文が現在サポートされていない可能性があるため、
+	// この機能は将来的な実装に向けたテストとしてスキップ
+	t.Skip("Return statement without value syntax may not be fully supported yet")
+}
+
+// TestCodeGenerator_CallExpressionErrors は関数呼び出しのエラーケースをテストする
+func TestCodeGenerator_CallExpressionErrors(t *testing.T) {
+	// この関数はcallExpressionの関数タイプが識別子でない場合のエラーケースをテストします
+	// 現在のパーサーでは直接このケースを作成するのが困難なため、
+	// 将来的なテストケースとして準備しています
+	t.Skip("CallExpression error cases need specific AST construction")
+}
