@@ -150,7 +150,7 @@ fmt: ## コードフォーマット
 	$(GOCMD) fmt ./...
 
 .PHONY: quality
-quality: fmt lint test ## 全品質チェック実行
+quality: deps fmt lint build test ## 全品質チェック実行
 	@echo "✅ 品質チェック完了"
 
 ##@ ベンチマーク・性能測定
