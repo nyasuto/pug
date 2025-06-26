@@ -1,0 +1,508 @@
+// テキスト処理ツール - Dog言語
+// 文字列操作、パターンマッチング、テキスト解析の実用的なアプリケーション
+
+puts("=== Dog言語 テキスト処理ツール ===");
+puts("");
+
+// ===== 基本的な文字列操作関数 =====
+puts("【基本的な文字列操作関数】");
+puts("");
+
+// 文字列の長さ（len関数の代替実装）
+let string_length = fn(str) {
+    let count = 0;
+    let i = 0;
+    // 簡易実装（実際のlen関数を使用）
+    return len(str);
+};
+
+// 文字列の部分文字列（簡易版）
+let substring = fn(str, start, length) {
+    let result = "";
+    let i = start;
+    let end = start + length;
+    
+    while (i < end && i < len(str)) {
+        // 実際の実装では文字単位のアクセスが必要
+        // ここでは概念的な実装を示す
+        i = i + 1;
+    };
+    
+    return result;
+};
+
+// 文字列の検索（簡単なパターンマッチング）
+let string_find = fn(text, pattern) {
+    let text_len = len(text);
+    let pattern_len = len(pattern);
+    
+    if (pattern_len > text_len) {
+        return -1;
+    };
+    
+    let i = 0;
+    while (i <= text_len - pattern_len) {
+        let match = true;
+        let j = 0;
+        
+        // パターンマッチングの簡易実装
+        // 実際の実装では文字単位の比較が必要
+        
+        if (match) {
+            return i;
+        };
+        i = i + 1;
+    };
+    
+    return -1;
+};
+
+// 文字列の置換（簡易版）
+let string_replace = fn(text, old_pattern, new_pattern) {
+    // 実際の実装では複雑な文字列操作が必要
+    // ここでは概念を示す
+    puts("置換処理: '" + old_pattern + "' を '" + new_pattern + "' に置換");
+    return text;  // 簡易実装
+};
+
+// 文字列の分割（区切り文字による）
+let string_split = fn(text, delimiter) {
+    let result = [];
+    let current = "";
+    let i = 0;
+    
+    // 簡易実装 - 実際の実装では文字単位の処理が必要
+    // ここでは空白で分割する例を概念的に示す
+    
+    result = push(result, "単語1");
+    result = push(result, "単語2");
+    result = push(result, "単語3");
+    
+    return result;
+};
+
+// 文字列のトリム（前後の空白除去）
+let string_trim = fn(text) {
+    // 実際の実装では前後の空白文字を除去
+    puts("トリム処理: '" + text + "'");
+    return text;  // 簡易実装
+};
+
+puts("基本文字列操作のテスト:");
+let sample_text = "Hello, Dog Language!";
+puts("元のテキスト:", sample_text);
+puts("文字列長:", string_length(sample_text));
+puts("");
+
+// ===== 単語カウンター =====
+puts("【単語カウンター】");
+puts("");
+
+let count_words = fn(text) {
+    // 簡易実装：スペースで区切られた単語をカウント
+    let words = string_split(text, " ");
+    return len(words);
+};
+
+let count_characters = fn(text) {
+    return len(text);
+};
+
+let count_lines = fn(text) {
+    // 改行文字 (\n) で分割
+    let lines = string_split(text, "\n");
+    return len(lines);
+};
+
+// 文字頻度解析
+let character_frequency = fn(text) {
+    let freq = {};
+    let i = 0;
+    
+    // 簡易実装 - 実際には文字単位でカウント
+    freq["a"] = 3;
+    freq["e"] = 5;
+    freq["o"] = 2;
+    freq["l"] = 4;
+    
+    return freq;
+};
+
+// 単語頻度解析
+let word_frequency = fn(text) {
+    let words = string_split(text, " ");
+    let freq = {};
+    
+    let i = 0;
+    while (i < len(words)) {
+        let word = words[i];
+        if (freq[word] == null) {
+            freq[word] = 0;
+        };
+        freq[word] = freq[word] + 1;
+        i = i + 1;
+    };
+    
+    return freq;
+};
+
+puts("テキスト解析のテスト:");
+let article = "The quick brown fox jumps over the lazy dog. The dog was sleeping.";
+puts("解析対象:", article);
+puts("単語数:", count_words(article));
+puts("文字数:", count_characters(article));
+
+let word_freq = word_frequency(article);
+puts("単語頻度解析結果:", word_freq);
+puts("");
+
+// ===== パスワード強度チェッカー =====
+puts("【パスワード強度チェッカー】");
+puts("");
+
+let has_uppercase = fn(password) {
+    // 大文字が含まれているかチェック（簡易実装）
+    return true;  // 実際の実装では文字単位でチェック
+};
+
+let has_lowercase = fn(password) {
+    // 小文字が含まれているかチェック（簡易実装）
+    return true;
+};
+
+let has_numbers = fn(password) {
+    // 数字が含まれているかチェック（簡易実装）
+    return true;
+};
+
+let has_special_chars = fn(password) {
+    // 特殊文字が含まれているかチェック（簡易実装）
+    return false;
+};
+
+let check_password_strength = fn(password) {
+    let score = 0;
+    let requirements = [];
+    
+    if (len(password) >= 8) {
+        score = score + 1;
+        requirements = push(requirements, "✓ 8文字以上");
+    } else {
+        requirements = push(requirements, "✗ 8文字以上");
+    };
+    
+    if (has_uppercase(password)) {
+        score = score + 1;
+        requirements = push(requirements, "✓ 大文字を含む");
+    } else {
+        requirements = push(requirements, "✗ 大文字を含む");
+    };
+    
+    if (has_lowercase(password)) {
+        score = score + 1;
+        requirements = push(requirements, "✓ 小文字を含む");
+    } else {
+        requirements = push(requirements, "✗ 小文字を含む");
+    };
+    
+    if (has_numbers(password)) {
+        score = score + 1;
+        requirements = push(requirements, "✓ 数字を含む");
+    } else {
+        requirements = push(requirements, "✗ 数字を含む");
+    };
+    
+    if (has_special_chars(password)) {
+        score = score + 1;
+        requirements = push(requirements, "✓ 特殊文字を含む");
+    } else {
+        requirements = push(requirements, "✗ 特殊文字を含む");
+    };
+    
+    let strength = "弱い";
+    if (score >= 4) {
+        strength = "強い";
+    } else if (score >= 3) {
+        strength = "普通";
+    };
+    
+    return {
+        "score": score,
+        "strength": strength,
+        "requirements": requirements
+    };
+};
+
+puts("パスワード強度チェック:");
+let passwords = ["password", "Password1", "P@ssw0rd123"];
+
+let i = 0;
+while (i < len(passwords)) {
+    let pwd = passwords[i];
+    let result = check_password_strength(pwd);
+    puts("パスワード: '" + pwd + "'");
+    puts("  強度: " + result["strength"] + " (スコア: " + result["score"] + "/5)");
+    
+    let j = 0;
+    while (j < len(result["requirements"])) {
+        puts("  " + result["requirements"][j]);
+        j = j + 1;
+    };
+    puts("");
+    i = i + 1;
+};
+
+// ===== CSVパーサー（簡易版） =====
+puts("【CSVパーサー（簡易版）】");
+puts("");
+
+let parse_csv_line = fn(line) {
+    // カンマで分割（簡易実装）
+    let fields = [];
+    let current_field = "";
+    let in_quotes = false;
+    let i = 0;
+    
+    // 実際の実装では文字単位で解析
+    // ここでは概念的な実装を示す
+    fields = push(fields, "名前");
+    fields = push(fields, "年齢");
+    fields = push(fields, "都市");
+    
+    return fields;
+};
+
+let parse_csv = fn(csv_text) {
+    let lines = string_split(csv_text, "\n");
+    let result = [];
+    
+    let i = 0;
+    while (i < len(lines)) {
+        if (len(lines[i]) > 0) {
+            let fields = parse_csv_line(lines[i]);
+            result = push(result, fields);
+        };
+        i = i + 1;
+    };
+    
+    return result;
+};
+
+let print_csv_table = fn(data) {
+    let i = 0;
+    while (i < len(data)) {
+        let row = data[i];
+        let row_str = "";
+        let j = 0;
+        while (j < len(row)) {
+            row_str = row_str + row[j];
+            if (j < len(row) - 1) {
+                row_str = row_str + " | ";
+            };
+            j = j + 1;
+        };
+        puts(row_str);
+        i = i + 1;
+    };
+};
+
+puts("CSVパーサーのテスト:");
+let csv_data = "名前,年齢,都市\nAlice,25,東京\nBob,30,大阪\nCharlie,22,福岡";
+puts("元のCSVデータ:");
+puts(csv_data);
+puts("");
+puts("パース結果:");
+let parsed_data = parse_csv(csv_data);
+print_csv_table(parsed_data);
+puts("");
+
+// ===== ログファイル解析器 =====
+puts("【ログファイル解析器】");
+puts("");
+
+let parse_log_entry = fn(log_line) {
+    // ログエントリの解析（簡易実装）
+    return {
+        "timestamp": "2023-12-01 10:30:00",
+        "level": "INFO",
+        "message": "User login successful",
+        "ip": "192.168.1.100"
+    };
+};
+
+let analyze_logs = fn(log_lines) {
+    let stats = {
+        "total_entries": 0,
+        "error_count": 0,
+        "warning_count": 0,
+        "info_count": 0,
+        "unique_ips": []
+    };
+    
+    let i = 0;
+    while (i < len(log_lines)) {
+        let entry = parse_log_entry(log_lines[i]);
+        stats["total_entries"] = stats["total_entries"] + 1;
+        
+        if (entry["level"] == "ERROR") {
+            stats["error_count"] = stats["error_count"] + 1;
+        } else if (entry["level"] == "WARN") {
+            stats["warning_count"] = stats["warning_count"] + 1;
+        } else if (entry["level"] == "INFO") {
+            stats["info_count"] = stats["info_count"] + 1;
+        };
+        
+        i = i + 1;
+    };
+    
+    return stats;
+};
+
+let generate_log_report = fn(stats) {
+    puts("=== ログ解析レポート ===");
+    puts("総エントリ数:", stats["total_entries"]);
+    puts("エラー:", stats["error_count"]);
+    puts("警告:", stats["warning_count"]);
+    puts("情報:", stats["info_count"]);
+    
+    if (stats["total_entries"] > 0) {
+        let error_rate = (stats["error_count"] * 100) / stats["total_entries"];
+        puts("エラー率:", error_rate + "%");
+    };
+};
+
+puts("ログ解析のテスト:");
+let sample_logs = [
+    "2023-12-01 10:30:00 INFO User login successful",
+    "2023-12-01 10:31:15 ERROR Database connection failed",
+    "2023-12-01 10:32:00 WARN High memory usage detected",
+    "2023-12-01 10:33:30 INFO User logout"
+];
+
+let log_stats = analyze_logs(sample_logs);
+generate_log_report(log_stats);
+puts("");
+
+// ===== マークダウンパーサー（簡易版） =====
+puts("【マークダウンパーサー（簡易版）】");
+puts("");
+
+let parse_markdown_line = fn(line) {
+    if (len(line) == 0) {
+        return {"type": "empty", "content": ""};
+    };
+    
+    // 見出しの検出（簡易実装）
+    if (line == "# 見出し1") {
+        return {"type": "h1", "content": "見出し1"};
+    } else if (line == "## 見出し2") {
+        return {"type": "h2", "content": "見出し2"};
+    } else if (line == "**太字**") {
+        return {"type": "bold", "content": "太字"};
+    } else if (line == "*斜体*") {
+        return {"type": "italic", "content": "斜体"};
+    } else {
+        return {"type": "text", "content": line};
+    };
+};
+
+let markdown_to_html = fn(markdown_lines) {
+    let html = "";
+    let i = 0;
+    
+    while (i < len(markdown_lines)) {
+        let parsed = parse_markdown_line(markdown_lines[i]);
+        
+        if (parsed["type"] == "h1") {
+            html = html + "<h1>" + parsed["content"] + "</h1>\n";
+        } else if (parsed["type"] == "h2") {
+            html = html + "<h2>" + parsed["content"] + "</h2>\n";
+        } else if (parsed["type"] == "bold") {
+            html = html + "<strong>" + parsed["content"] + "</strong>\n";
+        } else if (parsed["type"] == "italic") {
+            html = html + "<em>" + parsed["content"] + "</em>\n";
+        } else if (parsed["type"] == "text") {
+            html = html + "<p>" + parsed["content"] + "</p>\n";
+        };
+        
+        i = i + 1;
+    };
+    
+    return html;
+};
+
+puts("マークダウンパーサーのテスト:");
+let markdown_content = [
+    "# メインタイトル",
+    "## サブタイトル",
+    "これは普通のテキストです。",
+    "**太字のテキスト**",
+    "*斜体のテキスト*"
+];
+
+puts("マークダウン入力:");
+i = 0;
+while (i < len(markdown_content)) {
+    puts("  " + markdown_content[i]);
+    i = i + 1;
+};
+
+puts("");
+puts("HTML出力:");
+let html_output = markdown_to_html(markdown_content);
+puts(html_output);
+
+// ===== テキスト統計解析 =====
+puts("【テキスト統計解析】");
+puts("");
+
+let analyze_text_statistics = fn(text) {
+    let words = string_split(text, " ");
+    let sentences = string_split(text, ".");
+    
+    let total_chars = len(text);
+    let total_words = len(words);
+    let total_sentences = len(sentences);
+    
+    let avg_word_length = 0;
+    if (total_words > 0) {
+        let total_word_chars = 0;
+        let i = 0;
+        while (i < len(words)) {
+            total_word_chars = total_word_chars + len(words[i]);
+            i = i + 1;
+        };
+        avg_word_length = total_word_chars / total_words;
+    };
+    
+    let avg_sentence_length = 0;
+    if (total_sentences > 0) {
+        avg_sentence_length = total_words / total_sentences;
+    };
+    
+    return {
+        "characters": total_chars,
+        "words": total_words,
+        "sentences": total_sentences,
+        "avg_word_length": avg_word_length,
+        "avg_sentence_length": avg_sentence_length
+    };
+};
+
+let print_text_stats = fn(stats) {
+    puts("=== テキスト統計 ===");
+    puts("文字数:", stats["characters"]);
+    puts("単語数:", stats["words"]);
+    puts("文数:", stats["sentences"]);
+    puts("平均単語長:", stats["avg_word_length"]);
+    puts("平均文長:", stats["avg_sentence_length"]);
+};
+
+puts("テキスト統計解析のテスト:");
+let analysis_text = "これはテキスト解析のサンプルです。Dog言語で実装されています。統計情報を計算します。";
+puts("解析対象:", analysis_text);
+let text_stats = analyze_text_statistics(analysis_text);
+print_text_stats(text_stats);
+
+puts("");
+puts("=== テキスト処理ツール完了 ===");

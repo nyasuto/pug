@@ -1,0 +1,628 @@
+// 数学アルゴリズム集 - Dog言語
+// 数論、組み合わせ論、数値計算アルゴリズムの実装
+
+puts("=== Dog言語 数学アルゴリズム集 ===");
+puts("");
+
+// ===== 1. 基本的な数学関数 =====
+puts("【1. 基本的な数学関数】");
+puts("");
+
+// 絶対値
+let abs = fn(x) {
+    if (x < 0) {
+        return -x;
+    };
+    return x;
+};
+
+// 最大値
+let max = fn(a, b) {
+    if (a > b) {
+        return a;
+    };
+    return b;
+};
+
+// 最小値
+let min = fn(a, b) {
+    if (a < b) {
+        return a;
+    };
+    return b;
+};
+
+// 累乗（整数のみ）
+let power = fn(base, exp) {
+    if (exp == 0) {
+        return 1;
+    };
+    if (exp == 1) {
+        return base;
+    };
+    
+    let result = 1;
+    let i = 0;
+    while (i < exp) {
+        result = result * base;
+        i = i + 1;
+    };
+    return result;
+};
+
+// 高速累乗（分割統治法）
+let fast_power = fn(base, exp) {
+    if (exp == 0) {
+        return 1;
+    };
+    if (exp == 1) {
+        return base;
+    };
+    
+    if (exp % 2 == 0) {
+        let half = fast_power(base, exp / 2);
+        return half * half;
+    } else {
+        return base * fast_power(base, exp - 1);
+    };
+};
+
+puts("基本数学関数のテスト:");
+puts("abs(-15) =", abs(-15));
+puts("max(10, 20) =", max(10, 20));
+puts("min(10, 20) =", min(10, 20));
+puts("power(2, 8) =", power(2, 8));
+puts("fast_power(2, 8) =", fast_power(2, 8));
+puts("");
+
+// ===== 2. 数論アルゴリズム =====
+puts("【2. 数論アルゴリズム】");
+puts("");
+
+// 最大公約数（ユークリッドの互除法）
+let gcd = fn(a, b) {
+    while (b != 0) {
+        let temp = b;
+        b = a % b;
+        a = temp;
+    };
+    return a;
+};
+
+// 最大公約数（再帰版）
+let gcd_recursive = fn(a, b) {
+    if (b == 0) {
+        return a;
+    };
+    return gcd_recursive(b, a % b);
+};
+
+// 最小公倍数
+let lcm = fn(a, b) {
+    return (a * b) / gcd(a, b);
+};
+
+// 拡張ユークリッドの互除法
+let extended_gcd = fn(a, b) {
+    if (b == 0) {
+        return {"gcd": a, "x": 1, "y": 0};
+    };
+    
+    let result = extended_gcd(b, a % b);
+    let gcd_val = result["gcd"];
+    let x1 = result["x"];
+    let y1 = result["y"];
+    
+    let x = y1;
+    let y = x1 - (a / b) * y1;
+    
+    return {"gcd": gcd_val, "x": x, "y": y};
+};
+
+// 素数判定（試し割り法）
+let is_prime = fn(n) {
+    if (n < 2) {
+        return false;
+    };
+    if (n == 2) {
+        return true;
+    };
+    if (n % 2 == 0) {
+        return false;
+    };
+    
+    let i = 3;
+    while (i * i <= n) {
+        if (n % i == 0) {
+            return false;
+        };
+        i = i + 2;
+    };
+    return true;
+};
+
+// エラトステネスの篩
+let sieve_of_eratosthenes = fn(limit) {
+    let is_prime_array = [];
+    let i = 0;
+    while (i <= limit) {
+        is_prime_array = push(is_prime_array, true);
+        i = i + 1;
+    };
+    
+    is_prime_array[0] = false;
+    is_prime_array[1] = false;
+    
+    i = 2;
+    while (i * i <= limit) {
+        if (is_prime_array[i]) {
+            let j = i * i;
+            while (j <= limit) {
+                is_prime_array[j] = false;
+                j = j + i;
+            };
+        };
+        i = i + 1;
+    };
+    
+    let primes = [];
+    i = 2;
+    while (i <= limit) {
+        if (is_prime_array[i]) {
+            primes = push(primes, i);
+        };
+        i = i + 1;
+    };
+    
+    return primes;
+};
+
+// 素因数分解
+let prime_factorization = fn(n) {
+    let factors = [];
+    let d = 2;
+    
+    while (d * d <= n) {
+        while (n % d == 0) {
+            factors = push(factors, d);
+            n = n / d;
+        };
+        d = d + 1;
+    };
+    
+    if (n > 1) {
+        factors = push(factors, n);
+    };
+    
+    return factors;
+};
+
+puts("数論アルゴリズムのテスト:");
+puts("gcd(48, 18) =", gcd(48, 18));
+puts("lcm(48, 18) =", lcm(48, 18));
+puts("is_prime(17) =", is_prime(17));
+puts("is_prime(18) =", is_prime(18));
+
+let ext_gcd_result = extended_gcd(48, 18);
+puts("extended_gcd(48, 18) = gcd:", ext_gcd_result["gcd"], "x:", ext_gcd_result["x"], "y:", ext_gcd_result["y"]);
+
+let primes_50 = sieve_of_eratosthenes(50);
+let prime_str = "50以下の素数: [";
+let i = 0;
+while (i < len(primes_50)) {
+    prime_str = prime_str + primes_50[i];
+    if (i < len(primes_50) - 1) {
+        prime_str = prime_str + ", ";
+    };
+    i = i + 1;
+};
+prime_str = prime_str + "]";
+puts(prime_str);
+
+let factors_60 = prime_factorization(60);
+let factor_str = "60の素因数分解: [";
+i = 0;
+while (i < len(factors_60)) {
+    factor_str = factor_str + factors_60[i];
+    if (i < len(factors_60) - 1) {
+        factor_str = factor_str + ", ";
+    };
+    i = i + 1;
+};
+factor_str = factor_str + "]";
+puts(factor_str);
+puts("");
+
+// ===== 3. 組み合わせ論 =====
+puts("【3. 組み合わせ論】");
+puts("");
+
+// 階乗
+let factorial = fn(n) {
+    if (n <= 1) {
+        return 1;
+    };
+    return n * factorial(n - 1);
+};
+
+// 階乗（反復版）
+let factorial_iterative = fn(n) {
+    let result = 1;
+    let i = 2;
+    while (i <= n) {
+        result = result * i;
+        i = i + 1;
+    };
+    return result;
+};
+
+// 順列 P(n, r) = n! / (n-r)!
+let permutation = fn(n, r) {
+    if (r > n) {
+        return 0;
+    };
+    
+    let result = 1;
+    let i = n;
+    while (i > n - r) {
+        result = result * i;
+        i = i - 1;
+    };
+    return result;
+};
+
+// 組み合わせ C(n, r) = n! / (r! * (n-r)!)
+let combination = fn(n, r) {
+    if (r > n) {
+        return 0;
+    };
+    if (r == 0 || r == n) {
+        return 1;
+    };
+    
+    // より効率的な計算
+    if (r > n - r) {
+        r = n - r;
+    };
+    
+    let result = 1;
+    let i = 0;
+    while (i < r) {
+        result = result * (n - i) / (i + 1);
+        i = i + 1;
+    };
+    return result;
+};
+
+// パスカルの三角形
+let pascal_triangle = fn(rows) {
+    let triangle = [];
+    let i = 0;
+    
+    while (i < rows) {
+        let row = [];
+        let j = 0;
+        while (j <= i) {
+            row = push(row, combination(i, j));
+            j = j + 1;
+        };
+        triangle = push(triangle, row);
+        i = i + 1;
+    };
+    
+    return triangle;
+};
+
+// フィボナッチ数列
+let fibonacci = fn(n) {
+    if (n <= 1) {
+        return n;
+    };
+    return fibonacci(n - 1) + fibonacci(n - 2);
+};
+
+// フィボナッチ数列（動的プログラミング版）
+let fibonacci_dp = fn(n) {
+    if (n <= 1) {
+        return n;
+    };
+    
+    let dp = [0, 1];
+    let i = 2;
+    while (i <= n) {
+        dp = push(dp, dp[i - 1] + dp[i - 2]);
+        i = i + 1;
+    };
+    
+    return dp[n];
+};
+
+// カタラン数
+let catalan = fn(n) {
+    if (n <= 1) {
+        return 1;
+    };
+    
+    let result = 0;
+    let i = 0;
+    while (i < n) {
+        result = result + catalan(i) * catalan(n - 1 - i);
+        i = i + 1;
+    };
+    return result;
+};
+
+puts("組み合わせ論のテスト:");
+puts("factorial(5) =", factorial(5));
+puts("permutation(5, 3) =", permutation(5, 3));
+puts("combination(5, 3) =", combination(5, 3));
+puts("fibonacci(10) =", fibonacci(10));
+puts("fibonacci_dp(10) =", fibonacci_dp(10));
+puts("catalan(4) =", catalan(4));
+
+puts("パスカルの三角形 (5行):");
+let pascal = pascal_triangle(5);
+i = 0;
+while (i < len(pascal)) {
+    let row_str = "";
+    let j = 0;
+    while (j < len(pascal[i])) {
+        row_str = row_str + pascal[i][j];
+        if (j < len(pascal[i]) - 1) {
+            row_str = row_str + " ";
+        };
+        j = j + 1;
+    };
+    puts("  " + row_str);
+    i = i + 1;
+};
+puts("");
+
+// ===== 4. 数値計算アルゴリズム =====
+puts("【4. 数値計算アルゴリズム】");
+puts("");
+
+// 平方根（ニュートン法）
+let sqrt_newton = fn(x) {
+    if (x < 0) {
+        return -1;  // エラー
+    };
+    if (x == 0) {
+        return 0;
+    };
+    
+    let guess = x / 2;
+    let precision = 0.0001;
+    let max_iterations = 100;
+    let iterations = 0;
+    
+    while (iterations < max_iterations) {
+        let new_guess = (guess + x / guess) / 2;
+        let diff = new_guess - guess;
+        
+        if (diff < 0) {
+            diff = -diff;
+        };
+        
+        if (diff < precision) {
+            return new_guess;
+        };
+        
+        guess = new_guess;
+        iterations = iterations + 1;
+    };
+    
+    return guess;
+};
+
+// 平方根（二分探索法）
+let sqrt_binary = fn(x) {
+    if (x < 0) {
+        return -1;
+    };
+    if (x == 0 || x == 1) {
+        return x;
+    };
+    
+    let left = 0;
+    let right = x;
+    let precision = 0.0001;
+    
+    while (right - left > precision) {
+        let mid = (left + right) / 2;
+        let square = mid * mid;
+        
+        if (square == x) {
+            return mid;
+        } else if (square < x) {
+            left = mid;
+        } else {
+            right = mid;
+        };
+    };
+    
+    return (left + right) / 2;
+};
+
+// 指数関数の近似（テイラー展開）
+let exp_taylor = fn(x) {
+    let result = 1;
+    let term = 1;
+    let n = 1;
+    let max_terms = 20;
+    
+    while (n <= max_terms) {
+        term = term * x / n;
+        result = result + term;
+        n = n + 1;
+    };
+    
+    return result;
+};
+
+// 正弦関数の近似（テイラー展開）
+let sin_taylor = fn(x) {
+    let result = x;
+    let term = x;
+    let n = 1;
+    let max_terms = 10;
+    
+    while (n <= max_terms) {
+        term = term * (-x) * x / ((2 * n) * (2 * n + 1));
+        result = result + term;
+        n = n + 1;
+    };
+    
+    return result;
+};
+
+// 数値積分（台形則）
+let trapezoidal_rule = fn(func, a, b, n) {
+    let h = (b - a) / n;
+    let sum = func(a) + func(b);
+    
+    let i = 1;
+    while (i < n) {
+        sum = sum + 2 * func(a + i * h);
+        i = i + 1;
+    };
+    
+    return sum * h / 2;
+};
+
+// 数値積分（シンプソン則）
+let simpson_rule = fn(func, a, b, n) {
+    if (n % 2 != 0) {
+        n = n + 1;  // nを偶数にする
+    };
+    
+    let h = (b - a) / n;
+    let sum = func(a) + func(b);
+    
+    let i = 1;
+    while (i < n) {
+        if (i % 2 == 0) {
+            sum = sum + 2 * func(a + i * h);
+        } else {
+            sum = sum + 4 * func(a + i * h);
+        };
+        i = i + 1;
+    };
+    
+    return sum * h / 3;
+};
+
+puts("数値計算アルゴリズムのテスト:");
+puts("sqrt_newton(16) =", sqrt_newton(16));
+puts("sqrt_binary(16) =", sqrt_binary(16));
+puts("exp_taylor(1) ≈", exp_taylor(1));
+puts("sin_taylor(π/2 ≈ 1.57) ≈", sin_taylor(1.57));
+
+// x^2 を積分（0から2まで）理論値は8/3≈2.67
+let square_func = fn(x) { return x * x; };
+puts("∫₀² x² dx (台形則) ≈", trapezoidal_rule(square_func, 0, 2, 100));
+puts("∫₀² x² dx (シンプソン則) ≈", simpson_rule(square_func, 0, 2, 100));
+puts("");
+
+// ===== 5. グラフ理論的数学 =====
+puts("【5. グラフ理論的数学】");
+puts("");
+
+// 最短経路（フロイド・ワーシャル法）
+let floyd_warshall = fn(graph) {
+    let n = len(graph);
+    let dist = [];
+    
+    // 距離行列の初期化
+    let i = 0;
+    while (i < n) {
+        let row = [];
+        let j = 0;
+        while (j < n) {
+            row = push(row, graph[i][j]);
+            j = j + 1;
+        };
+        dist = push(dist, row);
+        i = i + 1;
+    };
+    
+    // フロイド・ワーシャル法
+    let k = 0;
+    while (k < n) {
+        i = 0;
+        while (i < n) {
+            let j = 0;
+            while (j < n) {
+                if (dist[i][k] + dist[k][j] < dist[i][j]) {
+                    dist[i][j] = dist[i][k] + dist[k][j];
+                };
+                j = j + 1;
+            };
+            i = i + 1;
+        };
+        k = k + 1;
+    };
+    
+    return dist;
+};
+
+// 行列の乗算
+let matrix_multiply = fn(a, b) {
+    let rows_a = len(a);
+    let cols_a = len(a[0]);
+    let cols_b = len(b[0]);
+    
+    let result = [];
+    let i = 0;
+    while (i < rows_a) {
+        let row = [];
+        let j = 0;
+        while (j < cols_b) {
+            let sum = 0;
+            let k = 0;
+            while (k < cols_a) {
+                sum = sum + a[i][k] * b[k][j];
+                k = k + 1;
+            };
+            row = push(row, sum);
+            j = j + 1;
+        };
+        result = push(result, row);
+        i = i + 1;
+    };
+    
+    return result;
+};
+
+puts("グラフ理論的数学のテスト:");
+let INF = 9999;
+let graph_matrix = [
+    [0, 3, INF, 7],
+    [8, 0, 2, INF],
+    [5, INF, 0, 1],
+    [2, INF, INF, 0]
+];
+
+let shortest_paths = floyd_warshall(graph_matrix);
+puts("最短経路行列 (フロイド・ワーシャル法):");
+i = 0;
+while (i < len(shortest_paths)) {
+    let row_str = "";
+    let j = 0;
+    while (j < len(shortest_paths[i])) {
+        if (shortest_paths[i][j] == INF) {
+            row_str = row_str + "∞";
+        } else {
+            row_str = row_str + shortest_paths[i][j];
+        };
+        if (j < len(shortest_paths[i]) - 1) {
+            row_str = row_str + " ";
+        };
+        j = j + 1;
+    };
+    puts("  " + row_str);
+    i = i + 1;
+};
+
+puts("");
+puts("=== 数学アルゴリズム集完了 ===");

@@ -1,0 +1,614 @@
+// 性能測定ベンチマーク集 - Dog言語
+// CPU集約的処理、メモリ使用量、再帰処理の性能測定用プログラム
+
+puts("=== Dog言語 性能測定ベンチマーク集 ===");
+puts("");
+
+// ===== 1. フィボナッチ数列ベンチマーク =====
+puts("【1. フィボナッチ数列ベンチマーク】");
+puts("CPU集約的な再帰処理の性能測定");
+puts("");
+
+// 再帰版フィボナッチ（指数時間アルゴリズム）
+let fibonacci_recursive = fn(n) {
+    if (n <= 1) {
+        return n;
+    };
+    return fibonacci_recursive(n - 1) + fibonacci_recursive(n - 2);
+};
+
+// 反復版フィボナッチ（線形時間アルゴリズム）
+let fibonacci_iterative = fn(n) {
+    if (n <= 1) {
+        return n;
+    };
+    
+    let a = 0;
+    let b = 1;
+    let i = 2;
+    
+    while (i <= n) {
+        let temp = a + b;
+        a = b;
+        b = temp;
+        i = i + 1;
+    };
+    
+    return b;
+};
+
+// 動的プログラミング版フィボナッチ
+let fibonacci_dp = fn(n) {
+    if (n <= 1) {
+        return n;
+    };
+    
+    let dp = [0, 1];
+    let i = 2;
+    
+    while (i <= n) {
+        dp = push(dp, dp[i - 1] + dp[i - 2]);
+        i = i + 1;
+    };
+    
+    return dp[n];
+};
+
+// メモ化フィボナッチ
+let fibonacci_memo = fn(n, memo) {
+    if (memo == null) {
+        memo = {};
+    };
+    
+    if (n <= 1) {
+        return n;
+    };
+    
+    if (memo[n] != null) {
+        return memo[n];
+    };
+    
+    memo[n] = fibonacci_memo(n - 1, memo) + fibonacci_memo(n - 2, memo);
+    return memo[n];
+};
+
+puts("フィボナッチ数列ベンチマーク (n=15):");
+let fib_n = 15;
+
+puts("再帰版: fibonacci(" + fib_n + ") = " + fibonacci_recursive(fib_n));
+puts("反復版: fibonacci(" + fib_n + ") = " + fibonacci_iterative(fib_n));
+puts("DP版: fibonacci(" + fib_n + ") = " + fibonacci_dp(fib_n));
+puts("メモ化版: fibonacci(" + fib_n + ") = " + fibonacci_memo(fib_n, null));
+
+puts("");
+puts("より大きな値での比較 (n=30):");
+let large_fib_n = 30;
+puts("反復版: fibonacci(" + large_fib_n + ") = " + fibonacci_iterative(large_fib_n));
+puts("DP版: fibonacci(" + large_fib_n + ") = " + fibonacci_dp(large_fib_n));
+puts("メモ化版: fibonacci(" + large_fib_n + ") = " + fibonacci_memo(large_fib_n, null));
+puts("注意: 再帰版は時間がかかりすぎるためスキップ");
+puts("");
+
+// ===== 2. 階乗計算ベンチマーク =====
+puts("【2. 階乗計算ベンチマーク】");
+puts("大きな数値計算の性能測定");
+puts("");
+
+// 再帰版階乗
+let factorial_recursive = fn(n) {
+    if (n <= 1) {
+        return 1;
+    };
+    return n * factorial_recursive(n - 1);
+};
+
+// 反復版階乗
+let factorial_iterative = fn(n) {
+    let result = 1;
+    let i = 1;
+    
+    while (i <= n) {
+        result = result * i;
+        i = i + 1;
+    };
+    
+    return result;
+};
+
+// 末尾再帰版階乗
+let factorial_tail_recursive = fn(n, acc) {
+    if (acc == null) {
+        acc = 1;
+    };
+    
+    if (n <= 1) {
+        return acc;
+    };
+    
+    return factorial_tail_recursive(n - 1, n * acc);
+};
+
+puts("階乗計算ベンチマーク:");
+let fact_n = 10;
+
+puts("再帰版: " + fact_n + "! = " + factorial_recursive(fact_n));
+puts("反復版: " + fact_n + "! = " + factorial_iterative(fact_n));
+puts("末尾再帰版: " + fact_n + "! = " + factorial_tail_recursive(fact_n, null));
+
+let large_fact_n = 15;
+puts("大きな値での比較:");
+puts("反復版: " + large_fact_n + "! = " + factorial_iterative(large_fact_n));
+puts("末尾再帰版: " + large_fact_n + "! = " + factorial_tail_recursive(large_fact_n, null));
+puts("");
+
+// ===== 3. 配列操作ベンチマーク =====
+puts("【3. 配列操作ベンチマーク】");
+puts("メモリ集約的処理の性能測定");
+puts("");
+
+// 配列の生成
+let generate_array = fn(size) {
+    let array = [];
+    let i = 0;
+    
+    while (i < size) {
+        array = push(array, i);
+        i = i + 1;
+    };
+    
+    return array;
+};
+
+// 配列の合計計算
+let sum_array = fn(array) {
+    let sum = 0;
+    let i = 0;
+    
+    while (i < len(array)) {
+        sum = sum + array[i];
+        i = i + 1;
+    };
+    
+    return sum;
+};
+
+// 配列の要素検索
+let linear_search_all = fn(array, target) {
+    let count = 0;
+    let i = 0;
+    
+    while (i < len(array)) {
+        if (array[i] == target) {
+            count = count + 1;
+        };
+        i = i + 1;
+    };
+    
+    return count;
+};
+
+// 配列のコピー
+let copy_array = fn(array) {
+    let result = [];
+    let i = 0;
+    
+    while (i < len(array)) {
+        result = push(result, array[i]);
+        i = i + 1;
+    };
+    
+    return result;
+};
+
+// 配列の逆順
+let reverse_array = fn(array) {
+    let result = [];
+    let i = len(array) - 1;
+    
+    while (i >= 0) {
+        result = push(result, array[i]);
+        i = i - 1;
+    };
+    
+    return result;
+};
+
+puts("配列操作ベンチマーク:");
+let array_size = 1000;
+puts("配列サイズ: " + array_size);
+
+let test_array = generate_array(array_size);
+puts("配列生成完了");
+
+let array_sum = sum_array(test_array);
+puts("配列合計: " + array_sum);
+
+let search_count = linear_search_all(test_array, 500);
+puts("値 500 の出現回数: " + search_count);
+
+let copied_array = copy_array(test_array);
+puts("配列コピー完了 (長さ: " + len(copied_array) + ")");
+
+let reversed_array = reverse_array(test_array);
+puts("配列逆順完了 (最初の5要素: " + reversed_array[0] + ", " + reversed_array[1] + ", " + reversed_array[2] + ", " + reversed_array[3] + ", " + reversed_array[4] + ")");
+puts("");
+
+// ===== 4. ソートアルゴリズム性能比較 =====
+puts("【4. ソートアルゴリズム性能比較】");
+puts("異なるアルゴリズムの性能特性測定");
+puts("");
+
+// 簡単なバブルソート
+let bubble_sort = fn(array) {
+    let arr = copy_array(array);
+    let n = len(arr);
+    
+    let i = 0;
+    while (i < n - 1) {
+        let j = 0;
+        while (j < n - i - 1) {
+            if (arr[j] > arr[j + 1]) {
+                let temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            };
+            j = j + 1;
+        };
+        i = i + 1;
+    };
+    
+    return arr;
+};
+
+// 挿入ソート
+let insertion_sort = fn(array) {
+    let arr = copy_array(array);
+    let n = len(arr);
+    
+    let i = 1;
+    while (i < n) {
+        let key = arr[i];
+        let j = i - 1;
+        
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        };
+        
+        arr[j + 1] = key;
+        i = i + 1;
+    };
+    
+    return arr;
+};
+
+// クイックソート
+let quick_sort = fn(array) {
+    if (len(array) <= 1) {
+        return array;
+    };
+    
+    let pivot = array[len(array) / 2];
+    let less = [];
+    let equal = [];
+    let greater = [];
+    
+    let i = 0;
+    while (i < len(array)) {
+        if (array[i] < pivot) {
+            less = push(less, array[i]);
+        } else if (array[i] == pivot) {
+            equal = push(equal, array[i]);
+        } else {
+            greater = push(greater, array[i]);
+        };
+        i = i + 1;
+    };
+    
+    let sorted_less = quick_sort(less);
+    let sorted_greater = quick_sort(greater);
+    
+    let result = [];
+    i = 0;
+    while (i < len(sorted_less)) {
+        result = push(result, sorted_less[i]);
+        i = i + 1;
+    };
+    i = 0;
+    while (i < len(equal)) {
+        result = push(result, equal[i]);
+        i = i + 1;
+    };
+    i = 0;
+    while (i < len(sorted_greater)) {
+        result = push(result, sorted_greater[i]);
+        i = i + 1;
+    };
+    
+    return result;
+};
+
+// ランダム配列の生成
+let generate_random_array = fn(size, seed) {
+    let array = [];
+    let current_seed = seed;
+    let i = 0;
+    
+    while (i < size) {
+        current_seed = (current_seed * 1103515245 + 12345) % 1000000;
+        array = push(array, current_seed % 100);
+        i = i + 1;
+    };
+    
+    return array;
+};
+
+puts("ソートアルゴリズム性能比較:");
+let sort_size = 100;
+let random_data = generate_random_array(sort_size, 42);
+
+puts("テストデータサイズ: " + sort_size);
+puts("元のデータ (最初の10要素): ");
+let preview = "";
+let i = 0;
+while (i < 10) {
+    preview = preview + random_data[i];
+    if (i < 9) {
+        preview = preview + ", ";
+    };
+    i = i + 1;
+};
+puts("[" + preview + ", ...]");
+
+puts("");
+puts("バブルソート実行中...");
+let bubble_result = bubble_sort(random_data);
+puts("バブルソート完了");
+
+puts("挿入ソート実行中...");
+let insertion_result = insertion_sort(random_data);
+puts("挿入ソート完了");
+
+puts("クイックソート実行中...");
+let quick_result = quick_sort(random_data);
+puts("クイックソート完了");
+
+// 結果の検証
+let is_sorted = fn(array) {
+    let i = 1;
+    while (i < len(array)) {
+        if (array[i - 1] > array[i]) {
+            return false;
+        };
+        i = i + 1;
+    };
+    return true;
+};
+
+puts("");
+puts("ソート結果検証:");
+puts("バブルソート正しくソートされている:", is_sorted(bubble_result));
+puts("挿入ソート正しくソートされている:", is_sorted(insertion_result));
+puts("クイックソート正しくソートされている:", is_sorted(quick_result));
+puts("");
+
+// ===== 5. 数値計算ベンチマーク =====
+puts("【5. 数値計算ベンチマーク】");
+puts("計算集約的処理の性能測定");
+puts("");
+
+// 素数判定
+let is_prime = fn(n) {
+    if (n < 2) {
+        return false;
+    };
+    if (n == 2) {
+        return true;
+    };
+    if (n % 2 == 0) {
+        return false;
+    };
+    
+    let i = 3;
+    while (i * i <= n) {
+        if (n % i == 0) {
+            return false;
+        };
+        i = i + 2;
+    };
+    
+    return true;
+};
+
+// 指定範囲の素数カウント
+let count_primes = fn(limit) {
+    let count = 0;
+    let i = 2;
+    
+    while (i <= limit) {
+        if (is_prime(i)) {
+            count = count + 1;
+        };
+        i = i + 1;
+    };
+    
+    return count;
+};
+
+// 最大公約数（ユークリッドの互除法）
+let gcd = fn(a, b) {
+    while (b != 0) {
+        let temp = b;
+        b = a % b;
+        a = temp;
+    };
+    return a;
+};
+
+// 指定範囲でのGCD計算
+let benchmark_gcd = fn(range) {
+    let total_gcd = 0;
+    let count = 0;
+    let i = 1;
+    
+    while (i <= range) {
+        let j = i + 1;
+        while (j <= range) {
+            total_gcd = total_gcd + gcd(i, j);
+            count = count + 1;
+            j = j + 1;
+        };
+        i = i + 1;
+    };
+    
+    return {"total": total_gcd, "count": count};
+};
+
+// 平方根計算（ニュートン法）
+let sqrt_newton = fn(x, iterations) {
+    if (x <= 0) {
+        return 0;
+    };
+    
+    let guess = x / 2;
+    let i = 0;
+    
+    while (i < iterations) {
+        guess = (guess + x / guess) / 2;
+        i = i + 1;
+    };
+    
+    return guess;
+};
+
+puts("数値計算ベンチマーク:");
+
+let prime_limit = 1000;
+puts("1から" + prime_limit + "までの素数の個数: " + count_primes(prime_limit));
+
+let gcd_range = 50;
+let gcd_result = benchmark_gcd(gcd_range);
+puts("1から" + gcd_range + "までの全ペアのGCD合計: " + gcd_result["total"] + " (計算回数: " + gcd_result["count"] + ")");
+
+let sqrt_test = 2;
+let sqrt_iterations = 10;
+puts("sqrt(" + sqrt_test + ") ニュートン法 " + sqrt_iterations + "回: " + sqrt_newton(sqrt_test, sqrt_iterations));
+puts("");
+
+// ===== 6. 文字列処理ベンチマーク =====
+puts("【6. 文字列処理ベンチマーク】");
+puts("文字列操作の性能測定");
+puts("");
+
+// 文字列連結ベンチマーク
+let string_concat_benchmark = fn(count) {
+    let result = "";
+    let i = 0;
+    
+    while (i < count) {
+        result = result + "a";
+        i = i + 1;
+    };
+    
+    return len(result);
+};
+
+// 文字列検索ベンチマーク
+let string_search_benchmark = fn(text, pattern, repeat) {
+    let found_count = 0;
+    let i = 0;
+    
+    while (i < repeat) {
+        // 簡易検索実装
+        if (text == pattern) {
+            found_count = found_count + 1;
+        };
+        i = i + 1;
+    };
+    
+    return found_count;
+};
+
+puts("文字列処理ベンチマーク:");
+
+let concat_count = 1000;
+let concat_length = string_concat_benchmark(concat_count);
+puts("文字列連結ベンチマーク (" + concat_count + "回): 最終文字列長 = " + concat_length);
+
+let search_text = "Hello World";
+let search_pattern = "World";
+let search_repeat = 10000;
+let search_results = string_search_benchmark(search_text, search_pattern, search_repeat);
+puts("文字列検索ベンチマーク (" + search_repeat + "回): 発見回数 = " + search_results);
+puts("");
+
+// ===== 7. 総合ベンチマークスコア =====
+puts("【7. 総合ベンチマークスコア】");
+puts("複数の処理を組み合わせた総合性能評価");
+puts("");
+
+let comprehensive_benchmark = fn() {
+    puts("総合ベンチマーク実行中...");
+    
+    // CPU集約的処理
+    let cpu_score = fibonacci_iterative(30);
+    
+    // メモリ集約的処理
+    let memory_array = generate_array(500);
+    let memory_score = sum_array(memory_array);
+    
+    // 計算集約的処理
+    let math_score = count_primes(100);
+    
+    // ソート処理
+    let sort_data = generate_random_array(50, 123);
+    let sort_result = quick_sort(sort_data);
+    let sort_score = len(sort_result);
+    
+    // 文字列処理
+    let string_score = string_concat_benchmark(100);
+    
+    let total_score = cpu_score + memory_score + math_score + sort_score + string_score;
+    
+    return {
+        "cpu": cpu_score,
+        "memory": memory_score,
+        "math": math_score,
+        "sort": sort_score,
+        "string": string_score,
+        "total": total_score
+    };
+};
+
+let benchmark_results = comprehensive_benchmark();
+
+puts("=== 総合ベンチマーク結果 ===");
+puts("CPU処理スコア: " + benchmark_results["cpu"]);
+puts("メモリ処理スコア: " + benchmark_results["memory"]);
+puts("数学計算スコア: " + benchmark_results["math"]);
+puts("ソート処理スコア: " + benchmark_results["sort"]);
+puts("文字列処理スコア: " + benchmark_results["string"]);
+puts("総合スコア: " + benchmark_results["total"]);
+
+let performance_grade = "";
+if (benchmark_results["total"] > 1000000) {
+    performance_grade = "S+";
+} else if (benchmark_results["total"] > 500000) {
+    performance_grade = "S";
+} else if (benchmark_results["total"] > 100000) {
+    performance_grade = "A";
+} else if (benchmark_results["total"] > 50000) {
+    performance_grade = "B";
+} else if (benchmark_results["total"] > 10000) {
+    performance_grade = "C";
+} else {
+    performance_grade = "D";
+};
+
+puts("性能グレード: " + performance_grade);
+
+puts("");
+puts("=== 性能測定ベンチマーク集完了 ===");
+puts("このベンチマークは、Dog言語の処理系性能を評価するために使用できます。");
+puts("Phase 1 (インタープリター) から Phase 4 (LLVM連携) まで、");
+puts("各段階での性能向上を定量的に測定することが可能です。");
