@@ -311,16 +311,32 @@ jobs:
 
     - name: 📝 GitHub Wiki自動更新
       if: success()
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         echo "📝 GitHub Wiki自動更新中..."
         
-        # Wiki更新用の一時的な実装
-        echo "📚 Wiki更新準備完了" >> $GITHUB_STEP_SUMMARY
-        echo "- 性能ベンチマークページ更新予定" >> $GITHUB_STEP_SUMMARY
-        echo "- 進化分析データ蓄積中" >> $GITHUB_STEP_SUMMARY
+        # Git設定
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
         
-        # TODO: 完全なWiki自動更新システムの実装
-        echo "🔄 Wiki自動更新システムは次のフェーズで実装予定"
+        # Wiki自動更新システム実行
+        if [ -f "scripts/performance/cmd/wiki/main.go" ]; then
+          echo "🚀 Wiki自動更新システム実行中..."
+          go run scripts/performance/cmd/wiki/main.go
+          
+          if [ $? -eq 0 ]; then
+            echo "✅ Wiki更新完了" >> $GITHUB_STEP_SUMMARY
+            echo "- 📊 性能ベンチマークページ更新" >> $GITHUB_STEP_SUMMARY
+            echo "- 📈 進化履歴データ更新" >> $GITHUB_STEP_SUMMARY
+            echo "- 🏁 GCC/Rust比較データ更新" >> $GITHUB_STEP_SUMMARY
+            echo "- 📉 トレンド分析更新" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Wiki更新で警告が発生しました（継続）" >> $GITHUB_STEP_SUMMARY
+          fi
+        else
+          echo "⚠️ Wiki更新システムが見つかりません" >> $GITHUB_STEP_SUMMARY
+        fi
 
   # PR性能測定 (Pull Request用)
   benchmark_pr:

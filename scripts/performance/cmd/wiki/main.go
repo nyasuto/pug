@@ -244,7 +244,7 @@ func (w *WikiUpdater) generateMainBenchmarkPage(data PerformanceWikiData) string
 ## 🚀 最新ベンチマーク結果
 
 `, data.Timestamp.Format("2006-01-02 15:04:05 UTC"),
-		data.CommitHash[:8], w.RepoURL, data.CommitHash, data.Branch)
+		getShortHash(data.CommitHash), w.RepoURL, data.CommitHash, data.Branch)
 
 	// 性能データがある場合は詳細を追加
 	if perfData, ok := data.PerformanceData["summary"].(map[string]interface{}); ok {
@@ -442,7 +442,7 @@ func (w *WikiUpdater) commitAndPush(data PerformanceWikiData) error {
 - 更新日時: %s
 
 🤖 Generated with Claude Code
-`, data.CommitHash[:8], data.Branch, data.Timestamp.Format("2006-01-02 15:04:05 UTC"))
+`, getShortHash(data.CommitHash), data.Branch, data.Timestamp.Format("2006-01-02 15:04:05 UTC"))
 
 	cmd = exec.Command("git", "commit", "-m", commitMsg) // #nosec G204 - controlled git commit with validated message
 	cmd.Dir = w.TempDir
@@ -450,17 +450,24 @@ func (w *WikiUpdater) commitAndPush(data PerformanceWikiData) error {
 		return err
 	}
 
-	// プッシュ
+	// プッシュ（詳細ログ付き）
+	fmt.Println("🔄 Wikiプッシュ中...")
 	cmd = exec.Command("git", "push", "origin", "master")
 	cmd.Dir = w.TempDir
-	if err := cmd.Run(); err != nil {
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Printf("📋 master プッシュ結果: %s\n", string(output))
 		// masterがない場合はmainを試す
+		fmt.Println("🔄 main ブランチでプッシュ中...")
 		cmd = exec.Command("git", "push", "origin", "main")
 		cmd.Dir = w.TempDir
-		if err := cmd.Run(); err != nil {
-			return err
+		output, err = cmd.CombinedOutput()
+		if err != nil {
+			fmt.Printf("❌ プッシュ失敗: %s\n", string(output))
+			return fmt.Errorf("プッシュ失敗: %v", err)
 		}
 	}
+	fmt.Printf("📋 プッシュ成功: %s\n", string(output))
 
 	fmt.Println("✅ Wiki更新完了")
 	return nil
@@ -499,4 +506,11 @@ func getValueOrDefault(data map[string]interface{}, key string, defaultValue int
 		return value
 	}
 	return defaultValue
+}
+
+func getShortHash(hash string) string {
+	if len(hash) >= 8 {
+		return hash[:8]
+	}
+	return hash
 }
