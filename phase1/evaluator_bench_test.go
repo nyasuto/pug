@@ -215,21 +215,12 @@ func BenchmarkEvalEnvironmentOperations(t *testing.B) {
 // BenchmarkEvalParseAndEval benchmarks combined parsing and evaluation
 func BenchmarkEvalParseAndEval(t *testing.B) {
 	input := `
-	let quicksort = fn(arr) {
-		if (len(arr) <= 1) {
-			return arr;
-		}
-		
-		let pivot = first(arr);
-		let less = [];
-		let greater = [];
-		
-		// This is a conceptual implementation
-		// Real implementation would need array manipulation
-		return arr;
+	let add = fn(a, b) {
+		return a + b;
 	};
 	
-	quicksort([3, 1, 4, 1, 5, 9, 2, 6]);
+	let result = add(5, 10);
+	result * 2;
 	`
 
 	for i := 0; i < t.N; i++ {
