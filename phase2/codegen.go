@@ -161,6 +161,14 @@ func (cg *CodeGenerator) generateExpression(expr phase1.Expression) error {
 		return cg.generateInfixExpression(node)
 	case *phase1.PrefixExpression:
 		return cg.generatePrefixExpression(node)
+	case *phase1.CallExpression:
+		return cg.generateCallExpression(node)
+	case *phase1.IfExpression:
+		return cg.generateIfExpression(node)
+	case *phase1.FunctionLiteral:
+		return cg.generateFunctionLiteral(node)
+	case *phase1.StringLiteral:
+		return cg.generateStringLiteral(node)
 	default:
 		return fmt.Errorf("unsupported expression type: %T", expr)
 	}
@@ -179,6 +187,20 @@ func (cg *CodeGenerator) generateBoolean(node *phase1.Boolean) error {
 	} else {
 		cg.emit("    movq $0, %rax") // false = 0
 	}
+	return nil
+}
+
+// generateStringLiteral は文字列リテラルのアセンブリコードを生成する
+func (cg *CodeGenerator) generateStringLiteral(node *phase1.StringLiteral) error {
+	// 文字列ラベルを生成
+	strLabel := cg.generateLabel("str")
+
+	// データセクションに文字列を追加（簡易実装）
+	// 実際の実装では、データセクションを管理する必要がある
+	cg.emitf("    leaq %s(%%rip), %%rax", strLabel)
+
+	// TODO: データセクションに文字列データを追加する処理
+	// 現在は簡易的にアドレスのみを返す
 	return nil
 }
 
@@ -244,6 +266,10 @@ func (cg *CodeGenerator) generateInfixExpression(node *phase1.InfixExpression) e
 		return cg.generateComparison(node.Operator)
 	case ">":
 		return cg.generateComparison(node.Operator)
+	case "<=":
+		return cg.generateComparison(node.Operator)
+	case ">=":
+		return cg.generateComparison(node.Operator)
 	default:
 		return fmt.Errorf("unsupported infix operator: %s", node.Operator)
 	}
@@ -269,6 +295,10 @@ func (cg *CodeGenerator) generateComparison(operator string) error {
 		cg.emitf("    jl %s", trueLabel)
 	case ">":
 		cg.emitf("    jg %s", trueLabel)
+	case "<=":
+		cg.emitf("    jle %s", trueLabel)
+	case ">=":
+		cg.emitf("    jge %s", trueLabel)
 	}
 
 	// 偽の場合：0をRAXに設定
@@ -439,6 +469,106 @@ func (cg *CodeGenerator) generateBlockStatement(stmt *phase1.BlockStatement) err
 			return err
 		}
 	}
+	return nil
+}
+
+// generateCallExpression は関数呼び出しのアセンブリコードを生成する
+func (cg *CodeGenerator) generateCallExpression(node *phase1.CallExpression) error {
+	// 引数を逆順でスタックにプッシュ（x86_64 calling convention）
+	for i := len(node.Arguments) - 1; i >= 0; i-- {
+		if err := cg.generateExpression(node.Arguments[i]); err != nil {
+			return err
+		}
+		cg.emit("    pushq %rax")
+	}
+
+	// 関数の識別子を取得
+	if ident, ok := node.Function.(*phase1.Identifier); ok {
+		// 関数呼び出し
+		cg.emitf("    call %s", ident.Value)
+
+		// スタックポインタを調整（引数の分だけpop）
+		if len(node.Arguments) > 0 {
+			cg.emitf("    addq $%d, %%rsp", len(node.Arguments)*8)
+		}
+	} else {
+		return fmt.Errorf("unsupported function call type: %T", node.Function)
+	}
+
+	return nil
+}
+
+// generateIfExpression はif式のアセンブリコードを生成する
+func (cg *CodeGenerator) generateIfExpression(node *phase1.IfExpression) error {
+	// 条件式を評価
+	if err := cg.generateExpression(node.Condition); err != nil {
+		return err
+	}
+
+	// ラベルを生成
+	elseLabel := cg.generateLabel("else")
+	endLabel := cg.generateLabel("end")
+
+	// 条件をテストして分岐
+	cg.emit("    testq %rax, %rax")
+	cg.emitf("    je %s", elseLabel)
+
+	// then節を生成
+	if err := cg.generateBlockStatement(node.Consequence); err != nil {
+		return err
+	}
+	cg.emitf("    jmp %s", endLabel)
+
+	// else節
+	cg.emitf("%s:", elseLabel)
+	if node.Alternative != nil {
+		if err := cg.generateBlockStatement(node.Alternative); err != nil {
+			return err
+		}
+	} else {
+		// elseがない場合はfalse(0)を返す
+		cg.emit("    movq $0, %rax")
+	}
+
+	cg.emitf("%s:", endLabel)
+	return nil
+}
+
+// generateFunctionLiteral は関数リテラルのアセンブリコードを生成する
+func (cg *CodeGenerator) generateFunctionLiteral(node *phase1.FunctionLiteral) error {
+	// 関数名を生成
+	funcName := cg.generateLabel("func")
+
+	// 関数のアドレスをRAXに格納
+	cg.emitf("    leaq %s(%%rip), %%rax", funcName)
+
+	// 関数の終わりまでジャンプ
+	endLabel := cg.generateLabel("func_end")
+	cg.emitf("    jmp %s", endLabel)
+
+	// 関数定義の開始
+	cg.emitf("%s:", funcName)
+	cg.emit("    pushq %rbp")
+	cg.emit("    movq %rsp, %rbp")
+
+	// パラメータをローカル変数に設定
+	for i, param := range node.Parameters {
+		// スタックから引数を取得してローカル変数として保存
+		offset := (i+1)*8 + 16 // rbp + return address + parameters
+		cg.variables[param.Value] = offset
+	}
+
+	// 関数本体を生成
+	if err := cg.generateBlockStatement(node.Body); err != nil {
+		return err
+	}
+
+	// 関数のエピローグ
+	cg.emit("    popq %rbp")
+	cg.emit("    ret")
+
+	// 関数定義の終わり
+	cg.emitf("%s:", endLabel)
 	return nil
 }
 
