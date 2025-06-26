@@ -149,9 +149,30 @@ fmt: ## コードフォーマット
 	@echo "✨ コードフォーマット中..."
 	$(GOCMD) fmt ./...
 
+.PHONY: sec
+sec: ## セキュリティスキャン (gosec)
+	@echo "🔒 セキュリティスキャン実行中..."
+	@if command -v gosec >/dev/null 2>&1; then \
+		gosec ./...; \
+	else \
+		echo "⚠️  gosec がインストールされていません"; \
+		echo "   インストール: go install github.com/securego/gosec/v2/cmd/gosec@latest"; \
+	fi
+
 .PHONY: quality
 quality: deps fmt lint build test ## 全品質チェック実行
 	@echo "✅ 品質チェック完了"
+
+.PHONY: quality-fix
+quality-fix: ## 自動修正可能な品質問題を修正
+	@echo "🔧 品質問題自動修正中..."
+	$(GOCMD) fmt ./...
+	@if command -v $(GOLINT) >/dev/null 2>&1; then \
+		$(GOLINT) run --fix ./...; \
+	else \
+		echo "⚠️  golangci-lint がインストールされていません"; \
+	fi
+	@echo "✅ 自動修正完了 - 手動でテストを実行してください: make test"
 
 ##@ ベンチマーク・性能測定
 .PHONY: bench
