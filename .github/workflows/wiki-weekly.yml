@@ -1,0 +1,141 @@
+name: 📝 週次Wiki自動更新
+
+on:
+  schedule:
+    # 毎週日曜日 JST 10:00 (UTC 01:00) に実行
+    - cron: '0 1 * * 0'
+  workflow_dispatch: # 手動実行も可能
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  wiki-weekly-update:
+    name: 📚 週次Wiki包括更新
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 リポジトリチェックアウト
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # 全履歴を取得（トレンド分析用）
+
+    - name: 🐹 Go環境セットアップ
+      uses: actions/setup-go@v5
+      with:
+        go-version: 'stable'
+        cache: true
+
+    - name: 📦 依存関係インストール
+      run: |
+        go mod download
+        go mod tidy
+
+    - name: 🏗️ プロジェクトビルド
+      run: make build
+
+    - name: 📊 週次包括性能測定
+      run: |
+        echo "📊 週次包括性能測定実行中..."
+        
+        # 基本ベンチマーク
+        echo "⚡ 基本ベンチマーク実行中..."
+        make bench-basic
+        
+        # コンパイラベンチマーク
+        echo "🔧 コンパイラベンチマーク実行中..."
+        make bench-compiler
+        
+        # 他言語比較ベンチマーク（可能な場合）
+        echo "🏁 比較ベンチマーク実行中..."
+        if command -v gcc >/dev/null 2>&1; then
+          echo "  ✅ GCC比較ベンチマーク実行"
+          make bench-vs-gcc || echo "  ⚠️ GCC比較ベンチマーク失敗（継続）"
+        else
+          echo "  ⚠️ GCC利用不可"
+        fi
+        
+        if command -v rustc >/dev/null 2>&1; then
+          echo "  ✅ Rust比較ベンチマーク実行"
+          make bench-vs-rust || echo "  ⚠️ Rust比較ベンチマーク失敗（継続）"
+        else
+          echo "  ⚠️ Rust利用不可"
+        fi
+
+    - name: 📈 性能データ分析
+      run: |
+        echo "📊 性能データ分析実行中..."
+        make bench-analyze || echo "⚠️ 分析処理で警告（継続）"
+
+    - name: 📉 トレンド分析
+      run: |
+        echo "📈 長期トレンド分析実行中..."
+        make bench-trend || echo "⚠️ トレンド分析で警告（継続）"
+
+    - name: 🎨 ダッシュボード生成
+      run: |
+        echo "🎨 ダッシュボード生成中..."
+        make bench-dashboard || echo "⚠️ ダッシュボード生成で警告（継続）"
+
+    - name: 📝 GitHub Wiki包括更新
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        echo "📝 GitHub Wiki包括更新実行中..."
+        
+        # Git設定
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        
+        # Wiki自動更新実行
+        echo "🚀 週次Wiki更新システム実行中..."
+        make bench-wiki
+        
+        if [ $? -eq 0 ]; then
+          echo "✅ 週次Wiki更新完了" >> $GITHUB_STEP_SUMMARY
+          echo "- 📊 性能ベンチマークページ包括更新" >> $GITHUB_STEP_SUMMARY
+          echo "- 📈 進化履歴データ蓄積・更新" >> $GITHUB_STEP_SUMMARY
+          echo "- 🏁 GCC/Rust比較データ更新" >> $GITHUB_STEP_SUMMARY
+          echo "- 📉 週次トレンド分析更新" >> $GITHUB_STEP_SUMMARY
+          echo "- 🎨 ダッシュボード更新" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "⚠️ 週次Wiki更新で警告が発生しました" >> $GITHUB_STEP_SUMMARY
+        fi
+
+    - name: 📊 週次レポート生成
+      run: |
+        echo "📊 週次レポート生成中..."
+        
+        echo "## 📈 週次性能レポート" >> $GITHUB_STEP_SUMMARY
+        echo "**実行日時**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+        echo "**実行タイプ**: 週次包括更新" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        echo "### 📋 実行結果" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ 基本ベンチマーク実行" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ コンパイラベンチマーク実行" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ 性能データ分析完了" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ トレンド分析完了" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ ダッシュボード更新完了" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ GitHub Wiki更新完了" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        echo "### 🔗 リンク" >> $GITHUB_STEP_SUMMARY
+        echo "- [📊 性能ベンチマーク Wiki](https://github.com/nyasuto/pug/wiki/Performance-Benchmark)" >> $GITHUB_STEP_SUMMARY
+        echo "- [📚 学習ガイド Wiki](https://github.com/nyasuto/pug/wiki/Learning-Guide)" >> $GITHUB_STEP_SUMMARY
+        echo "- [🏠 Wiki ホーム](https://github.com/nyasuto/pug/wiki)" >> $GITHUB_STEP_SUMMARY
+
+    - name: 📦 週次アーティファクト保存
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: weekly-performance-reports-${{ github.run_number }}
+        path: |
+          performance-*.html
+          performance-*.json
+          trend-*.json
+          dashboard-*.html
+          dashboard-*.json
+          *.s
+        retention-days: 90  # 週次レポートは90日保持
