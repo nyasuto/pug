@@ -160,7 +160,7 @@ sec: ## セキュリティスキャン (gosec)
 	fi
 
 .PHONY: quality
-quality: deps fmt lint build test ## 全品質チェック実行
+quality: deps fmt lint build test sec ## 全品質チェック実行
 	@echo "✅ 品質チェック完了"
 
 .PHONY: quality-fix
