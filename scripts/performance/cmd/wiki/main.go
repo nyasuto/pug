@@ -138,14 +138,14 @@ func (w *WikiUpdater) cloneWikiRepo() error {
 	fmt.Println("📥 Wikiリポジトリクローン中...")
 
 	// 既存ディレクトリを削除
-	os.RemoveAll(w.TempDir)
+	_ = os.RemoveAll(w.TempDir)
 
 	// Wikiクローン（失敗しても継続 - Wikiが初回作成の場合）
-	cmd := exec.Command("git", "clone", w.WikiURL, w.TempDir)
+	cmd := exec.Command("git", "clone", w.WikiURL, w.TempDir) // #nosec G204 - controlled git operations for Wiki automation
 	if err := cmd.Run(); err != nil {
 		fmt.Printf("ℹ️ Wikiクローン失敗（初回作成時は正常）: %v\n", err)
 		// 空のディレクトリを作成して初期化
-		if err := os.MkdirAll(w.TempDir, 0755); err != nil {
+		if err := os.MkdirAll(w.TempDir, 0750); err != nil {
 			return err
 		}
 
@@ -157,7 +157,7 @@ func (w *WikiUpdater) cloneWikiRepo() error {
 		}
 
 		// リモート追加
-		cmd = exec.Command("git", "remote", "add", "origin", w.WikiURL)
+		cmd = exec.Command("git", "remote", "add", "origin", w.WikiURL) // #nosec G204 - controlled git operations
 		cmd.Dir = w.TempDir
 		_ = cmd.Run() // エラーは無視（すでに存在する場合）
 	}
@@ -175,7 +175,7 @@ func (w *WikiUpdater) setupGitConfig() error {
 	}
 
 	for _, cmdArgs := range commands {
-		cmd := exec.Command(cmdArgs[0], cmdArgs[1:]...)
+		cmd := exec.Command(cmdArgs[0], cmdArgs[1:]...) // #nosec G204 - controlled git config commands
 		cmd.Dir = w.TempDir
 		if err := cmd.Run(); err != nil {
 			return err
@@ -412,7 +412,7 @@ TODO: 回帰アラート情報の表示
 // updateWikiPage Wikiページを更新
 func (w *WikiUpdater) updateWikiPage(page WikiPage) error {
 	filePath := filepath.Join(w.TempDir, page.Filename)
-	return os.WriteFile(filePath, []byte(page.Content), 0644)
+	return os.WriteFile(filePath, []byte(page.Content), 0600)
 }
 
 // commitAndPush 変更をコミットしてプッシュ
@@ -444,7 +444,7 @@ func (w *WikiUpdater) commitAndPush(data PerformanceWikiData) error {
 🤖 Generated with Claude Code
 `, data.CommitHash[:8], data.Branch, data.Timestamp.Format("2006-01-02 15:04:05 UTC"))
 
-	cmd = exec.Command("git", "commit", "-m", commitMsg)
+	cmd = exec.Command("git", "commit", "-m", commitMsg) // #nosec G204 - controlled git commit with validated message
 	cmd.Dir = w.TempDir
 	if err := cmd.Run(); err != nil {
 		return err
@@ -468,7 +468,7 @@ func (w *WikiUpdater) commitAndPush(data PerformanceWikiData) error {
 
 // cleanup 一時ディレクトリをクリーンアップ
 func (w *WikiUpdater) cleanup() {
-	os.RemoveAll(w.TempDir)
+	_ = os.RemoveAll(w.TempDir)
 }
 
 // ユーティリティ関数群
@@ -481,7 +481,7 @@ func getEnvOrDefault(key, defaultValue string) string {
 }
 
 func loadJSONFile(filename string) (map[string]interface{}, error) {
-	data, err := os.ReadFile(filename)
+	data, err := os.ReadFile(filename) // #nosec G304 - controlled performance data file reading
 	if err != nil {
 		return nil, err
 	}

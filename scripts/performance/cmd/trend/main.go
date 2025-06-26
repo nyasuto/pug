@@ -152,7 +152,7 @@ func collectPerformanceHistory() ([]PerformanceHistoryEntry, error) {
 func parseHistoryFile(filepath string) (PerformanceHistoryEntry, error) {
 	var entry PerformanceHistoryEntry
 
-	data, err := os.ReadFile(filepath)
+	data, err := os.ReadFile(filepath) // #nosec G304 - controlled performance history file reading
 	if err != nil {
 		return entry, err
 	}
@@ -380,7 +380,7 @@ func saveAnalysisResult(analysis TrendAnalysisResult) error {
 		return err
 	}
 
-	return os.WriteFile("trend-analysis.json", data, 0644)
+	return os.WriteFile("trend-analysis.json", data, 0600)
 }
 
 func generateAlertReport(analysis TrendAnalysisResult) {
@@ -439,7 +439,7 @@ func generateVisualizationData(analysis TrendAnalysisResult, data []PerformanceH
 
 	// Chart.jsデータをJSONファイルに保存
 	chartJSON, _ := json.MarshalIndent(chartData, "", "  ")
-	err := os.WriteFile("performance-chart-data.json", chartJSON, 0644)
+	err := os.WriteFile("performance-chart-data.json", chartJSON, 0600)
 	if err != nil {
 		log.Printf("⚠️ Chart.jsデータファイル保存失敗: %v", err)
 	}

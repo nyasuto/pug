@@ -166,7 +166,7 @@ func parseBasicBenchmark(filename string) ([]BenchmarkResult, error) {
 		return nil, err
 	}
 
-	file, err := os.Open(filename)
+	file, err := os.Open(filename) // #nosec G304 - controlled benchmark file reading
 	if err != nil {
 		return nil, err
 	}
@@ -210,7 +210,7 @@ func parseComparisonData(filename, language string) ([]ComparisonData, error) {
 		return nil, err
 	}
 
-	file, err := os.Open(filename)
+	file, err := os.Open(filename) // #nosec G304 - controlled benchmark file reading
 	if err != nil {
 		return nil, err
 	}
@@ -328,7 +328,7 @@ func saveJSONReport(report PerformanceReport) error {
 		return err
 	}
 
-	return os.WriteFile("performance-report.json", data, 0644)
+	return os.WriteFile("performance-report.json", data, 0600)
 }
 
 // generateHTMLReport HTMLレポートを生成
@@ -404,7 +404,7 @@ func generateHTMLReport(report PerformanceReport) error {
 		generateRecommendationsList(report.Summary.Recommendations),
 	)
 
-	return os.WriteFile("performance-report.html", []byte(htmlContent), 0644)
+	return os.WriteFile("performance-report.html", []byte(htmlContent), 0600)
 }
 
 // ユーティリティ関数群

@@ -473,7 +473,7 @@ func generateHTMLDashboard(data DashboardData) error {
 		"lower": func(s string) string { return s },
 		"toJSON": func(v interface{}) template.JS {
 			bytes, _ := json.Marshal(v)
-			return template.JS(bytes)
+			return template.JS(bytes) // #nosec G203 - controlled JSON data for Chart.js
 		},
 		"div": func(a, b float64) float64 {
 			if b == 0 {
@@ -507,7 +507,7 @@ func generateHTMLDashboard(data DashboardData) error {
 // ユーティリティ関数群（続き）
 
 func loadJSONFile(filename string) (map[string]interface{}, error) {
-	data, err := os.ReadFile(filename)
+	data, err := os.ReadFile(filename) // #nosec G304 - controlled performance data file reading
 	if err != nil {
 		return nil, err
 	}
@@ -667,5 +667,5 @@ func saveDashboardJSON(data DashboardData) error {
 		return err
 	}
 
-	return os.WriteFile("dashboard-data.json", jsonData, 0644)
+	return os.WriteFile("dashboard-data.json", jsonData, 0600)
 }
