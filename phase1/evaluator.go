@@ -342,6 +342,10 @@ func evalExpressions(exps []Expression, env *Environment) []Object {
 func applyFunction(fn Object, args []Object) Object {
 	switch fn := fn.(type) {
 	case *Function:
+		// 引数の数をチェック
+		if len(args) != len(fn.Parameters) {
+			return newError("wrong number of arguments: want=%d, got=%d", len(fn.Parameters), len(args))
+		}
 		extendedEnv := extendFunctionEnv(fn, args)
 		evaluated := Eval(fn.Body, extendedEnv)
 		return unwrapReturnValue(evaluated)
