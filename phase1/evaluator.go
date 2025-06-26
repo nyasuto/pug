@@ -398,7 +398,7 @@ func isError(obj Object) bool {
 }
 
 // newError は新しいエラーオブジェクトを作成する
-func newError(format string, a ...interface{}) *Error {
+func newError(format string, a ...any) *Error {
 	return &Error{Message: fmt.Sprintf(format, a...)}
 }
 

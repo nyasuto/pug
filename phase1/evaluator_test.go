@@ -310,6 +310,39 @@ func TestFunctionApplication(t *testing.T) {
 	}
 }
 
+func TestFunctionApplicationErrors(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{
+			"let add = fn(x, y) { x + y; }; add(1);",
+			"wrong number of arguments: want=2, got=1",
+		},
+		{
+			"let add = fn(x, y) { x + y; }; add(1, 2, 3);",
+			"wrong number of arguments: want=2, got=3",
+		},
+		{
+			"fn() { 5; }(1);",
+			"wrong number of arguments: want=0, got=1",
+		},
+	}
+
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		errObj, ok := evaluated.(*Error)
+		if !ok {
+			t.Errorf("object is not Error. got=%T (%+v)", evaluated, evaluated)
+			continue
+		}
+
+		if errObj.Message != tt.expected {
+			t.Errorf("wrong error message. expected=%q, got=%q", tt.expected, errObj.Message)
+		}
+	}
+}
+
 func TestStringLiteral(t *testing.T) {
 	input := `"Hello World!"`
 
