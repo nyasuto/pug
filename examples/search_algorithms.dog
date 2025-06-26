@@ -1,0 +1,498 @@
+// 探索アルゴリズム集 - Dog言語
+// 線形探索、二分探索、ハッシュテーブル、木構造探索の実装
+
+puts("=== Dog言語 探索アルゴリズム集 ===");
+puts("");
+
+// ===== 配列表示用ヘルパー関数 =====
+let print_array = fn(array, name) {
+    let str = name + ": [";
+    let i = 0;
+    while (i < len(array)) {
+        str = str + array[i];
+        if (i < len(array) - 1) {
+            str = str + ", ";
+        };
+        i = i + 1;
+    };
+    str = str + "]";
+    puts(str);
+};
+
+// ===== 1. 線形探索 (Linear Search) =====
+puts("【1. 線形探索 (Linear Search)】");
+puts("時間計算量: O(n), 空間計算量: O(1)");
+puts("ソート済み配列: 不要");
+puts("");
+
+let linear_search = fn(array, target) {
+    let i = 0;
+    while (i < len(array)) {
+        if (array[i] == target) {
+            return i;
+        };
+        i = i + 1;
+    };
+    return -1;  // 見つからない場合
+};
+
+// 全ての一致するインデックスを返すバージョン
+let linear_search_all = fn(array, target) {
+    let results = [];
+    let i = 0;
+    while (i < len(array)) {
+        if (array[i] == target) {
+            results = push(results, i);
+        };
+        i = i + 1;
+    };
+    return results;
+};
+
+// 条件を満たす最初の要素を探索
+let linear_search_condition = fn(array, predicate) {
+    let i = 0;
+    while (i < len(array)) {
+        if (predicate(array[i])) {
+            return i;
+        };
+        i = i + 1;
+    };
+    return -1;
+};
+
+// ===== 2. 二分探索 (Binary Search) =====
+puts("【2. 二分探索 (Binary Search)】");
+puts("時間計算量: O(log n), 空間計算量: O(1)");
+puts("ソート済み配列: 必要");
+puts("");
+
+let binary_search = fn(array, target) {
+    let left = 0;
+    let right = len(array) - 1;
+    
+    while (left <= right) {
+        let mid = (left + right) / 2;
+        
+        if (array[mid] == target) {
+            return mid;
+        } else if (array[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        };
+    };
+    
+    return -1;  // 見つからない場合
+};
+
+// 再帰版二分探索
+let binary_search_recursive = fn(array, target, left, right) {
+    if (left > right) {
+        return -1;
+    };
+    
+    let mid = (left + right) / 2;
+    
+    if (array[mid] == target) {
+        return mid;
+    } else if (array[mid] < target) {
+        return binary_search_recursive(array, target, mid + 1, right);
+    } else {
+        return binary_search_recursive(array, target, left, mid - 1);
+    };
+};
+
+// 最初の出現位置を探索
+let binary_search_first = fn(array, target) {
+    let left = 0;
+    let right = len(array) - 1;
+    let result = -1;
+    
+    while (left <= right) {
+        let mid = (left + right) / 2;
+        
+        if (array[mid] == target) {
+            result = mid;
+            right = mid - 1;  // より左を探索
+        } else if (array[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        };
+    };
+    
+    return result;
+};
+
+// 最後の出現位置を探索
+let binary_search_last = fn(array, target) {
+    let left = 0;
+    let right = len(array) - 1;
+    let result = -1;
+    
+    while (left <= right) {
+        let mid = (left + right) / 2;
+        
+        if (array[mid] == target) {
+            result = mid;
+            left = mid + 1;   // より右を探索
+        } else if (array[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        };
+    };
+    
+    return result;
+};
+
+// ===== 3. 補間探索 (Interpolation Search) =====
+puts("【3. 補間探索 (Interpolation Search)】");
+puts("時間計算量: 平均 O(log log n), 最悪 O(n)");
+puts("均等分布のソート済み配列で効率的");
+puts("");
+
+let interpolation_search = fn(array, target) {
+    let left = 0;
+    let right = len(array) - 1;
+    
+    while (left <= right && target >= array[left] && target <= array[right]) {
+        if (left == right) {
+            if (array[left] == target) {
+                return left;
+            };
+            return -1;
+        };
+        
+        // 補間による位置の推定
+        let pos = left + ((target - array[left]) * (right - left)) / (array[right] - array[left]);
+        
+        if (array[pos] == target) {
+            return pos;
+        } else if (array[pos] < target) {
+            left = pos + 1;
+        } else {
+            right = pos - 1;
+        };
+    };
+    
+    return -1;
+};
+
+// ===== 4. 指数探索 (Exponential Search) =====
+puts("【4. 指数探索 (Exponential Search)】");
+puts("時間計算量: O(log n), 空間計算量: O(1)");
+puts("無限配列や大きな配列に適している");
+puts("");
+
+let exponential_search = fn(array, target) {
+    if (len(array) == 0) {
+        return -1;
+    };
+    
+    if (array[0] == target) {
+        return 0;
+    };
+    
+    // 範囲を指数的に拡大
+    let bound = 1;
+    while (bound < len(array) && array[bound] < target) {
+        bound = bound * 2;
+    };
+    
+    // 見つかった範囲で二分探索
+    let left = bound / 2;
+    let right = bound;
+    if (right >= len(array)) {
+        right = len(array) - 1;
+    };
+    
+    return binary_search_recursive(array, target, left, right);
+};
+
+// ===== 5. ジャンプ探索 (Jump Search) =====
+puts("【5. ジャンプ探索 (Jump Search)】");
+puts("時間計算量: O(√n), 空間計算量: O(1)");
+puts("二分探索と線形探索の中間");
+puts("");
+
+let jump_search = fn(array, target) {
+    let n = len(array);
+    if (n == 0) {
+        return -1;
+    };
+    
+    // 最適なジャンプサイズは√n
+    let step = 4;  // 簡単のため固定値を使用（実際は√nを計算）
+    let prev = 0;
+    
+    // ブロックの最後まで進む
+    while (array[step - 1] < target) {
+        prev = step;
+        step = step + 4;
+        if (prev >= n) {
+            return -1;
+        };
+    };
+    
+    // ブロック内で線形探索
+    while (array[prev] < target) {
+        prev = prev + 1;
+        if (prev == step || prev == n) {
+            return -1;
+        };
+    };
+    
+    if (array[prev] == target) {
+        return prev;
+    };
+    
+    return -1;
+};
+
+// ===== 6. 三分探索 (Ternary Search) =====
+puts("【6. 三分探索 (Ternary Search)】");
+puts("時間計算量: O(log₃ n), 空間計算量: O(1)");
+puts("配列を3つに分割して探索");
+puts("");
+
+let ternary_search = fn(array, target) {
+    let left = 0;
+    let right = len(array) - 1;
+    
+    while (left <= right) {
+        let mid1 = left + (right - left) / 3;
+        let mid2 = right - (right - left) / 3;
+        
+        if (array[mid1] == target) {
+            return mid1;
+        };
+        if (array[mid2] == target) {
+            return mid2;
+        };
+        
+        if (target < array[mid1]) {
+            right = mid1 - 1;
+        } else if (target > array[mid2]) {
+            left = mid2 + 1;
+        } else {
+            left = mid1 + 1;
+            right = mid2 - 1;
+        };
+    };
+    
+    return -1;
+};
+
+// ===== 7. ハッシュテーブル探索 =====
+puts("【7. ハッシュテーブル探索】");
+puts("時間計算量: 平均 O(1), 最悪 O(n)");
+puts("キー-値ペアの高速探索");
+puts("");
+
+// 簡単なハッシュ関数
+let hash_function = fn(key, table_size) {
+    let hash = 0;
+    let i = 0;
+    while (i < len(key)) {
+        // 文字コードの代わりに文字の位置を使用
+        hash = hash + i + 1;
+        i = i + 1;
+    };
+    return hash % table_size;
+};
+
+// ハッシュテーブルの作成
+let create_hash_table = fn(size) {
+    let table = [];
+    let i = 0;
+    while (i < size) {
+        table = push(table, []);
+        i = i + 1;
+    };
+    return table;
+};
+
+// ハッシュテーブルに挿入
+let hash_insert = fn(table, key, value) {
+    let index = hash_function(key, len(table));
+    let bucket = table[index];
+    
+    // 既存のキーを探索
+    let i = 0;
+    while (i < len(bucket)) {
+        if (bucket[i]["key"] == key) {
+            bucket[i]["value"] = value;  // 更新
+            return table;
+        };
+        i = i + 1;
+    };
+    
+    // 新しいエントリを追加
+    bucket = push(bucket, {"key": key, "value": value});
+    table[index] = bucket;
+    return table;
+};
+
+// ハッシュテーブルから探索
+let hash_search = fn(table, key) {
+    let index = hash_function(key, len(table));
+    let bucket = table[index];
+    
+    let i = 0;
+    while (i < len(bucket)) {
+        if (bucket[i]["key"] == key) {
+            return bucket[i]["value"];
+        };
+        i = i + 1;
+    };
+    
+    return null;  // 見つからない場合
+};
+
+// ===== 8. 二分探索木 (Binary Search Tree) =====
+puts("【8. 二分探索木 (Binary Search Tree)】");
+puts("時間計算量: 平均 O(log n), 最悪 O(n)");
+puts("動的な挿入・削除・探索が可能");
+puts("");
+
+// BSTノードの作成
+let create_node = fn(value) {
+    return {"value": value, "left": null, "right": null};
+};
+
+// BSTに挿入
+let bst_insert = fn(root, value) {
+    if (root == null) {
+        return create_node(value);
+    };
+    
+    if (value < root["value"]) {
+        root["left"] = bst_insert(root["left"], value);
+    } else if (value > root["value"]) {
+        root["right"] = bst_insert(root["right"], value);
+    };
+    
+    return root;
+};
+
+// BSTで探索
+let bst_search = fn(root, target) {
+    if (root == null) {
+        return false;
+    };
+    
+    if (target == root["value"]) {
+        return true;
+    } else if (target < root["value"]) {
+        return bst_search(root["left"], target);
+    } else {
+        return bst_search(root["right"], target);
+    };
+};
+
+// BST中序巡回（ソート順に出力）
+let bst_inorder = fn(root, result) {
+    if (root != null) {
+        result = bst_inorder(root["left"], result);
+        result = push(result, root["value"]);
+        result = bst_inorder(root["right"], result);
+    };
+    return result;
+};
+
+// ===== 探索アルゴリズムのテスト =====
+puts("【探索アルゴリズムのテスト】");
+puts("");
+
+// テストデータ
+let unsorted_data = [64, 34, 25, 12, 22, 11, 90, 5, 77, 30];
+let sorted_data = [5, 11, 12, 22, 25, 30, 34, 64, 77, 90];
+let target = 25;
+
+print_array(unsorted_data, "未ソートデータ");
+print_array(sorted_data, "ソート済みデータ");
+puts("探索対象:", target);
+puts("");
+
+// 線形探索のテスト
+puts("線形探索結果:");
+puts("未ソートデータから", target, "を探索:", linear_search(unsorted_data, target));
+puts("ソート済みデータから", target, "を探索:", linear_search(sorted_data, target));
+
+let duplicate_data = [1, 2, 3, 2, 4, 2, 5];
+puts("重複データから 2 を全て探索:", linear_search_all(duplicate_data, 2));
+
+let is_even = fn(x) { return x % 2 == 0; };
+puts("最初の偶数を探索:", linear_search_condition(unsorted_data, is_even));
+puts("");
+
+// 二分探索のテスト
+puts("二分探索結果:");
+puts("ソート済みデータから", target, "を探索:", binary_search(sorted_data, target));
+puts("再帰版二分探索:", binary_search_recursive(sorted_data, target, 0, len(sorted_data) - 1));
+
+let duplicate_sorted = [1, 2, 2, 2, 3, 4, 5];
+puts("重複ソートデータから 2 の最初の位置:", binary_search_first(duplicate_sorted, 2));
+puts("重複ソートデータから 2 の最後の位置:", binary_search_last(duplicate_sorted, 2));
+puts("");
+
+// その他の探索アルゴリズムのテスト
+puts("その他の探索結果:");
+puts("補間探索:", interpolation_search(sorted_data, target));
+puts("指数探索:", exponential_search(sorted_data, target));
+puts("ジャンプ探索:", jump_search(sorted_data, target));
+puts("三分探索:", ternary_search(sorted_data, target));
+puts("");
+
+// ハッシュテーブルのテスト
+puts("ハッシュテーブルテスト:");
+let hash_table = create_hash_table(7);
+hash_table = hash_insert(hash_table, "apple", 100);
+hash_table = hash_insert(hash_table, "banana", 200);
+hash_table = hash_insert(hash_table, "orange", 150);
+
+puts("apple の値:", hash_search(hash_table, "apple"));
+puts("banana の値:", hash_search(hash_table, "banana"));
+puts("grape の値:", hash_search(hash_table, "grape"));
+puts("");
+
+// 二分探索木のテスト
+puts("二分探索木テスト:");
+let bst_root = null;
+let bst_values = [50, 30, 70, 20, 40, 60, 80];
+
+let i = 0;
+while (i < len(bst_values)) {
+    bst_root = bst_insert(bst_root, bst_values[i]);
+    i = i + 1;
+};
+
+puts("BST 探索 40:", bst_search(bst_root, 40));
+puts("BST 探索 99:", bst_search(bst_root, 99));
+
+let inorder_result = bst_inorder(bst_root, []);
+print_array(inorder_result, "BST 中序巡回");
+
+puts("");
+
+// ===== 性能比較 =====
+puts("【性能比較のためのより大きなデータセット】");
+
+// 大きなソート済み配列の生成
+let large_sorted = [];
+i = 0;
+while (i < 1000) {
+    large_sorted = push(large_sorted, i * 2);
+    i = i + 1;
+};
+
+let search_target = 500;
+puts("大きなデータセット (1000要素) から", search_target, "を探索:");
+puts("線形探索結果:", linear_search(large_sorted, search_target));
+puts("二分探索結果:", binary_search(large_sorted, search_target));
+puts("補間探索結果:", interpolation_search(large_sorted, search_target));
+
+puts("");
+puts("=== 探索アルゴリズム集完了 ===");

@@ -1,0 +1,468 @@
+// シンプルゲーム集 - Dog言語
+// 数当てゲーム、じゃんけん、簡単なRPG要素を含むゲーム実装
+
+puts("=== Dog言語 シンプルゲーム集 ===");
+puts("");
+
+// ===== 1. 数当てゲーム =====
+puts("【1. 数当てゲーム】");
+puts("");
+
+let number_guessing_game = fn(target, max_attempts) {
+    puts("🎯 数当てゲーム開始!");
+    puts("1から100までの数を当ててください");
+    puts("最大試行回数: " + max_attempts);
+    puts("目標数字: " + target + " (本来は隠される)");
+    puts("");
+    
+    // 予め定義された推測値（実際のゲームではユーザー入力）
+    let guesses = [50, 75, 87, 93, 90, 88, 89];
+    let attempt = 1;
+    
+    while (attempt <= max_attempts && attempt <= len(guesses)) {
+        let guess = guesses[attempt - 1];
+        puts("第" + attempt + "回目の推測: " + guess);
+        
+        if (guess == target) {
+            puts("🎉 正解! " + attempt + "回目で当たりました!");
+            puts("スコア: " + (max_attempts - attempt + 1) * 10 + "点");
+            return attempt;
+        } else if (guess < target) {
+            puts("📈 もっと大きい数です");
+        } else {
+            puts("📉 もっと小さい数です");
+        };
+        
+        attempt = attempt + 1;
+    };
+    
+    puts("💔 残念! " + max_attempts + "回以内に当てられませんでした");
+    puts("正解は " + target + " でした");
+    return -1;
+};
+
+// ランダム風数値生成（擬似ランダム）
+let pseudo_random = fn(seed, min, max) {
+    let new_seed = (seed * 1103515245 + 12345) % 1000000;
+    return min + (new_seed % (max - min + 1));
+};
+
+puts("数当てゲームをプレイ:");
+let random_target = pseudo_random(42, 1, 100);
+number_guessing_game(random_target, 7);
+puts("");
+
+// ===== 2. じゃんけんゲーム =====
+puts("【2. じゃんけんゲーム】");
+puts("");
+
+let rock_paper_scissors = fn(rounds) {
+    puts("✂️ じゃんけんゲーム開始!");
+    puts("ラウンド数: " + rounds);
+    puts("");
+    
+    let choices = ["グー", "チョキ", "パー"];
+    let player_score = 0;
+    let computer_score = 0;
+    let ties = 0;
+    
+    // 予め定義されたプレイヤーの選択
+    let player_moves = ["グー", "チョキ", "パー", "グー", "パー"];
+    let seed = 123;
+    
+    let round = 1;
+    while (round <= rounds && round <= len(player_moves)) {
+        puts("--- ラウンド " + round + " ---");
+        
+        let player_choice = player_moves[round - 1];
+        
+        // コンピュータの選択（擬似ランダム）
+        seed = pseudo_random(seed, 1, 1000);
+        let computer_index = seed % 3;
+        let computer_choice = choices[computer_index];
+        
+        puts("プレイヤー: " + player_choice);
+        puts("コンピュータ: " + computer_choice);
+        
+        // 勝敗判定
+        let result = "";
+        if (player_choice == computer_choice) {
+            result = "引き分け";
+            ties = ties + 1;
+        } else if (
+            (player_choice == "グー" && computer_choice == "チョキ") ||
+            (player_choice == "チョキ" && computer_choice == "パー") ||
+            (player_choice == "パー" && computer_choice == "グー")
+        ) {
+            result = "プレイヤーの勝ち";
+            player_score = player_score + 1;
+        } else {
+            result = "コンピュータの勝ち";
+            computer_score = computer_score + 1;
+        };
+        
+        puts("結果: " + result);
+        puts("");
+        round = round + 1;
+    };
+    
+    puts("=== 最終結果 ===");
+    puts("プレイヤー: " + player_score + "勝");
+    puts("コンピュータ: " + computer_score + "勝");
+    puts("引き分け: " + ties + "回");
+    
+    if (player_score > computer_score) {
+        puts("🏆 プレイヤーの総合勝利!");
+    } else if (computer_score > player_score) {
+        puts("🤖 コンピュータの総合勝利!");
+    } else {
+        puts("🤝 総合引き分け!");
+    };
+    
+    return {"player": player_score, "computer": computer_score, "ties": ties};
+};
+
+puts("じゃんけんゲームをプレイ:");
+rock_paper_scissors(5);
+puts("");
+
+// ===== 3. 簡単なRPG戦闘システム =====
+puts("【3. 簡単なRPG戦闘システム】");
+puts("");
+
+// キャラクター作成
+let create_character = fn(name, hp, attack, defense) {
+    return {
+        "name": name,
+        "max_hp": hp,
+        "hp": hp,
+        "attack": attack,
+        "defense": defense,
+        "level": 1,
+        "exp": 0
+    };
+};
+
+// ダメージ計算
+let calculate_damage = fn(attacker, defender) {
+    let base_damage = attacker["attack"] - defender["defense"];
+    if (base_damage < 1) {
+        base_damage = 1;  // 最低ダメージ
+    };
+    
+    // ランダム要素（80-120%）
+    let seed = attacker["attack"] + defender["defense"];
+    let random_factor = 80 + (pseudo_random(seed, 1, 100) % 41);
+    let damage = (base_damage * random_factor) / 100;
+    
+    return damage;
+};
+
+// 攻撃処理
+let attack_character = fn(attacker, defender) {
+    let damage = calculate_damage(attacker, defender);
+    defender["hp"] = defender["hp"] - damage;
+    
+    if (defender["hp"] < 0) {
+        defender["hp"] = 0;
+    };
+    
+    puts(attacker["name"] + " の攻撃!");
+    puts(defender["name"] + " に " + damage + " のダメージ!");
+    puts(defender["name"] + " HP: " + defender["hp"] + "/" + defender["max_hp"]);
+    
+    return damage;
+};
+
+// 回復処理
+let heal_character = fn(character, amount) {
+    character["hp"] = character["hp"] + amount;
+    if (character["hp"] > character["max_hp"]) {
+        character["hp"] = character["max_hp"];
+    };
+    
+    puts(character["name"] + " は " + amount + " 回復した!");
+    puts(character["name"] + " HP: " + character["hp"] + "/" + character["max_hp"]);
+};
+
+// 戦闘システム
+let battle = fn(player, enemy) {
+    puts("⚔️ 戦闘開始!");
+    puts(player["name"] + " vs " + enemy["name"]);
+    puts("");
+    
+    let turn = 1;
+    let max_turns = 20;  // 無限ループ防止
+    
+    while (player["hp"] > 0 && enemy["hp"] > 0 && turn <= max_turns) {
+        puts("--- ターン " + turn + " ---");
+        
+        // プレイヤーのターン
+        if (player["hp"] > 0) {
+            // 簡単なAI: HPが30%以下なら回復、そうでなければ攻撃
+            if (player["hp"] < player["max_hp"] / 3 && turn % 4 == 1) {
+                heal_character(player, 20);
+            } else {
+                attack_character(player, enemy);
+            };
+        };
+        
+        if (enemy["hp"] <= 0) {
+            break;
+        };
+        
+        puts("");
+        
+        // 敵のターン
+        if (enemy["hp"] > 0) {
+            attack_character(enemy, player);
+        };
+        
+        puts("");
+        turn = turn + 1;
+    };
+    
+    puts("=== 戦闘終了 ===");
+    if (player["hp"] > 0) {
+        puts("🏆 " + player["name"] + " の勝利!");
+        let exp_gained = enemy["level"] * 10;
+        player["exp"] = player["exp"] + exp_gained;
+        puts("経験値 " + exp_gained + " を獲得!");
+        return true;
+    } else {
+        puts("💀 " + player["name"] + " の敗北...");
+        return false;
+    };
+};
+
+puts("RPG戦闘システムのデモ:");
+let hero = create_character("勇者", 100, 25, 5);
+let monster = create_character("ドラゴン", 80, 20, 3);
+
+puts("キャラクター情報:");
+puts(hero["name"] + " - HP:" + hero["hp"] + " ATK:" + hero["attack"] + " DEF:" + hero["defense"]);
+puts(monster["name"] + " - HP:" + monster["hp"] + " ATK:" + monster["attack"] + " DEF:" + monster["defense"]);
+puts("");
+
+battle(hero, monster);
+puts("");
+
+// ===== 4. 迷路ゲーム（簡易版） =====
+puts("【4. 迷路ゲーム（簡易版）】");
+puts("");
+
+// 迷路の作成（5x5）
+let create_maze = fn() {
+    return [
+        ["S", "#", " ", " ", "#"],
+        [" ", "#", " ", "#", " "],
+        [" ", " ", " ", "#", " "],
+        ["#", "#", " ", " ", " "],
+        ["#", " ", " ", "#", "G"]
+    ];
+};
+
+// 迷路の表示
+let print_maze = fn(maze, player_x, player_y) {
+    puts("迷路 (S=スタート, G=ゴール, #=壁, P=プレイヤー):");
+    let i = 0;
+    while (i < len(maze)) {
+        let row_str = "";
+        let j = 0;
+        while (j < len(maze[i])) {
+            if (i == player_y && j == player_x) {
+                row_str = row_str + "P ";
+            } else {
+                row_str = row_str + maze[i][j] + " ";
+            };
+            j = j + 1;
+        };
+        puts(row_str);
+        i = i + 1;
+    };
+    puts("");
+};
+
+// 移動の妥当性チェック
+let is_valid_move = fn(maze, x, y) {
+    if (x < 0 || y < 0 || y >= len(maze) || x >= len(maze[0])) {
+        return false;
+    };
+    return maze[y][x] != "#";
+};
+
+// 迷路ゲーム
+let maze_game = fn() {
+    puts("🧩 迷路ゲーム開始!");
+    puts("目標: スタート(S)からゴール(G)まで移動しよう");
+    puts("");
+    
+    let maze = create_maze();
+    let player_x = 0;
+    let player_y = 0;
+    let moves = ["down", "right", "right", "down", "down", "right", "right"];
+    let move_count = 0;
+    let max_moves = len(moves);
+    
+    print_maze(maze, player_x, player_y);
+    
+    let step = 0;
+    while (step < max_moves) {
+        let direction = moves[step];
+        let new_x = player_x;
+        let new_y = player_y;
+        
+        if (direction == "up") {
+            new_y = new_y - 1;
+        } else if (direction == "down") {
+            new_y = new_y + 1;
+        } else if (direction == "left") {
+            new_x = new_x - 1;
+        } else if (direction == "right") {
+            new_x = new_x + 1;
+        };
+        
+        puts("移動: " + direction);
+        
+        if (is_valid_move(maze, new_x, new_y)) {
+            player_x = new_x;
+            player_y = new_y;
+            move_count = move_count + 1;
+            puts("移動成功! (" + player_x + ", " + player_y + ")");
+            
+            // ゴールチェック
+            if (maze[player_y][player_x] == "G") {
+                puts("🎉 ゴール到達!");
+                puts("移動回数: " + move_count);
+                print_maze(maze, player_x, player_y);
+                return true;
+            };
+        } else {
+            puts("移動不可! 壁があります");
+        };
+        
+        print_maze(maze, player_x, player_y);
+        step = step + 1;
+    };
+    
+    puts("💔 移動回数上限に達しました");
+    return false;
+};
+
+puts("迷路ゲームをプレイ:");
+maze_game();
+puts("");
+
+// ===== 5. 単語当てゲーム =====
+puts("【5. 単語当てゲーム】");
+puts("");
+
+let word_guessing_game = fn() {
+    puts("📝 単語当てゲーム開始!");
+    
+    let words = ["DOG", "CAT", "BIRD", "FISH", "LION"];
+    let seed = 456;
+    let word_index = pseudo_random(seed, 0, len(words) - 1) % len(words);
+    let target_word = words[word_index];
+    let word_length = len(target_word);
+    
+    puts("単語の長さ: " + word_length + " 文字");
+    puts("ヒント: 動物の名前です");
+    puts("");
+    
+    // プレイヤーの推測（予め定義）
+    let guesses = ["CAT", "DOG", "BIRD"];
+    let attempts = 0;
+    let max_attempts = 3;
+    
+    while (attempts < max_attempts && attempts < len(guesses)) {
+        let guess = guesses[attempts];
+        puts("推測 " + (attempts + 1) + ": " + guess);
+        
+        if (guess == target_word) {
+            puts("🎉 正解! 単語は " + target_word + " でした!");
+            return true;
+        } else {
+            puts("❌ 違います");
+            
+            // ヒント：一致する文字数
+            let matching_chars = 0;
+            // 簡易実装：完全一致のみカウント
+            if (len(guess) == len(target_word)) {
+                matching_chars = 1;  // 概念的な実装
+            };
+            puts("ヒント: " + matching_chars + " 文字が一致しています");
+        };
+        
+        attempts = attempts + 1;
+        puts("");
+    };
+    
+    puts("💔 残念! 正解は " + target_word + " でした");
+    return false;
+};
+
+puts("単語当てゲームをプレイ:");
+word_guessing_game();
+puts("");
+
+// ===== 6. ゲーム統計システム =====
+puts("【6. ゲーム統計システム】");
+puts("");
+
+let game_statistics = {
+    "games_played": 0,
+    "games_won": 0,
+    "total_score": 0,
+    "best_score": 0,
+    "playtime": 0
+};
+
+let update_stats = fn(won, score, time) {
+    game_statistics["games_played"] = game_statistics["games_played"] + 1;
+    
+    if (won) {
+        game_statistics["games_won"] = game_statistics["games_won"] + 1;
+    };
+    
+    game_statistics["total_score"] = game_statistics["total_score"] + score;
+    
+    if (score > game_statistics["best_score"]) {
+        game_statistics["best_score"] = score;
+    };
+    
+    game_statistics["playtime"] = game_statistics["playtime"] + time;
+};
+
+let print_statistics = fn() {
+    puts("=== ゲーム統計 ===");
+    puts("プレイ回数: " + game_statistics["games_played"]);
+    puts("勝利回数: " + game_statistics["games_won"]);
+    
+    let win_rate = 0;
+    if (game_statistics["games_played"] > 0) {
+        win_rate = (game_statistics["games_won"] * 100) / game_statistics["games_played"];
+    };
+    puts("勝率: " + win_rate + "%");
+    
+    puts("総スコア: " + game_statistics["total_score"]);
+    puts("最高スコア: " + game_statistics["best_score"]);
+    puts("総プレイ時間: " + game_statistics["playtime"] + " 分");
+    
+    let avg_score = 0;
+    if (game_statistics["games_played"] > 0) {
+        avg_score = game_statistics["total_score"] / game_statistics["games_played"];
+    };
+    puts("平均スコア: " + avg_score);
+};
+
+puts("ゲーム統計の更新:");
+update_stats(true, 150, 5);   // 勝利、150点、5分
+update_stats(false, 80, 3);   // 敗北、80点、3分
+update_stats(true, 200, 7);   // 勝利、200点、7分
+
+print_statistics();
+
+puts("");
+puts("=== シンプルゲーム集完了 ===");
+puts("楽しんでいただけましたか? 🎮");

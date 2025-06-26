@@ -1,0 +1,368 @@
+// 関数デモプログラム - Dog言語
+// 関数定義、引数、戻り値、クロージャ、高階関数の詳細解説
+
+puts("=== Dog言語 関数デモ ===");
+puts("");
+
+// ===== 基本的な関数定義 =====
+puts("【基本的な関数定義】");
+
+// 引数なし、戻り値なしの関数
+let say_hello = fn() {
+    puts("Hello from function!");
+};
+
+// 引数あり、戻り値ありの関数
+let add = fn(a, b) {
+    return a + b;
+};
+
+// 複数の引数を持つ関数
+let calculate_area = fn(length, width) {
+    return length * width;
+};
+
+puts("関数呼び出し例:");
+say_hello();
+puts("add(5, 3) =", add(5, 3));
+puts("rectangle area(4, 6) =", calculate_area(4, 6));
+puts("");
+
+// ===== 様々な戻り値パターン =====
+puts("【様々な戻り値パターン】");
+
+// 条件によって異なる値を返す関数
+let abs_value = fn(x) {
+    if (x < 0) {
+        return -x;
+    };
+    return x;
+};
+
+// 複数の値を構造体として返す関数
+let divide_with_remainder = fn(dividend, divisor) {
+    if (divisor == 0) {
+        return {"error": true, "message": "Division by zero"};
+    };
+    return {
+        "quotient": dividend / divisor,
+        "remainder": dividend % divisor,
+        "error": false
+    };
+};
+
+// 早期リターンを使った関数
+let find_in_array = fn(array, target) {
+    let i = 0;
+    while (i < len(array)) {
+        if (array[i] == target) {
+            return i;  // 見つかったらすぐに返す
+        };
+        i = i + 1;
+    };
+    return -1;  // 見つからなかった場合
+};
+
+puts("戻り値パターンの例:");
+puts("abs_value(-10) =", abs_value(-10));
+puts("abs_value(10) =", abs_value(10));
+
+let div_result = divide_with_remainder(17, 5);
+puts("17 ÷ 5 =", div_result);
+
+let numbers = [10, 20, 30, 40, 50];
+puts("find 30 in array =", find_in_array(numbers, 30));
+puts("find 99 in array =", find_in_array(numbers, 99));
+puts("");
+
+// ===== 再帰関数 =====
+puts("【再帰関数】");
+
+// 基本的な再帰 - 階乗
+let factorial = fn(n) {
+    if (n <= 1) {
+        return 1;
+    };
+    return n * factorial(n - 1);
+};
+
+// 相互再帰の例（偶数・奇数判定）
+let is_even;
+let is_odd;
+
+is_even = fn(n) {
+    if (n == 0) {
+        return true;
+    };
+    return is_odd(n - 1);
+};
+
+is_odd = fn(n) {
+    if (n == 0) {
+        return false;
+    };
+    return is_even(n - 1);
+};
+
+// フィボナッチ数列（メモ化なし）
+let fibonacci = fn(n) {
+    if (n <= 1) {
+        return n;
+    };
+    return fibonacci(n - 1) + fibonacci(n - 2);
+};
+
+// 二分探索（再帰版）
+let binary_search = fn(array, target, left, right) {
+    if (left > right) {
+        return -1;
+    };
+    
+    let mid = (left + right) / 2;
+    if (array[mid] == target) {
+        return mid;
+    } else if (array[mid] > target) {
+        return binary_search(array, target, left, mid - 1);
+    } else {
+        return binary_search(array, target, mid + 1, right);
+    };
+};
+
+puts("再帰関数の例:");
+puts("factorial(5) =", factorial(5));
+puts("is_even(4) =", is_even(4));
+puts("is_odd(4) =", is_odd(4));
+puts("fibonacci(7) =", fibonacci(7));
+
+let sorted_array = [1, 3, 5, 7, 9, 11, 13];
+puts("binary_search for 7 =", binary_search(sorted_array, 7, 0, len(sorted_array) - 1));
+puts("");
+
+// ===== クロージャ（関数内関数） =====
+puts("【クロージャ（関数内関数）】");
+
+// カウンター生成器
+let make_counter = fn() {
+    let count = 0;
+    return fn() {
+        count = count + 1;
+        return count;
+    };
+};
+
+// 乗数生成器
+let make_multiplier = fn(factor) {
+    return fn(x) {
+        return x * factor;
+    };
+};
+
+// アキュムレータ（累積器）
+let make_accumulator = fn(initial) {
+    let total = initial;
+    return fn(value) {
+        total = total + value;
+        return total;
+    };
+};
+
+puts("クロージャの例:");
+let counter1 = make_counter();
+let counter2 = make_counter();
+puts("counter1:", counter1(), counter1(), counter1());
+puts("counter2:", counter2(), counter2());
+
+let double = make_multiplier(2);
+let triple = make_multiplier(3);
+puts("double(5) =", double(5));
+puts("triple(5) =", triple(5));
+
+let acc = make_accumulator(10);
+puts("accumulator:", acc(5), acc(3), acc(2));
+puts("");
+
+// ===== 高階関数（関数を引数に取る関数） =====
+puts("【高階関数】");
+
+// map関数の実装
+let map = fn(array, func) {
+    let result = [];
+    let i = 0;
+    while (i < len(array)) {
+        result = push(result, func(array[i]));
+        i = i + 1;
+    };
+    return result;
+};
+
+// filter関数の実装
+let filter = fn(array, predicate) {
+    let result = [];
+    let i = 0;
+    while (i < len(array)) {
+        if (predicate(array[i])) {
+            result = push(result, array[i]);
+        };
+        i = i + 1;
+    };
+    return result;
+};
+
+// reduce関数の実装
+let reduce = fn(array, func, initial) {
+    let result = initial;
+    let i = 0;
+    while (i < len(array)) {
+        result = func(result, array[i]);
+        i = i + 1;
+    };
+    return result;
+};
+
+// 関数合成
+let compose = fn(f, g) {
+    return fn(x) {
+        return f(g(x));
+    };
+};
+
+puts("高階関数の例:");
+let numbers = [1, 2, 3, 4, 5];
+
+let square = fn(x) { return x * x; };
+let squared_numbers = map(numbers, square);
+puts("map square:", squared_numbers);
+
+let is_even_predicate = fn(x) { return x % 2 == 0; };
+let even_numbers = filter(numbers, is_even_predicate);
+puts("filter even:", even_numbers);
+
+let sum_reducer = fn(acc, x) { return acc + x; };
+let total_sum = reduce(numbers, sum_reducer, 0);
+puts("reduce sum:", total_sum);
+
+let add_one = fn(x) { return x + 1; };
+let double_then_add_one = compose(add_one, double);
+puts("compose(+1, *2)(5) =", double_then_add_one(5));
+puts("");
+
+// ===== 関数のカリー化 =====
+puts("【関数のカリー化】");
+
+// 通常の3引数関数
+let add_three = fn(a, b, c) {
+    return a + b + c;
+};
+
+// カリー化された版
+let add_three_curried = fn(a) {
+    return fn(b) {
+        return fn(c) {
+            return a + b + c;
+        };
+    };
+};
+
+// 部分適用の例
+let add_five = add_three_curried(5);
+let add_five_and_three = add_five(3);
+
+puts("カリー化の例:");
+puts("add_three(1, 2, 3) =", add_three(1, 2, 3));
+puts("add_three_curried(1)(2)(3) =", add_three_curried(1)(2)(3));
+puts("partial application:", add_five_and_three(2));
+puts("");
+
+// ===== 関数をデータとして扱う =====
+puts("【関数をデータとして扱う】");
+
+// 関数のテーブル
+let operations = {
+    "add": fn(a, b) { return a + b; },
+    "subtract": fn(a, b) { return a - b; },
+    "multiply": fn(a, b) { return a * b; },
+    "divide": fn(a, b) { return a / b; }
+};
+
+// 関数ディスパッチャ
+let calculate = fn(operation, a, b) {
+    let func = operations[operation];
+    if (func == null) {
+        return "Unknown operation";
+    };
+    return func(a, b);
+};
+
+// 関数の配列
+let math_functions = [
+    fn(x) { return x + 1; },
+    fn(x) { return x * 2; },
+    fn(x) { return x * x; }
+];
+
+let apply_all = fn(functions, value) {
+    let results = [];
+    let i = 0;
+    while (i < len(functions)) {
+        results = push(results, functions[i](value));
+        i = i + 1;
+    };
+    return results;
+};
+
+puts("関数をデータとして扱う例:");
+puts("calculate('add', 10, 5) =", calculate("add", 10, 5));
+puts("calculate('multiply', 10, 5) =", calculate("multiply", 10, 5));
+puts("apply_all to 5:", apply_all(math_functions, 5));
+puts("");
+
+// ===== 関数型プログラミングパターン =====
+puts("【関数型プログラミングパターン】");
+
+// Maybe/Optional パターン
+let safe_head = fn(array) {
+    if (len(array) == 0) {
+        return {"has_value": false, "value": null};
+    };
+    return {"has_value": true, "value": array[0]};
+};
+
+let map_maybe = fn(maybe, func) {
+    if (maybe["has_value"]) {
+        return {"has_value": true, "value": func(maybe["value"])};
+    };
+    return maybe;
+};
+
+// パイプライン処理
+let pipeline = fn(value, functions) {
+    let result = value;
+    let i = 0;
+    while (i < len(functions)) {
+        result = functions[i](result);
+        i = i + 1;
+    };
+    return result;
+};
+
+puts("関数型パターンの例:");
+let empty_array = [];
+let non_empty_array = [1, 2, 3];
+
+let maybe_empty = safe_head(empty_array);
+let maybe_value = safe_head(non_empty_array);
+puts("safe_head(empty):", maybe_empty);
+puts("safe_head([1,2,3]):", maybe_value);
+
+let doubled_maybe = map_maybe(maybe_value, double);
+puts("map double over maybe:", doubled_maybe);
+
+let pipe_functions = [
+    fn(x) { return x + 10; },
+    fn(x) { return x * 2; },
+    fn(x) { return x - 5; }
+];
+puts("pipeline(3, [+10, *2, -5]) =", pipeline(3, pipe_functions));
+
+puts("");
+puts("=== 関数デモ完了 ===");

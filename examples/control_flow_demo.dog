@@ -1,0 +1,292 @@
+// 制御フローデモプログラム - Dog言語
+// if文、while文、for文、関数の制御構造を詳しく説明
+
+puts("=== Dog言語 制御フローデモ ===");
+puts("");
+
+// ===== if文 (条件分岐) =====
+puts("【if文 - 条件分岐】");
+
+let age = 25;
+puts("年齢:", age);
+
+// 基本的なif文
+if (age >= 20) {
+    puts("成人です");
+} else {
+    puts("未成年です");
+};
+
+// if-else if-else文
+let score = 85;
+puts("テストの点数:", score);
+
+if (score >= 90) {
+    puts("評価: A (優秀)");
+} else if (score >= 80) {
+    puts("評価: B (良好)");
+} else if (score >= 70) {
+    puts("評価: C (普通)");
+} else if (score >= 60) {
+    puts("評価: D (合格)");
+} else {
+    puts("評価: F (不合格)");
+};
+
+// ネストしたif文
+let weather = "sunny";
+let temperature = 25;
+puts("天気:", weather, "気温:", temperature, "度");
+
+if (weather == "sunny") {
+    if (temperature > 30) {
+        puts("とても暑い晴れの日です");
+    } else if (temperature > 20) {
+        puts("気持ちの良い晴れの日です");
+    } else {
+        puts("涼しい晴れの日です");
+    };
+} else if (weather == "rainy") {
+    puts("雨の日です。傘を持ちましょう");
+} else {
+    puts("その他の天気です");
+};
+puts("");
+
+// ===== while文 (繰り返し処理) =====
+puts("【while文 - 繰り返し処理】");
+
+// 基本的なwhile文
+puts("1から5までの数字:");
+let i = 1;
+while (i <= 5) {
+    puts("数字:", i);
+    i = i + 1;
+};
+
+// 条件によるbreak相当の処理
+puts("条件による早期終了:");
+let counter = 1;
+while (counter <= 10) {
+    if (counter == 6) {
+        puts("6に到達したので終了");
+        counter = 11; // while条件を満たさなくする
+    } else {
+        puts("カウンター:", counter);
+        counter = counter + 1;
+    };
+};
+
+// 累積計算
+puts("1から10までの合計:");
+let sum = 0;
+let num = 1;
+while (num <= 10) {
+    sum = sum + num;
+    num = num + 1;
+};
+puts("合計:", sum);
+puts("");
+
+// ===== for文風ループ (while文で実装) =====
+puts("【for文風ループ】");
+
+// for(i=0; i<5; i++)相当
+puts("配列のインデックスアクセス:");
+let array = [10, 20, 30, 40, 50];
+let index = 0;
+while (index < len(array)) {
+    puts("array[" + index + "] =", array[index]);
+    index = index + 1;
+};
+
+// ステップ指定のループ
+puts("2の倍数を表示:");
+let step = 0;
+while (step <= 20) {
+    if (step % 2 == 0) {
+        puts("偶数:", step);
+    };
+    step = step + 1;
+};
+puts("");
+
+// ===== 関数内での制御フロー =====
+puts("【関数内での制御フロー】");
+
+// 早期リターンを使った関数
+let check_positive = fn(number) {
+    if (number > 0) {
+        return "正の数";
+    };
+    if (number < 0) {
+        return "負の数";
+    };
+    return "ゼロ";
+};
+
+puts("数値判定:");
+puts("check_positive(15) =", check_positive(15));
+puts("check_positive(-7) =", check_positive(-7));
+puts("check_positive(0) =", check_positive(0));
+
+// 複雑な条件分岐を含む関数
+let grade_calculator = fn(score) {
+    if (score < 0 || score > 100) {
+        return "エラー: 無効な点数";
+    };
+    
+    if (score >= 90) {
+        return "A";
+    } else if (score >= 80) {
+        return "B";
+    } else if (score >= 70) {
+        return "C";
+    } else if (score >= 60) {
+        return "D";
+    } else {
+        return "F";
+    };
+};
+
+puts("成績計算:");
+puts("grade_calculator(95) =", grade_calculator(95));
+puts("grade_calculator(75) =", grade_calculator(75));
+puts("grade_calculator(55) =", grade_calculator(55));
+puts("grade_calculator(105) =", grade_calculator(105));
+puts("");
+
+// ===== ネストしたループ =====
+puts("【ネストしたループ】");
+
+// 九九の表
+puts("九九の表:");
+let row = 1;
+while (row <= 3) {  // 簡略化のため3x3のみ
+    let col = 1;
+    let line = "";
+    while (col <= 3) {
+        let result = row * col;
+        if (result < 10) {
+            line = line + " " + result + " ";
+        } else {
+            line = line + result + " ";
+        };
+        col = col + 1;
+    };
+    puts("第" + row + "行:", line);
+    row = row + 1;
+};
+
+// 三角形のパターン
+puts("三角形パターン:");
+let triangle_row = 1;
+while (triangle_row <= 5) {
+    let stars = "";
+    let star_count = 1;
+    while (star_count <= triangle_row) {
+        stars = stars + "*";
+        star_count = star_count + 1;
+    };
+    puts(stars);
+    triangle_row = triangle_row + 1;
+};
+puts("");
+
+// ===== 複雑な制御フロー例 =====
+puts("【複雑な制御フロー例 - 数値当てゲーム】");
+
+let guess_number = fn(target, max_attempts) {
+    puts("数値当てゲーム開始! (目標:", target, ")");
+    
+    let attempt = 1;
+    let guesses = [3, 7, 5, 6, 4];  // 予め定義された推測値
+    
+    while (attempt <= max_attempts && attempt <= len(guesses)) {
+        let guess = guesses[attempt - 1];
+        puts("第" + attempt + "回目の推測:", guess);
+        
+        if (guess == target) {
+            puts("正解! " + attempt + "回目で当たりました!");
+            return attempt;
+        } else if (guess < target) {
+            puts("もっと大きい数です");
+        } else {
+            puts("もっと小さい数です");
+        };
+        
+        attempt = attempt + 1;
+    };
+    
+    puts("残念! " + max_attempts + "回以内に当てられませんでした");
+    puts("正解は", target, "でした");
+    return -1;
+};
+
+guess_number(5, 5);
+puts("");
+
+// ===== 再帰的制御フロー =====
+puts("【再帰的制御フロー】");
+
+// 階乗計算（再帰版）
+let factorial_recursive = fn(n) {
+    if (n <= 1) {
+        return 1;
+    };
+    return n * factorial_recursive(n - 1);
+};
+
+// 階乗計算（ループ版）
+let factorial_iterative = fn(n) {
+    let result = 1;
+    let i = 1;
+    while (i <= n) {
+        result = result * i;
+        i = i + 1;
+    };
+    return result;
+};
+
+puts("階乗計算の比較:");
+puts("5! (再帰) =", factorial_recursive(5));
+puts("5! (ループ) =", factorial_iterative(5));
+
+// ユークリッドの互除法（再帰版）
+let gcd_recursive = fn(a, b) {
+    if (b == 0) {
+        return a;
+    };
+    return gcd_recursive(b, a % b);
+};
+
+puts("最大公約数:");
+puts("gcd(48, 18) =", gcd_recursive(48, 18));
+puts("");
+
+// ===== エラーハンドリング風制御フロー =====
+puts("【エラーハンドリング風制御フロー】");
+
+let safe_divide = fn(a, b) {
+    if (b == 0) {
+        return {"error": true, "message": "ゼロ除算エラー", "result": null};
+    };
+    return {"error": false, "message": "成功", "result": a / b};
+};
+
+let division_result = safe_divide(10, 2);
+if (division_result["error"]) {
+    puts("エラー:", division_result["message"]);
+} else {
+    puts("計算結果:", division_result["result"]);
+};
+
+let error_result = safe_divide(10, 0);
+if (error_result["error"]) {
+    puts("エラー:", error_result["message"]);
+} else {
+    puts("計算結果:", error_result["result"]);
+};
+
+puts("");
+puts("=== 制御フローデモ完了 ===");

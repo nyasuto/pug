@@ -1,0 +1,207 @@
+// データ型デモプログラム - Dog言語
+// 基本的なデータ型とその操作方法を説明
+
+puts("=== Dog言語 データ型デモ ===");
+puts("");
+
+// ===== 整数型 (Integer) =====
+puts("【整数型 (Integer)】");
+let int1 = 42;
+let int2 = -17;
+let int3 = 0;
+
+puts("正の整数:", int1);
+puts("負の整数:", int2);
+puts("ゼロ:", int3);
+
+// 整数演算
+puts("算術演算:");
+puts("42 + 17 =", 42 + 17);
+puts("42 - 17 =", 42 - 17);
+puts("42 * 17 =", 42 * 17);
+puts("42 / 17 =", 42 / 17);
+puts("42 % 17 =", 42 % 17);
+puts("");
+
+// ===== 浮動小数点数型 (Float) =====
+puts("【浮動小数点数型 (Float)】");
+let float1 = 3.14159;
+let float2 = -2.71828;
+let float3 = 0.0;
+
+puts("円周率 π ≈", float1);
+puts("自然対数の底 e ≈", float2);
+puts("浮動小数点ゼロ:", float3);
+
+// 浮動小数点演算
+puts("浮動小数点演算:");
+puts("3.14 + 2.86 =", 3.14 + 2.86);
+puts("10.5 / 3.0 =", 10.5 / 3.0);
+puts("2.5 * 4.0 =", 2.5 * 4.0);
+puts("");
+
+// ===== ブール型 (Boolean) =====
+puts("【ブール型 (Boolean)】");
+let bool_true = true;
+let bool_false = false;
+
+puts("真値:", bool_true);
+puts("偽値:", bool_false);
+
+// ブール演算
+puts("論理演算:");
+puts("!true =", !bool_true);
+puts("!false =", !bool_false);
+puts("true && false =", true && false);
+puts("true || false =", true || false);
+puts("");
+
+// ===== 文字列型 (String) =====
+puts("【文字列型 (String)】");
+let str1 = "Hello";
+let str2 = "World";
+let str3 = "Dog言語";
+
+puts("英語の挨拶:", str1);
+puts("世界:", str2);
+puts("言語名:", str3);
+
+// 文字列連結
+puts("文字列連結:");
+puts(str1 + ", " + str2 + "!");
+puts("こんにちは、" + str3 + "!");
+puts("");
+
+// エスケープシーケンス
+puts("エスケープシーケンス:");
+puts("改行文字を含む文字列:\n第1行\n第2行\n第3行");
+puts("タブ文字:\tインデント\tされた\tテキスト");
+puts("引用符: \"これは引用です\"");
+puts("");
+
+// ===== 配列型 (Array) =====
+puts("【配列型 (Array)】");
+let numbers = [1, 2, 3, 4, 5];
+let mixed = [42, "文字列", true, 3.14];
+let empty_array = [];
+
+puts("数値配列:", numbers);
+puts("混合型配列:", mixed);
+puts("空配列:", empty_array);
+
+// 配列アクセス
+puts("配列要素アクセス:");
+puts("numbers[0] =", numbers[0]);
+puts("numbers[4] =", numbers[4]);
+puts("mixed[1] =", mixed[1]);
+puts("");
+
+// 配列の長さ
+puts("配列の長さ:");
+puts("len(numbers) =", len(numbers));
+puts("len(mixed) =", len(mixed));
+puts("len(empty_array) =", len(empty_array));
+puts("");
+
+// ===== ハッシュ/マップ型 (Hash/Map) =====
+puts("【ハッシュ/マップ型 (Hash/Map)】");
+let person = {"name": "Alice", "age": 30, "city": "Tokyo"};
+let scores = {"math": 95, "english": 87, "science": 92};
+
+puts("人物情報:", person);
+puts("成績データ:", scores);
+
+// ハッシュアクセス
+puts("ハッシュ要素アクセス:");
+puts("person[\"name\"] =", person["name"]);
+puts("person[\"age\"] =", person["age"]);
+puts("scores[\"math\"] =", scores["math"]);
+puts("");
+
+// ===== 関数型 (Function) =====
+puts("【関数型 (Function)】");
+
+// 関数定義
+let add = fn(a, b) { return a + b; };
+let multiply = fn(x, y) { return x * y; };
+let greet = fn(name) { return "Hello, " + name + "!"; };
+
+puts("関数定義例:");
+puts("add =", add);
+puts("multiply =", multiply);
+puts("greet =", greet);
+
+// 関数呼び出し
+puts("関数呼び出し:");
+puts("add(10, 20) =", add(10, 20));
+puts("multiply(6, 7) =", multiply(6, 7));
+puts("greet(\"Dog\") =", greet("Dog"));
+puts("");
+
+// 高階関数（関数を引数に取る関数）
+let apply_twice = fn(func, x) {
+    return func(func(x));
+};
+
+let double = fn(x) { return x * 2; };
+puts("高階関数:");
+puts("apply_twice(double, 5) =", apply_twice(double, 5));
+puts("");
+
+// ===== 型判定と変換 =====
+puts("【型判定と変換】");
+
+// 型判定関数（仮想的な実装）
+let type_of = fn(value) {
+    // 実際の実装は言語仕様により異なる
+    if (value == true || value == false) {
+        return "boolean";
+    };
+    if (value == 0 || value == 1 || value == -1) {
+        return "integer";  // 簡易判定
+    };
+    return "unknown";
+};
+
+puts("型判定例:");
+puts("type_of(42) =", type_of(42));
+puts("type_of(true) =", type_of(true));
+puts("type_of(false) =", type_of(false));
+puts("");
+
+// ===== 比較演算 =====
+puts("【比較演算】");
+let a = 10;
+let b = 20;
+
+puts("比較演算の例:");
+puts("10 == 20:", a == b);
+puts("10 != 20:", a != b);
+puts("10 < 20:", a < b);
+puts("10 > 20:", a > b);
+puts("10 <= 20:", a <= b);
+puts("10 >= 20:", a >= b);
+puts("");
+
+// 文字列比較
+puts("文字列比較:");
+puts("\"apple\" == \"apple\":", "apple" == "apple");
+puts("\"apple\" != \"orange\":", "apple" != "orange");
+puts("");
+
+// ===== NULL/nil値 =====
+puts("【NULL/nil値】");
+let null_value = null;
+puts("NULL値:", null_value);
+
+// NULL値の判定
+let is_null = fn(value) {
+    return value == null;
+};
+
+puts("NULL判定:");
+puts("is_null(null) =", is_null(null));
+puts("is_null(42) =", is_null(42));
+puts("");
+
+puts("=== データ型デモ完了 ===");

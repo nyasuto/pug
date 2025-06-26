@@ -1,0 +1,446 @@
+// ソートアルゴリズム集 - Dog言語
+// 様々なソートアルゴリズムの実装と性能比較
+
+puts("=== Dog言語 ソートアルゴリズム集 ===");
+puts("");
+
+// ===== 配列表示用ヘルパー関数 =====
+let print_array = fn(array, name) {
+    let str = name + ": [";
+    let i = 0;
+    while (i < len(array)) {
+        str = str + array[i];
+        if (i < len(array) - 1) {
+            str = str + ", ";
+        };
+        i = i + 1;
+    };
+    str = str + "]";
+    puts(str);
+};
+
+// 配列のコピー関数
+let copy_array = fn(array) {
+    let result = [];
+    let i = 0;
+    while (i < len(array)) {
+        result = push(result, array[i]);
+        i = i + 1;
+    };
+    return result;
+};
+
+// 配列の交換関数
+let swap = fn(array, i, j) {
+    let temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+    return array;
+};
+
+// ===== 1. バブルソート (Bubble Sort) =====
+puts("【1. バブルソート (Bubble Sort)】");
+puts("時間計算量: O(n²), 空間計算量: O(1)");
+puts("安定ソート: Yes, 内部ソート: Yes");
+puts("");
+
+let bubble_sort = fn(array) {
+    let arr = copy_array(array);
+    let n = len(arr);
+    
+    let i = 0;
+    while (i < n - 1) {
+        let j = 0;
+        let swapped = false;
+        
+        while (j < n - i - 1) {
+            if (arr[j] > arr[j + 1]) {
+                arr = swap(arr, j, j + 1);
+                swapped = true;
+            };
+            j = j + 1;
+        };
+        
+        // 交換が発生しなかった場合、ソート完了
+        if (!swapped) {
+            break;
+        };
+        
+        i = i + 1;
+    };
+    
+    return arr;
+};
+
+// ===== 2. 選択ソート (Selection Sort) =====
+puts("【2. 選択ソート (Selection Sort)】");
+puts("時間計算量: O(n²), 空間計算量: O(1)");
+puts("安定ソート: No, 内部ソート: Yes");
+puts("");
+
+let selection_sort = fn(array) {
+    let arr = copy_array(array);
+    let n = len(arr);
+    
+    let i = 0;
+    while (i < n - 1) {
+        let min_idx = i;
+        let j = i + 1;
+        
+        while (j < n) {
+            if (arr[j] < arr[min_idx]) {
+                min_idx = j;
+            };
+            j = j + 1;
+        };
+        
+        if (min_idx != i) {
+            arr = swap(arr, i, min_idx);
+        };
+        
+        i = i + 1;
+    };
+    
+    return arr;
+};
+
+// ===== 3. 挿入ソート (Insertion Sort) =====
+puts("【3. 挿入ソート (Insertion Sort)】");
+puts("時間計算量: O(n²), 空間計算量: O(1)");
+puts("安定ソート: Yes, 内部ソート: Yes");
+puts("");
+
+let insertion_sort = fn(array) {
+    let arr = copy_array(array);
+    let n = len(arr);
+    
+    let i = 1;
+    while (i < n) {
+        let key = arr[i];
+        let j = i - 1;
+        
+        // key より大きい要素を右にシフト
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        };
+        
+        arr[j + 1] = key;
+        i = i + 1;
+    };
+    
+    return arr;
+};
+
+// ===== 4. マージソート (Merge Sort) =====
+puts("【4. マージソート (Merge Sort)】");
+puts("時間計算量: O(n log n), 空間計算量: O(n)");
+puts("安定ソート: Yes, 内部ソート: No");
+puts("");
+
+let merge = fn(left, right) {
+    let result = [];
+    let i = 0;
+    let j = 0;
+    
+    while (i < len(left) && j < len(right)) {
+        if (left[i] <= right[j]) {
+            result = push(result, left[i]);
+            i = i + 1;
+        } else {
+            result = push(result, right[j]);
+            j = j + 1;
+        };
+    };
+    
+    // 残りの要素を追加
+    while (i < len(left)) {
+        result = push(result, left[i]);
+        i = i + 1;
+    };
+    
+    while (j < len(right)) {
+        result = push(result, right[j]);
+        j = j + 1;
+    };
+    
+    return result;
+};
+
+let merge_sort = fn(array) {
+    if (len(array) <= 1) {
+        return array;
+    };
+    
+    let mid = len(array) / 2;
+    let left = [];
+    let right = [];
+    
+    let i = 0;
+    while (i < mid) {
+        left = push(left, array[i]);
+        i = i + 1;
+    };
+    
+    while (i < len(array)) {
+        right = push(right, array[i]);
+        i = i + 1;
+    };
+    
+    let sorted_left = merge_sort(left);
+    let sorted_right = merge_sort(right);
+    
+    return merge(sorted_left, sorted_right);
+};
+
+// ===== 5. クイックソート (Quick Sort) =====
+puts("【5. クイックソート (Quick Sort)】");
+puts("時間計算量: 平均 O(n log n), 最悪 O(n²), 空間計算量: O(log n)");
+puts("安定ソート: No, 内部ソート: Yes");
+puts("");
+
+let partition = fn(array, low, high) {
+    let pivot = array[high];
+    let i = low - 1;
+    
+    let j = low;
+    while (j < high) {
+        if (array[j] <= pivot) {
+            i = i + 1;
+            array = swap(array, i, j);
+        };
+        j = j + 1;
+    };
+    
+    array = swap(array, i + 1, high);
+    return {"array": array, "pivot_index": i + 1};
+};
+
+let quick_sort_range = fn(array, low, high) {
+    if (low < high) {
+        let partition_result = partition(array, low, high);
+        array = partition_result["array"];
+        let pi = partition_result["pivot_index"];
+        
+        array = quick_sort_range(array, low, pi - 1);
+        array = quick_sort_range(array, pi + 1, high);
+    };
+    
+    return array;
+};
+
+let quick_sort = fn(array) {
+    let arr = copy_array(array);
+    if (len(arr) <= 1) {
+        return arr;
+    };
+    return quick_sort_range(arr, 0, len(arr) - 1);
+};
+
+// ===== 6. ヒープソート (Heap Sort) =====
+puts("【6. ヒープソート (Heap Sort)】");
+puts("時間計算量: O(n log n), 空間計算量: O(1)");
+puts("安定ソート: No, 内部ソート: Yes");
+puts("");
+
+let heapify = fn(array, n, i) {
+    let largest = i;
+    let left = 2 * i + 1;
+    let right = 2 * i + 2;
+    
+    if (left < n && array[left] > array[largest]) {
+        largest = left;
+    };
+    
+    if (right < n && array[right] > array[largest]) {
+        largest = right;
+    };
+    
+    if (largest != i) {
+        array = swap(array, i, largest);
+        array = heapify(array, n, largest);
+    };
+    
+    return array;
+};
+
+let heap_sort = fn(array) {
+    let arr = copy_array(array);
+    let n = len(arr);
+    
+    // ヒープを構築
+    let i = n / 2 - 1;
+    while (i >= 0) {
+        arr = heapify(arr, n, i);
+        i = i - 1;
+    };
+    
+    // ヒープから要素を取り出してソート
+    i = n - 1;
+    while (i > 0) {
+        arr = swap(arr, 0, i);
+        arr = heapify(arr, i, 0);
+        i = i - 1;
+    };
+    
+    return arr;
+};
+
+// ===== 7. カウンティングソート (Counting Sort) =====
+puts("【7. カウンティングソート (Counting Sort)】");
+puts("時間計算量: O(n + k), 空間計算量: O(k)");
+puts("安定ソート: Yes, 内部ソート: No");
+puts("注意: 小さな正の整数範囲のみ対応");
+puts("");
+
+let counting_sort = fn(array) {
+    if (len(array) == 0) {
+        return array;
+    };
+    
+    // 最大値を見つける
+    let max_val = array[0];
+    let i = 1;
+    while (i < len(array)) {
+        if (array[i] > max_val) {
+            max_val = array[i];
+        };
+        i = i + 1;
+    };
+    
+    // カウント配列を初期化
+    let count = [];
+    i = 0;
+    while (i <= max_val) {
+        count = push(count, 0);
+        i = i + 1;
+    };
+    
+    // 各要素の出現回数をカウント
+    i = 0;
+    while (i < len(array)) {
+        count[array[i]] = count[array[i]] + 1;
+        i = i + 1;
+    };
+    
+    // 結果配列を構築
+    let result = [];
+    i = 0;
+    while (i <= max_val) {
+        let j = 0;
+        while (j < count[i]) {
+            result = push(result, i);
+            j = j + 1;
+        };
+        i = i + 1;
+    };
+    
+    return result;
+};
+
+// ===== ソートアルゴリズムのテスト =====
+puts("【ソートアルゴリズムのテスト】");
+puts("");
+
+// テストデータ
+let test_data = [64, 34, 25, 12, 22, 11, 90, 5];
+let small_data = [3, 1, 4, 1, 5, 9, 2, 6];
+let reverse_data = [9, 8, 7, 6, 5, 4, 3, 2, 1];
+
+print_array(test_data, "元のデータ");
+puts("");
+
+// 各アルゴリズムでソート
+puts("バブルソート結果:");
+print_array(bubble_sort(test_data), "結果");
+puts("");
+
+puts("選択ソート結果:");
+print_array(selection_sort(test_data), "結果");
+puts("");
+
+puts("挿入ソート結果:");
+print_array(insertion_sort(test_data), "結果");
+puts("");
+
+puts("マージソート結果:");
+print_array(merge_sort(test_data), "結果");
+puts("");
+
+puts("クイックソート結果:");
+print_array(quick_sort(test_data), "結果");
+puts("");
+
+puts("ヒープソート結果:");
+print_array(heap_sort(test_data), "結果");
+puts("");
+
+puts("カウンティングソート結果 (小さなデータ):");
+print_array(small_data, "元のデータ");
+print_array(counting_sort(small_data), "結果");
+puts("");
+
+// ===== 性能比較用の大きなデータセット =====
+puts("【大きなデータセットでのテスト】");
+
+// ランダム風データの生成（擬似ランダム）
+let generate_data = fn(size) {
+    let data = [];
+    let seed = 7;
+    let i = 0;
+    while (i < size) {
+        seed = (seed * 1103515245 + 12345) % 1000000;
+        data = push(data, seed % 100);
+        i = i + 1;
+    };
+    return data;
+};
+
+let large_data = generate_data(50);
+puts("大きなデータセット (最初の10要素):");
+let preview = [];
+let i = 0;
+while (i < 10) {
+    preview = push(preview, large_data[i]);
+    i = i + 1;
+};
+print_array(preview, "プレビュー");
+
+// 効率的なアルゴリズムのみテスト
+puts("マージソート (大きなデータ):");
+let sorted_large = merge_sort(large_data);
+let sorted_preview = [];
+i = 0;
+while (i < 10) {
+    sorted_preview = push(sorted_preview, sorted_large[i]);
+    i = i + 1;
+};
+print_array(sorted_preview, "ソート結果プレビュー");
+
+puts("");
+
+// ===== ソートの検証関数 =====
+let is_sorted = fn(array) {
+    let i = 1;
+    while (i < len(array)) {
+        if (array[i - 1] > array[i]) {
+            return false;
+        };
+        i = i + 1;
+    };
+    return true;
+};
+
+puts("【ソートの検証】");
+puts("テストデータのソート結果が正しいか検証:");
+
+puts("バブルソート:", is_sorted(bubble_sort(test_data)));
+puts("選択ソート:", is_sorted(selection_sort(test_data)));
+puts("挿入ソート:", is_sorted(insertion_sort(test_data)));
+puts("マージソート:", is_sorted(merge_sort(test_data)));
+puts("クイックソート:", is_sorted(quick_sort(test_data)));
+puts("ヒープソート:", is_sorted(heap_sort(test_data)));
+puts("カウンティングソート:", is_sorted(counting_sort(small_data)));
+
+puts("");
+puts("=== ソートアルゴリズム集完了 ===");
