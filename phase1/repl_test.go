@@ -95,7 +95,7 @@ func TestREPLParserErrors(t *testing.T) {
 			Start(input, output)
 
 			result := output.String()
-			hasErrorOutput := strings.Contains(result, "\t") // Error messages are indented
+			hasErrorOutput := strings.Contains(result, "🚨 構文解析エラー:") // Error messages start with this
 
 			if tt.hasError && !hasErrorOutput {
 				t.Errorf("Expected error output, but got none. Output:\n%s", result)
@@ -151,11 +151,128 @@ func TestPrintParserErrors(t *testing.T) {
 
 	result := output.String()
 
-	// Check that errors are properly formatted with tabs
+	// Check that errors are properly formatted
 	for _, err := range errors {
-		expectedError := "\t" + err + "\n"
-		if !strings.Contains(result, expectedError) {
-			t.Errorf("Expected formatted error %q, got:\n%s", expectedError, result)
+		if !strings.Contains(result, err) {
+			t.Errorf("Expected error %q, got:\n%s", err, result)
 		}
+	}
+}
+
+// Enhanced REPL tests for new functionality
+
+func TestREPLSpecialCommands(t *testing.T) {
+	tests := []struct {
+		command  string
+		expected string
+	}{
+		{":help", "📖 Pug REPL ヘルプ:"},
+		{":exit", "👋 Goodbye!"},
+		{":quit", "👋 Goodbye!"},
+		{":q", "👋 Goodbye!"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.command, func(t *testing.T) {
+			in := strings.NewReader(tt.command + "\n")
+			var out bytes.Buffer
+
+			Start(in, &out)
+
+			output := out.String()
+			if !strings.Contains(output, tt.expected) {
+				t.Errorf("Expected output to contain %q, got %q", tt.expected, output)
+			}
+		})
+	}
+}
+
+func TestREPLHistory(t *testing.T) {
+	input := "5 + 3\nlet x = 42\n:history\n:exit\n"
+	in := strings.NewReader(input)
+	var out bytes.Buffer
+
+	Start(in, &out)
+
+	output := out.String()
+
+	// 履歴に両方のコマンドが含まれることを確認
+	if !strings.Contains(output, "1: 5 + 3") {
+		t.Error("Expected history to contain '1: 5 + 3'")
+	}
+	if !strings.Contains(output, "2: let x = 42") {
+		t.Error("Expected history to contain '2: let x = 42'")
+	}
+}
+
+func TestREPLEnhancedErrorHandling(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"unknownVariable", "identifier not found: unknownVariable"},
+		{"5 / 0", "division by zero"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			in := strings.NewReader(tt.input + "\n:exit\n")
+			var out bytes.Buffer
+
+			Start(in, &out)
+
+			output := out.String()
+			if !strings.Contains(output, tt.expected) {
+				t.Errorf("Expected output to contain %q, got %q", tt.expected, output)
+			}
+		})
+	}
+}
+
+func TestREPLUnknownCommand(t *testing.T) {
+	input := ":unknown\n:exit\n"
+	in := strings.NewReader(input)
+	var out bytes.Buffer
+
+	Start(in, &out)
+
+	output := out.String()
+
+	// 不明なコマンドに対する適切なエラーメッセージ
+	if !strings.Contains(output, "❓ 不明なコマンド: :unknown") {
+		t.Error("Expected unknown command error message")
+	}
+}
+
+func TestREPLEmptyLines(t *testing.T) {
+	input := "\n\n5 + 3\n\n:exit\n"
+	in := strings.NewReader(input)
+	var out bytes.Buffer
+
+	Start(in, &out)
+
+	output := out.String()
+
+	// 空行がスキップされ、計算が正しく実行されることを確認
+	if !strings.Contains(output, "=> 8") {
+		t.Error("Expected 5 + 3 to equal 8 despite empty lines")
+	}
+}
+
+func TestREPLEnhancedPromptAndOutput(t *testing.T) {
+	input := "42\n:exit\n"
+	in := strings.NewReader(input)
+	var out bytes.Buffer
+
+	Start(in, &out)
+
+	output := out.String()
+
+	// 新しいプロンプトとアウトプット形式の確認
+	if !strings.Contains(output, "pug>") {
+		t.Error("Expected new prompt 'pug>'")
+	}
+	if !strings.Contains(output, "=> 42") {
+		t.Error("Expected enhanced output format '=> 42'")
 	}
 }
