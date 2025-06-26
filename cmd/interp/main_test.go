@@ -173,3 +173,55 @@ func TestMainWithFile(t *testing.T) {
 	// main関数のテストは統合テストで行う
 	// ここでは基本的な設定のテストのみ
 }
+
+func TestValidateFilePath(t *testing.T) {
+	tests := []struct {
+		name     string
+		filename string
+		wantErr  bool
+		errMsg   string
+	}{
+		{
+			name:     "Valid .dog file",
+			filename: "test.dog",
+			wantErr:  false,
+		},
+		{
+			name:     "Empty filename",
+			filename: "",
+			wantErr:  true,
+			errMsg:   "ファイル名が指定されていません",
+		},
+		{
+			name:     "Path traversal attack",
+			filename: "../../../etc/passwd",
+			wantErr:  true,
+			errMsg:   "相対パス '..' は使用できません",
+		},
+		{
+			name:     "Non-.dog file",
+			filename: "test.txt",
+			wantErr:  true,
+			errMsg:   "サポートされているファイル形式は .dog のみです",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validateFilePath(tt.filename)
+			if tt.wantErr {
+				if err == nil {
+					t.Errorf("validateFilePath() error = nil, wantErr %v", tt.wantErr)
+					return
+				}
+				if !strings.Contains(err.Error(), tt.errMsg) {
+					t.Errorf("validateFilePath() error = %v, want error containing %v", err, tt.errMsg)
+				}
+			} else {
+				if err != nil {
+					t.Errorf("validateFilePath() error = %v, wantErr %v", err, tt.wantErr)
+				}
+			}
+		})
+	}
+}
