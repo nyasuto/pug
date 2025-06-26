@@ -25,6 +25,7 @@ func main() {
 	fmt.Printf("📄 ファイル '%s' をコンパイル中...\n", filename)
 
 	// ファイルを読み込み
+	// #nosec G304 - コンパイラツールとしてファイル読み込みは必要な機能
 	input, err := os.ReadFile(filename)
 	if err != nil {
 		fmt.Printf("❌ ファイル読み込みエラー: %v\n", err)
