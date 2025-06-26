@@ -263,6 +263,53 @@ bench-comprehensive: build bench-compiler bench-gcc bench-rust bench-evolution #
 	@echo ""
 	@echo "📈 詳細結果は個別ベンチマーク実行時に表示されます"
 
+.PHONY: bench-analyze
+bench-analyze: ## 性能データ分析・レポート生成
+	@echo "📊 性能データ分析実行中..."
+	@if [ -f "scripts/performance/cmd/analyzer/main.go" ]; then \
+		go run scripts/performance/cmd/analyzer/main.go; \
+	else \
+		echo "⚠️  analyzer が見つかりません"; \
+	fi
+
+.PHONY: bench-trend
+bench-trend: ## 長期性能トレンド分析
+	@echo "📈 トレンド分析実行中..."
+	@if [ -f "scripts/performance/cmd/trend/main.go" ]; then \
+		go run scripts/performance/cmd/trend/main.go; \
+	else \
+		echo "⚠️  trend analyzer が見つかりません"; \
+	fi
+
+.PHONY: bench-dashboard
+bench-dashboard: ## 性能ダッシュボード生成
+	@echo "🎨 ダッシュボード生成中..."
+	@if [ -f "scripts/performance/cmd/dashboard/main.go" ]; then \
+		go run scripts/performance/cmd/dashboard/main.go; \
+	else \
+		echo "⚠️  dashboard generator が見つかりません"; \
+	fi
+
+.PHONY: bench-wiki
+bench-wiki: ## GitHub Wiki自動更新
+	@echo "📝 Wiki自動更新中..."
+	@if [ -f "scripts/performance/cmd/wiki/main.go" ]; then \
+		go run scripts/performance/cmd/wiki/main.go; \
+	else \
+		echo "⚠️  wiki updater が見つかりません"; \
+	fi
+
+.PHONY: bench-cicd
+bench-cicd: bench-comprehensive bench-analyze bench-trend bench-dashboard ## CI/CD統合ベンチマーク（完全自動化）
+	@echo "🚀 CI/CD統合ベンチマーク完了"
+	@echo ""
+	@echo "📊 生成されたファイル:"
+	@ls -la performance-*.* 2>/dev/null | sed 's/^/  /' || echo "  📊 レポートファイルなし"
+	@ls -la trend-*.* 2>/dev/null | sed 's/^/  /' || echo "  📈 トレンドファイルなし"  
+	@ls -la dashboard-*.* 2>/dev/null | sed 's/^/  /' || echo "  🎨 ダッシュボードファイルなし"
+	@echo ""
+	@echo "✅ 全ての性能分析が完了しました"
+
 .PHONY: bench-compile
 bench-compile: ## コンパイル時間測定（従来互換）
 	@echo "⏱️  コンパイル時間測定中..."
