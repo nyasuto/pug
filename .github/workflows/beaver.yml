@@ -24,9 +24,9 @@ jobs:
     steps:
       - name: Generate Beaver Knowledge Base
         id: beaver
-        uses: nyasuto/beaver@v1.0.2
+        uses: nyasuto/beaver@v1.0.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           codecov-token: ${{ secrets.CODECOV_API_TOKEN }}  
-          enable-quality-dashboard: true
+          enable-quality-dashboard: false
           deploy-to-pages: true
