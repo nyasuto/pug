@@ -9,6 +9,7 @@ on:
   schedule:
     - cron: '0 6 * * *'  # 毎日午前6時に実行
   workflow_dispatch:  # 手動実行も可能
+
 jobs:
   knowledge-base:
     runs-on: ubuntu-latest
@@ -30,3 +31,4 @@ jobs:
           codecov-token: ${{ secrets.CODECOV_API_TOKEN }}  
           enable-quality-dashboard: false
           deploy-to-pages: true
+          site-subdirectory: pug
