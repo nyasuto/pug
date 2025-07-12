@@ -29,6 +29,5 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           codecov-token: ${{ secrets.CODECOV_API_TOKEN }}  
-          enable-quality-dashboard: false
+          enable-quality-dashboard: true
           deploy-to-pages: true
-          site-subdirectory: pug
