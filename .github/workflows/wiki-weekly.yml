@@ -22,7 +22,7 @@ jobs:
         fetch-depth: 0  # 全履歴を取得（トレンド分析用）
 
     - name: 🐹 Go環境セットアップ
-      uses: actions/setup-go@v5
+      uses: actions/setup-go@v6
       with:
         go-version: 'stable'
         cache: true
