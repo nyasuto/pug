@@ -113,7 +113,7 @@ jobs:
       run: make test
 
     - name: 📄 成果物アップロード
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: binaries-ubuntu-go${{ matrix.go-version }}
         path: bin/
@@ -279,7 +279,7 @@ jobs:
         echo "📁 **完全な結果**: Artifactsの \`benchmark-results-comprehensive\` を参照" >> $GITHUB_STEP_SUMMARY
 
     - name: 📈 ベンチマーク成果物保存
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: benchmark-results-comprehensive
         path: |
@@ -398,7 +398,7 @@ jobs:
           }
 
     - name: 📁 PR性能データ保存
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: pr-benchmark-results-${{ github.event.number }}
         path: |
