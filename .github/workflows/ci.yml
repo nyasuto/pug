@@ -43,7 +43,7 @@ jobs:
       run: make test-cov
 
     - name: 📊 Phase1 カバレッジアップロード
-      uses: codecov/codecov-action@v5
+      uses: codecov/codecov-action@v6
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         files: ./phase1.cover
@@ -52,7 +52,7 @@ jobs:
         fail_ci_if_error: false
 
     - name: 📊 Phase2 カバレッジアップロード
-      uses: codecov/codecov-action@v5
+      uses: codecov/codecov-action@v6
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         files: ./phase2.cover
@@ -61,7 +61,7 @@ jobs:
         fail_ci_if_error: false
 
     - name: 📊 統合カバレッジアップロード
-      uses: codecov/codecov-action@v5
+      uses: codecov/codecov-action@v6
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         files: ./coverage.out
