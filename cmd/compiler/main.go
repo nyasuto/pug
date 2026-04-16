@@ -39,7 +39,7 @@ func main() {
 	}
 
 	// ソースファイルを読み込み
-	// #nosec G304 -- inputFile is validated above to prevent path traversal
+	// #nosec G304 G703 -- inputFile is validated above to prevent path traversal
 	source, err := os.ReadFile(inputFile)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "エラー: ファイル読み込み失敗: %v\n", err)
@@ -77,7 +77,7 @@ func main() {
 
 	// アセンブリコードをファイルに出力
 	fmt.Println("💾 アセンブリファイル出力中...")
-	err = os.WriteFile(outputFile, []byte(asmCode), 0600)
+	err = os.WriteFile(outputFile, []byte(asmCode), 0600) // #nosec G703 -- outputFile is derived from validated inputFile
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "❌ ファイル出力エラー: %v\n", err)
 		os.Exit(1)

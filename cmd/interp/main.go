@@ -88,7 +88,7 @@ func executeFile(filename string) error {
 	}
 
 	// ファイルを読み込む
-	// #nosec G304 - ファイルパスは上記のvalidateFilePathで検証済み
+	// #nosec G304 G703 - ファイルパスは上記のvalidateFilePathで検証済み
 	input, err := os.ReadFile(filename)
 	if err != nil {
 		return fmt.Errorf("ファイルの読み込みに失敗しました: %v", err)
